@@ -102,7 +102,7 @@ export const toggleOfferStatus = async (id: string, value: boolean) => {
     formDataSend.append("type", "offer");
     formDataSend.append("active", value.toString());
 
-    await axios.put(`${API_BASE_URL}/offers/${id}`, formDataSend, {
+    await axios.put(`${API_BASE_URL}/offers/${id}/toggle`, formDataSend, {
       headers: { "Content-Type": "multipart/form-data" },
     });
 

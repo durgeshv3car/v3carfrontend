@@ -4,7 +4,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5
 
 export const fetchMoney = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/offer/offer`, {
+    const response = await axios.get(`${API_BASE_URL}/offer/money`, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -75,7 +75,7 @@ export const toggleMoneyStatus = async (id: string, value: boolean) => {
     formDataSend.append("type", "offer");
     formDataSend.append("active", value.toString()); 
 
-    await axios.put(`${API_BASE_URL}/offers/${id}`, formDataSend, {
+    await axios.put(`${API_BASE_URL}/offers/${id}/toggle`, formDataSend, {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
