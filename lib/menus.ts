@@ -31,7 +31,7 @@ export type Group = {
 export function getMenuList(pathname: string, role: string): Group[] {
   return [
     {
-      groupLabel: "dashboard",
+      groupLabel: "",
       id: "dashboard",
       menus: [
         {
@@ -64,7 +64,7 @@ export function getMenuList(pathname: string, role: string): Group[] {
       ],
     },
     {
-      groupLabel: "layout",
+      groupLabel: "",
       id: "layout",
       menus: [
         {
@@ -123,7 +123,7 @@ export function getMenuList(pathname: string, role: string): Group[] {
       ],
     },
     {
-      groupLabel: "messageCenter",
+      groupLabel: "",
       id: "messageCenter",
       menus: [
         {
@@ -159,6 +159,37 @@ export function getMenuList(pathname: string, role: string): Group[] {
               href: "/messageCenter/email",
               label: "Email",
               active: pathname === "/messageCenter/email",
+              icon: "heroicons:arrow-trending-up",
+              children: [],
+            },
+           
+          ],
+        },
+      ],
+    },
+    {
+      groupLabel: "",
+      id: "pages",
+      menus: [
+        {
+          id: "pages",
+          href: "",
+          label: "pages",
+          active: pathname.includes("/dashboard"),
+          icon: "heroicons-outline:home",
+          submenus: [
+           
+            {
+              href: "/pages/faq",
+              label: "Faq",
+              active: pathname === "/pages/faq",
+              icon: "heroicons:arrow-trending-up",
+              children: [],
+            },
+            {
+              href: "/pages/policy",
+              label: "Policy",
+              active: pathname === "/pages/policy",
               icon: "heroicons:arrow-trending-up",
               children: [],
             },

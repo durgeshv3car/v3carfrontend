@@ -8,13 +8,12 @@ import { toast } from "sonner";
 import { updateCategory } from "@/app/(protected)/services/categorys/api";
 
 interface TableRow {
-  id?: string;
+  id?: string; // Ensure `id` is required and explicitly typed
   title?: string;
-  [key: string]: any;
 }
 
 interface EditModalProps {
-  id?: string ;
+  id?: string;
   onClose: () => void;
   tableData: TableRow[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,7 +26,7 @@ const EditModal: React.FC<EditModalProps> = ({
   setRefresh,
 }) => {
   const router = useRouter();
-  const [editedData, setEditedData] = useState<Partial<TableRow>>({});
+  const [editedData, setEditedData] = useState<Record<string, any>>({});
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
 
   useEffect(() => {

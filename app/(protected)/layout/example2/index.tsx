@@ -111,7 +111,8 @@ const ExampleTwo = ({
   const searchParams = useSearchParams();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isCreateOpen, setIsCreateOpen] = React.useState(false);
-  const leadId = searchParams.get("id") || null;
+  const leadId = searchParams.get("id") || "";
+  console.log(typeof leadId, "leadId");
 
   React.useEffect(() => {
     setIsModalOpen(!!leadId);
@@ -232,7 +233,7 @@ const ExampleTwo = ({
           {/* Input for Filtering */}
           <Input
             placeholder="Filter Name..."
-            value={table.getColumn("name")?.getFilterValue() ?? ""}
+            value={table.getColumn("title")?.getFilterValue() ?? ""}
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
             }
@@ -324,7 +325,7 @@ const ExampleTwo = ({
       )}
       {isModalOpen && EditModalComponent && (
         <EditModalComponent
-          id={leadId}
+          id={leadId as string}
           onClose={closeModal}
           tableData={tableData}
           setRefresh={setRefresh}
