@@ -26,7 +26,7 @@ const OfferSelectionModal = ({ isOpen, onClose, onSelectOffer,selectedRowsData }
     const fetchOffers = async () => {
       try {
         console.log("Fetching offers from API...");
-        const response = await fetch("http://localhost:5000/api/offers");
+        const response = await fetch("http://localhost:5000/api/offer/offer");
 
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -56,6 +56,12 @@ const OfferSelectionModal = ({ isOpen, onClose, onSelectOffer,selectedRowsData }
       setLoading(true);
       console.log("Submitting selected offer:", selectedOffer);
       console.log("Selected rows:", selectedRowsData);
+      let sending;
+      if (type=="Notification"){
+        sending="Application"
+      }else{
+        sending=type
+      }
   
       const response = await fetch("http://localhost:5000/api/notifications", {
         method: "POST",
@@ -65,7 +71,7 @@ const OfferSelectionModal = ({ isOpen, onClose, onSelectOffer,selectedRowsData }
         body: JSON.stringify({
           offerIds: [selectedOffer.id], // Array format
           userIds: selectedRowsData.map(row => String(row.id)), // Array of row IDs
-          type:`${type}_create`
+          type:`${sending}_create`
         }),
       });
   
