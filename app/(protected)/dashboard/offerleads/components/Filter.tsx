@@ -11,7 +11,7 @@ export default function Filter({ selectedValues, setSelectedValues, data }) {
   const [titles, setTitles] = React.useState([]);
   const [users, setUsers] = React.useState([]);
   const [numbers, setNumbers] = React.useState([]);
-  const [sources, setSources] = React.useState([]);
+  const [source, setSource] = React.useState([]);
   const [openFilter, setOpenFilter] = React.useState(null);
 
   React.useEffect(() => {
@@ -21,7 +21,7 @@ export default function Filter({ selectedValues, setSelectedValues, data }) {
       const uniqueTitles = Array.from(new Set(data.map(item => item.offer.title))).sort();
       const uniqueNumbers = Array.from(new Set(data.map(item => item.user.phoneNumber))).sort();
       const uniqueNames = Array.from(new Set(data.map(item => item.user.firstName))).sort();
-      setSources(["All", ...uniqueSource]);
+      setSource(["All", ...uniqueSource]);
       setCategories(["All", ...uniqueCategories]);
       setTitles(["All", ...uniqueTitles]);
       setUsers(["All", ...uniqueNames]);
@@ -38,8 +38,8 @@ export default function Filter({ selectedValues, setSelectedValues, data }) {
     setOpenFilter(isOpen ? field : null);
   };
 
-  const fields = ["sources","categories", "titles", "users", "numbers"];
-  const options = { sources ,categories, titles, users, numbers };
+  const fields = ["source","categories", "titles", "users", "numbers"];
+  const options = { source,categories, titles, users, numbers };
 
   return (
     <div className="flex flex-wrap gap-4">

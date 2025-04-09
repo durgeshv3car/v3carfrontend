@@ -1,31 +1,33 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import ExampleTwo from "../../example2";
+import ExampleTwo from "../example2";
 import SiteBreadcrumb from "@/components/site-breadcrumb";
 import { notFound } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { columnsSlider } from "./components/columnsSlider";
-import { fetchSliderImages } from "@/app/(protected)/services/sliders/api";
 
-function Users() {
+import { columnsCategory } from "./components/columnsCategory";
+import { fetchCategories } from "@/app/(protected)/services/categorys/api";
+
+function Category() {
   const allowed = ["superadmin", "admin"];
   const role = "admin";
   if (!allowed.includes(role)) {
     notFound();
   }
   const router = useRouter();
-
   const [data, setData] = useState<DataProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = React.useState(null);
-  const [open, setOpen] = React.useState(false);
-  const type = "slider";
+  const type = "faq";
 
   const fetchData = async () => {
     try {
-      const result = await fetchSliderImages(type);
+      const result = await fetchCategories();
+      if (result.status == 404) {
+        setData([]);
+        return;
+      }
 
       setData(result);
     } catch (error) {
@@ -47,9 +49,9 @@ function Users() {
         <Card>
           <CardContent className="p-0">
             <ExampleTwo
-              tableHeading="Slider List"
+              tableHeading="Faq List"
               tableData={data}
-              tableColumns={columnsSlider(fetchData, router,setSelectedDate,selectedDate,open,setOpen)}
+              tableColumns={columnsCategory(fetchData,router)}
               setRefresh={setRefresh}
               type={type}
             />
@@ -60,4 +62,4 @@ function Users() {
   );
 }
 
-export default Users;
+export default Category;

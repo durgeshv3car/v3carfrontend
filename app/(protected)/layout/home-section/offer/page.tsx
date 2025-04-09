@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import ExampleTwo from "../../example2";
 import SiteBreadcrumb from "@/components/site-breadcrumb";
 import { notFound } from "next/navigation";
-
+import { useRouter } from "next/navigation";
 
 import { columnsRecommend } from "./components/columnsRecommend";
 import { fetchOffers } from "@/app/(protected)/services/offers/api";
@@ -15,32 +15,28 @@ function Users() {
   if (!allowed.includes(role)) {
     notFound();
   }
+  const router = useRouter();
 
   const [data, setData] = useState<DataProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
   const type = "offer";
 
- const fetchData = async () => {
-      try {
-        const result = await fetchOffers(type);
-        if (result.status == 404) {
-          setData([]);
-          return;
-        }
-  
-        setData(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const result = await fetchOffers();
+      console.log("result", result.status);
+      setData(result);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, [refresh]);
-
- 
 
   if (loading) return <p>Loading...</p>;
   return (
@@ -52,7 +48,7 @@ function Users() {
             <ExampleTwo
               tableHeading="Offer List"
               tableData={data}
-              tableColumns={columnsRecommend(fetchData)}
+              tableColumns={columnsRecommend(setRefresh,router)} 
               setRefresh={setRefresh}
               type={type}
             />

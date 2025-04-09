@@ -77,7 +77,7 @@ const OfferSelectionModal = ({ isOpen, onClose, onSelectOffer,selectedRowsData }
       console.log("Offer submitted successfully:", result);
       if (type=="Email"){
         router.push("/messageCenter/email");
-      }else if (type=="Application"){
+      }else if (type=="Notification"){
         router.push("/messageCenter/application");
       }else if (type=="Sms"){
         router.push("/messageCenter/sms");

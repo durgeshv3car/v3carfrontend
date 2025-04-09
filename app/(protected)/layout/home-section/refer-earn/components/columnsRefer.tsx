@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useRouter } from "next/navigation";
+
 
 import { SquarePen, Trash2, CalendarClock } from "lucide-react";
 
@@ -20,7 +20,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Calendar } from "@/components/ui/calendar";
 import { scheduleDeleteReferImage,toggleReferImageStatus,deleteReferImage } from "@/app/(protected)/services/refer-earns/api";
 
-export const columnsRefer = (refreshData) => [
+export const columnsRefer = (refreshData,router,setSelectedDate,selectedDate,open,setOpen) => [
   {
     id: "select",
     header: ({ table }) => (
@@ -165,8 +165,7 @@ export const columnsRefer = (refreshData) => [
     header: "Action",
     enableHiding: false,
     cell: ({ row }) => {
-      const [selectedDate, setSelectedDate] = React.useState(null);
-      const router = useRouter();
+   
         const handleDelete = async (id: string) => {
                    const result = await deleteReferImage(id);
                  
@@ -230,9 +229,7 @@ export const columnsRefer = (refreshData) => [
         header: "schedulExpire",
         enableHiding: false,
         cell: ({ row }) => {
-          const [selectedDate, setSelectedDate] = React.useState(null);
-          const [open, setOpen] = React.useState(false);
-          const router = useRouter();
+         
           const type = "refer";
       
           const handleDateSelect = (date) => {

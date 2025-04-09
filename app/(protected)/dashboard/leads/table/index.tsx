@@ -72,6 +72,7 @@ const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }
   const [isCreatingNotification, setIsCreatingNotification] =
     React.useState(false);
 
+  const [type, setType] = React.useState(null);
   const table = useReactTable({
     data:tableData,
     columns:tableColumns,
@@ -101,6 +102,7 @@ const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }
 
   React.useEffect(() => {
     const creatingNotification = searchParams.get("createnotification");
+    setType( searchParams.get("type")); 
 
     if (creatingNotification === "true") {
       console.log("creatingNotification detected");
@@ -118,6 +120,7 @@ const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }
         <Filter
           selectedValues={selectedValues}
           setSelectedValues={setSelectedValues}
+          data={tableData}
         />
       </div>
 
@@ -192,7 +195,7 @@ const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }
                 disabled={Object.keys(rowSelection).length === 0}
                 onClick={() => setIsModalOpen(true)}
               >
-                Send Notification
+                Send {type}
               </button>
             )}
           </div>

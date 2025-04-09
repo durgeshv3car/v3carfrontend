@@ -16,6 +16,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import TextEditor from "../components/SunEditor";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -47,6 +48,11 @@ const EditModal: React.FC<EditModalProps> = ({
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
+  const [brandWebFile, setBrandWebFile] = useState<FileWithPreview | null>(
+    null
+  );
+  const [brandMobileFile, setBrandMobileFile] =
+    useState<FileWithPreview | null>(null);
   const [categories, setCategories] = useState([]);
 
   const buttonsType = [
@@ -61,21 +67,21 @@ const EditModal: React.FC<EditModalProps> = ({
     { id: "shop_now", name: "Shop Now" },
   ];
 
-    useEffect(() => {
-      axios
-        .get("http://localhost:5000/api/category")
-        .then((response) => {
-          console.log(response, "category");
-          setCategories(response.data);
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 404) {
-            setCategories([]);
-          } else {
-            console.error("Error fetching categories:", error);
-          }
-        });
-    }, [categories]);
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/category")
+      .then((response) => {
+        console.log(response, "category");
+        setCategories(response.data);
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 404) {
+          setCategories([]);
+        } else {
+          console.error("Error fetching categories:", error);
+        }
+      });
+  }, []); // Fixed dependency array to avoid infinite re-fetching
 
   // Find the row data based on the id
   useEffect(() => {
@@ -151,14 +157,12 @@ const EditModal: React.FC<EditModalProps> = ({
             ].includes(key) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">
-                  {key === "offerImage" ? "" : key}
+                  {key === "offerImage" || key === "brandLogo" ? "" : key}
                 </label>
 
-                {/* Handle Nested `offerImage` Object */}
                 {key === "offerImage" &&
                 typeof selectedRow[key] === "object" ? (
                   <div className="space-y-3">
-                    {/* Web Image */}
                     <div>
                       <label className="block text-sm font-medium">Web</label>
                       <ImageUpload
@@ -167,7 +171,6 @@ const EditModal: React.FC<EditModalProps> = ({
                       />
                     </div>
 
-                    {/* Mobile Image */}
                     <div>
                       <label className="block text-sm font-medium">
                         Mobile
@@ -175,6 +178,31 @@ const EditModal: React.FC<EditModalProps> = ({
                       <ImageUpload
                         files={mobileFile ? [mobileFile] : []}
                         setFiles={(files) => setMobileFile(files[0] || null)}
+                      />
+                    </div>
+                  </div>
+                ) : key === "brandLogo" &&
+                  typeof selectedRow[key] === "object" ? (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm font-medium">
+                        Brand Web
+                      </label>
+                      <ImageUpload
+                        files={brandWebFile ? [brandWebFile] : []}
+                        setFiles={(files) => setBrandWebFile(files[0] || null)}
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium">
+                        Brand Mobile
+                      </label>
+                      <ImageUpload
+                        files={brandMobileFile ? [brandMobileFile] : []}
+                        setFiles={(files) =>
+                          setBrandMobileFile(files[0] || null)
+                        }
                       />
                     </div>
                   </div>
@@ -198,7 +226,6 @@ const EditModal: React.FC<EditModalProps> = ({
                     </SelectContent>
                   </Select>
                 ) : key === "buttonType" ? (
-                  /* Button Name Selection */
                   <Select
                     value={editedData[key] || ""}
                     onValueChange={(value) =>
@@ -221,6 +248,16 @@ const EditModal: React.FC<EditModalProps> = ({
                     checked={Boolean(editedData[key])}
                     onCheckedChange={(value) =>
                       setEditedData((prev) => ({ ...prev, [key]: value }))
+                    }
+                  />
+                ) : key === "detailDescription" ? (
+                  <TextEditor
+                    value={editedData.detailDescription || ""}
+                    onChange={(value: string) =>
+                      setEditedData((prev) => ({
+                        ...prev,
+                        detailDescription: value,
+                      }))
                     }
                   />
                 ) : (

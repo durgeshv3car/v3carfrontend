@@ -8,13 +8,13 @@ import { toast } from "sonner";
 import { updateCategory } from "@/app/(protected)/services/categorys/api";
 
 interface TableRow {
-  id?: string;
+  id: string;
   title?: string;
   [key: string]: any;
 }
 
 interface EditModalProps {
-  id?: string ;
+  id: string | null;
   onClose: () => void;
   tableData: TableRow[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;

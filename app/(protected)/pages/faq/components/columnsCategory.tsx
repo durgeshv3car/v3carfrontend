@@ -61,6 +61,16 @@ export const columnsCategory = (refreshData,router) => [
       </div>
     ),
   },
+  {
+    accessorKey: "description",
+    header: "Description",
+    cell: ({ row }) => (
+      <div className="flex gap-3 items-center">
+        <span className="text-sm">{row.original.description}</span>
+      </div>
+    ),
+  },
+
 
 
   {
@@ -68,7 +78,7 @@ export const columnsCategory = (refreshData,router) => [
     header: "Action",
     enableHiding: false,
     cell: ({ row }) => {
-      
+
       const handleDelete = async (id: string) => {
         try {
           const result = await deleteCategory(id);

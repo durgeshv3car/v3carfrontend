@@ -45,55 +45,22 @@ import dynamic from "next/dynamic";
 
 // Dynamically import different modals based on type
 const modalMap = {
-  slider: {
-    create: dynamic(() => import("../home-section/slider/components/Create"), {
-      ssr: false,
-    }),
-    edit: dynamic(() => import("../home-section/slider/[id]/page"), {
-      ssr: false,
-    }),
-  },
-  money: {
+  
+  faq: {
     create: dynamic(
-      () => import("../home-section/money-smart/components/Create"),
+      () => import("../faq/components/Create"),
       { ssr: false }
     ),
-    edit: dynamic(() => import("../home-section/money-smart/[id]/page"), {
+    edit: dynamic(() => import("../faq/[id]/page"), {
       ssr: false,
     }),
   },
-  logo: {
-    create: dynamic(() => import("../home-section/logo/components/Create"), {
-      ssr: false,
-    }),
-    edit: dynamic(() => import("../home-section/logo/[id]/page"), {
-      ssr: false,
-    }),
-  },
-  refer: {
+  policy: {
     create: dynamic(
-      () => import("../home-section/refer-earn/components/Create"),
+      () => import("../policy/components/Create"),
       { ssr: false }
     ),
-    edit: dynamic(() => import("../home-section/refer-earn/[id]/page"), {
-      ssr: false,
-    }),
-  },
-  offer: {
-    create: dynamic(
-      () => import("../home-section/offer/components/Create"),
-      { ssr: false }
-    ),
-    edit: dynamic(() => import("../home-section/offer/[id]/page"), {
-      ssr: false,
-    }),
-  },
-  category: {
-    create: dynamic(
-      () => import("../home-section/category/components/Create"),
-      { ssr: false }
-    ),
-    edit: dynamic(() => import("../home-section/category/[id]/page"), {
+    edit: dynamic(() => import("../faq/[id]/page"), {
       ssr: false,
     }),
   },
@@ -111,7 +78,7 @@ const ExampleTwo = ({
   const searchParams = useSearchParams();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isCreateOpen, setIsCreateOpen] = React.useState(false);
-  const leadId = searchParams.get("id") || null;
+  const leadId = searchParams.get("id");
 
   React.useEffect(() => {
     setIsModalOpen(!!leadId);

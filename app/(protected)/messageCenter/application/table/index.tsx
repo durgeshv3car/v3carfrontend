@@ -76,7 +76,7 @@ const ExampleTwo = ({ selectedValues, setSelectedValues, tableData, tableColumns
       {/* Filter Section */}
       <div className="mt-5 flex items-center justify-between">
         <Filter selectedValues={selectedValues} setSelectedValues={setSelectedValues} data={tableData} />
-        <Button variant="primary" onClick={() => router.push("/dashboard/leads?createnotification=true&&type=Application")}>
+        <Button variant="primary" onClick={() => router.push("/dashboard/leads?createnotification=true&&type=Notification")}>
           Create Notification
         </Button>
       </div>

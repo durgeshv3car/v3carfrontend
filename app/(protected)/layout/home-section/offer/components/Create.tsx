@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import ImageUpload from "../../../components/ImageUpload";
 import { toast } from "sonner";
 import axios from "axios";
+import TextEditor from "./SunEditor";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Select,
@@ -34,9 +35,14 @@ const CreateModal: React.FC<CreateModalProps> = ({
   type,
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
+  const [fieldDescription, setFieldDescription] = useState<string>("");
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
-  const router = useRouter();
+  const [brandMobileFile, setBrandMobileFile] =
+    useState<FileWithPreview | null>(null);
+  const [brandWebFile, setBrandWebFile] = useState<FileWithPreview | null>(
+    null
+  );
 
   useEffect(() => {
     if (columnsField.length > 0) {
@@ -68,7 +74,6 @@ const CreateModal: React.FC<CreateModalProps> = ({
     axios
       .get("http://localhost:5000/api/category")
       .then((response) => {
-        console.log(response, "category");
         setCategories(response.data);
       })
       .catch((error) => {
@@ -89,23 +94,23 @@ const CreateModal: React.FC<CreateModalProps> = ({
   };
 
   const refreshData = () => setRefresh((prev) => !prev);
-  console.log(mobileFile, webFile);
 
   const handleSubmit = async () => {
-    console.log("type", type);
-
     const result = await addOffer(
       type,
-      formData,
+      { ...formData, fieldDescription: fieldDescription },
       mobileFile?.file,
-      webFile?.file
+      webFile?.file,
+      brandMobileFile?.file,
+      brandWebFile?.file
     );
 
     if (result.success) {
       toast.success(result.message);
-      console.log("Upload success:", result.data);
       setMobileFile(null);
       setWebFile(null);
+      setBrandMobileFile(null);
+      setBrandWebFile(null);
       refreshData();
       handleClose();
     } else {
@@ -135,7 +140,15 @@ const CreateModal: React.FC<CreateModalProps> = ({
             !excludedFields.includes(key.toLowerCase()) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">
-                  {key === "mobile" ? "Mobile" : key === "web" ? "Web" : key}
+                  {key === "mobile"
+                    ? "Mobile"
+                    : key === "web"
+                    ? "Web"
+                    : key === "brand web"
+                    ? "Brand Web"
+                    : key === "brand mobile"
+                    ? "Brand Mobile"
+                    : key}
                 </label>
 
                 {/* Select Dropdown for Category Name */}
@@ -187,6 +200,16 @@ const CreateModal: React.FC<CreateModalProps> = ({
                     files={mobileFile ? [mobileFile] : []}
                     setFiles={(files) => setMobileFile(files[0] || null)}
                   />
+                ) : key.toLowerCase() === "brand web" ? (
+                  <ImageUpload
+                    files={brandWebFile ? [brandWebFile] : []}
+                    setFiles={(files) => setBrandWebFile(files[0] || null)}
+                  />
+                ) : key.toLowerCase() === "brand mobile" ? (
+                  <ImageUpload
+                    files={brandMobileFile ? [brandMobileFile] : []}
+                    setFiles={(files) => setBrandMobileFile(files[0] || null)}
+                  />
                 ) : (
                   <Input
                     name={key}
@@ -198,6 +221,15 @@ const CreateModal: React.FC<CreateModalProps> = ({
               </div>
             ) : null
           )}
+          <div>
+            <label className="block text-sm font-medium">
+              Detail Description
+            </label>
+            <TextEditor
+              value={fieldDescription}
+              onChange={setFieldDescription}
+            />
+          </div>
         </div>
 
         <div className="mt-4 flex justify-end gap-2">

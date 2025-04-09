@@ -1,142 +1,101 @@
 import axios from "axios";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
 
-
-
-  export const uploadMoneyImage = async (formData: {
-    type: string;
-    name?: string;
-    mobileFile?: File | null;
-    webFile?: File | null;
-    companyUrl: string;
-  }) => {
-    try {
-      const formDataSend = new FormData();
-      formDataSend.append("type", formData.type);
-      formDataSend.append("name", formData.name || "");
-  
-      if (formData.mobileFile) {
-        formDataSend.append("mobile", formData.mobileFile);
-      }
-  
-      if (formData.webFile) {
-        formDataSend.append("web", formData.webFile);
-      }
-  
-      formDataSend.append("companyUrl", formData.companyUrl);
-  
-      const response = await axios.post(`${API_BASE_URL}/banner/upload`, formDataSend, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-  
-      return { success: true, data: response.data };
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      return { success: false };
-    }
-  };
-
-export const fetchMoneyImages = async (type: string) => {
+export const fetchMoney = async () => {
   try {
-    if (!type) {
-      console.warn("Type is undefined, skipping fetch");
-      return [];
-    }
-
-    const response = await axios.get(`${API_BASE_URL}/banner/images/${type}`);
-
-    return response.data.images || [];
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error:", error.response?.data || error.message);
-    } else {
-      console.error("Unexpected error:", error);
-    }
-    return [];
-  }
-};
-
-export const deleteMoneyImage = async (id: string) => {
-  try {
-    await axios.delete(`${API_BASE_URL}/banner/image`, {
-      data: { id },
+    const response = await axios.get(`${API_BASE_URL}/offer/offer`, {
       headers: {
         "Content-Type": "application/json",
       },
     });
-    return { success: true };
+
+    return response.data.offers || [];
   } catch (error) {
-    console.error("Error deleting Money image:", error);
-    return { success: false };
+    console.error("Error fetching offers:", error);
+    return [];
   }
 };
 
-export const updateMoneyImage = async (
-    id: string,
-    type: string,
-    editedData: { name?: string; companyUrl?: string; active?: boolean },
-    mobileFile?: File | null,
-    webFile?: File | null
-  ) => {
-    try {
-      const formDataSend = new FormData();
-      formDataSend.append("id", id);
-      formDataSend.append("type", type);
-  
-      if (editedData.name) formDataSend.append("name", editedData.name);
-      if (mobileFile) formDataSend.append("mobile", mobileFile);
-      if (webFile) formDataSend.append("web", webFile);
-      if (editedData.companyUrl) formDataSend.append("companyUrl", editedData.companyUrl);
-      if (editedData.active !== undefined) formDataSend.append("active", String(editedData.active));
-  
-      await axios.put(`${API_BASE_URL}/banner/image`, formDataSend, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-  
-      return { success: true };
-    } catch (error) {
-      console.error("Error updating Money image:", error);
-      return { success: false };
-    }
-  };
+export const updateMoney = async (id: string, type: string, editedData: any, mobileFile?: File, webFile?: File) => {
+  if (!id) return;
 
-  
-export const scheduleDeleteMoneyImage = async (id: string, type: string, deletionDate: Date) => {
-    try {
-      const formDataSend = new FormData();
-      formDataSend.append("id", id);
-      formDataSend.append("type", type);
-      formDataSend.append("deletionDate", deletionDate.toISOString());
-  
-      const response = await axios.put(`${API_BASE_URL}/banner/image`, formDataSend, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-  
-      console.log("✅ Scheduled Delete Response:", response.data);
-      return { success: true };
-    } catch (error) {
-      console.error("⚠️ Error scheduling delete:", error);
-      return { success: false };
-    }
-  };
+  try {
+    const formDataSend = new FormData();
+    formDataSend.append("id", id);
+    formDataSend.append("type", type);
+    
 
-  export const toggleMoneyImageStatus = async (id: string, isActive: boolean) => {
-    try {
-      const formDataSend = new FormData();
-      formDataSend.append("id", id);
-      formDataSend.append("type", "Money");
-      formDataSend.append("active", String(isActive));
-  
-      await axios.put(`${API_BASE_URL}/banner/image`, formDataSend, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-  
-      return { success: true };
-    } catch (error) {
-      console.error("Error toggling Money status:", error);
-      return { success: false };
-    }
-  };
-  
+    if (editedData.name) formDataSend.append("name", editedData.name);
+    if (mobileFile) formDataSend.append("mobile", mobileFile);
+    if (webFile) formDataSend.append("web", webFile);
+    if (editedData.companyUrl) formDataSend.append("companyUrl", editedData.companyUrl);
+    if (editedData.active !== undefined) formDataSend.append("active", editedData.active);
+
+    await axios.put(`${API_BASE_URL}/offers`, formDataSend, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    return { success: true, message: "Offer updated successfully" };
+  } catch (error) {
+    console.error("Error updating offer:", error);
+    return { success: false, message: "Failed to update offer" };
+  }
+};
+
+
+export const addMoney = async (type: string, formData: any, mobileFile?: File, webFile?: File) => {
+  try {
+    const formDataSend = new FormData();
+    formDataSend.append("type", type);
+    formDataSend.append("title", formData["Money title"] || "");
+    formDataSend.append("description", formData["Money description"] || "");
+    formDataSend.append("category", formData["Category Name"] || "");
+
+    if (mobileFile) formDataSend.append("mobile", mobileFile);
+    if (webFile) formDataSend.append("web", webFile);
+    
+    formDataSend.append("redirectUrl", formData["Company URL"] || "");
+
+    const response = await axios.post(`${API_BASE_URL}/offers`, formDataSend, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    return { success: true, message: "Recommended image added", data: response.data };
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    return { success: false, message: "Recommended image not added" };
+  }
+};
+
+export const toggleMoneyStatus = async (id: string, value: boolean) => {
+  try {
+    const formDataSend = new FormData();
+    formDataSend.append("id", id);
+    formDataSend.append("type", "offer");
+    formDataSend.append("active", value.toString()); 
+
+    await axios.put(`${API_BASE_URL}/offers/${id}`, formDataSend, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    return { success: true, message: `Recommend ${value ? "activated" : "deactivated"} successfully` };
+  } catch (error) {
+    console.error("Error updating isActive:", error);
+    return { success: false, message: "Failed to update status" };
+  }
+};
+
+
+export const deleteMoney = async (id: string) => {
+  try {
+    await axios.delete(`${API_BASE_URL}/offers/${id}`, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    return { success: true, message: "Recommended data deleted" };
+  } catch (error) {
+    console.error("Error deleting item:", error);
+    return { success: false, message: "Recommended data not deleted" };
+  }
+};

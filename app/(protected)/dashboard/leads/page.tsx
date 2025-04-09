@@ -9,8 +9,8 @@ import { fetchUsers } from "../../services/users/api";
 const LeadPage = () => {
   const [selectedValues, setSelectedValues] = useState({
     firstName: null,
-    lastName: null,
     email: null,
+    phone: null,
     dob: null,
     pan: null,
     pinCode: null,
@@ -51,6 +51,42 @@ const LeadPage = () => {
     fetchData();
   }, [refresh]);
 
+  const filteredData = data.filter((item) => {
+    const user = item 
+  
+    return (
+      (!selectedValues.firstName?.trim() ||
+        user.firstName?.toLowerCase().includes(selectedValues.firstName.toLowerCase())) &&
+      (!selectedValues.email?.trim() ||
+        user.email?.toLowerCase().includes(selectedValues.email.toLowerCase())) &&
+      (!selectedValues.phone?.trim() ||
+        user.phoneNumber?.includes(selectedValues.phone)) &&
+      (!selectedValues.dob?.trim() ||
+        user.dob?.includes(selectedValues.dob)) &&
+      (!selectedValues.pan?.trim() ||
+        user.pan?.toLowerCase().includes(selectedValues.pan.toLowerCase())) &&
+      (!selectedValues.pinCode?.trim() ||
+        user.pinCode?.includes(selectedValues.pinCode)) &&
+      (!selectedValues.city?.trim() ||
+        user.city?.toLowerCase().includes(selectedValues.city.toLowerCase())) &&
+      (!selectedValues.state?.trim() ||
+        user.state?.toLowerCase().includes(selectedValues.state.toLowerCase())) &&
+      (!selectedValues.houseNo?.trim() ||
+        user.houseNo?.toLowerCase().includes(selectedValues.houseNo.toLowerCase())) &&
+      (!selectedValues.streetAddress?.trim() ||
+        user.streetAddress?.toLowerCase().includes(selectedValues.streetAddress.toLowerCase())) &&
+      (!selectedValues.landmark?.trim() ||
+        user.landmark?.toLowerCase().includes(selectedValues.landmark.toLowerCase())) &&
+      (!selectedValues.gender?.trim() ||
+        user.gender?.toLowerCase() === selectedValues.gender.toLowerCase()) &&
+      (!selectedValues.education?.trim() ||
+        user.education?.toLowerCase().includes(selectedValues.education.toLowerCase())) &&
+      (!selectedValues.maritalStatus?.trim() ||
+        user.maritalStatus?.toLowerCase().includes(selectedValues.maritalStatus.toLowerCase()))
+    );
+  });
+  
+
   return (
     <>
       <SiteBreadcrumb />
@@ -58,7 +94,7 @@ const LeadPage = () => {
         <ExampleTwo
           selectedValues={selectedValues}
           setSelectedValues={setSelectedValues}
-          tableData={data}
+          tableData={filteredData}
           tableColumns={columns}
         />
       </div>

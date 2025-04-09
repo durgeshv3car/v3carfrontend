@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useRouter } from "next/navigation";
+
 
 import { SquarePen, Trash2, CalendarClock } from "lucide-react";
 
@@ -20,7 +20,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { scheduleDeleteLogoImage,toggleLogoImageStatus,deleteLogoImage } from "@/app/(protected)/services/logos/api";
 
-export const columnsLogo = (refreshData) => [
+export const columnsLogo = (refreshData,router,setSelectedDate,selectedDate,open,setOpen) => [
   {
     id: "select",
     header: ({ table }) => (
@@ -167,7 +167,7 @@ export const columnsLogo = (refreshData) => [
     header: "Action",
     enableHiding: false,
     cell: ({ row }) => {
-      const router = useRouter();
+
         const handleDelete = async (id: string) => {
               const result = await deleteLogoImage(id);
             
@@ -229,9 +229,8 @@ export const columnsLogo = (refreshData) => [
       header: "schedulExpire",
       enableHiding: false,
       cell: ({ row }) => {
-        const [selectedDate, setSelectedDate] = React.useState(null);
-        const [open, setOpen] = React.useState(false);
-        const router = useRouter();
+       
+       
         const type = "logo";
     
         const handleDateSelect = (date) => {

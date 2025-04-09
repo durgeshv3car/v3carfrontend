@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import ExampleTwo from "../../example2";
 import SiteBreadcrumb from "@/components/site-breadcrumb";
 import { notFound } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { columnsCategory } from "./components/columnsCategory";
 import { fetchCategories } from "@/app/(protected)/services/categorys/api";
@@ -14,6 +15,7 @@ function Category() {
   if (!allowed.includes(role)) {
     notFound();
   }
+  const router = useRouter();
 
   const [data, setData] = useState<DataProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -23,10 +25,7 @@ function Category() {
   const fetchData = async () => {
     try {
       const result = await fetchCategories();
-      if (result.status == 404) {
-        setData([]);
-        return;
-      }
+      console.log("result", result.status);
 
       setData(result);
     } catch (error) {
@@ -50,7 +49,7 @@ function Category() {
             <ExampleTwo
               tableHeading="Category List"
               tableData={data}
-              tableColumns={columnsCategory(fetchData)}
+              tableColumns={columnsCategory(fetchData,router)}
               setRefresh={setRefresh}
               type={type}
             />

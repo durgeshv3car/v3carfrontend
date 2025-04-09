@@ -8,7 +8,14 @@ import ImageUpload from "../../../components/ImageUpload";
 import { toast } from "sonner";
 import axios from "axios";
 import { Switch } from "@/components/ui/switch";
-import { updateMoneyImage } from "@/app/(protected)/services/moneySmart/api";
+import { updateMoney } from "@/app/(protected)/services/moneySmart/api";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 interface FileWithPreview extends File {
   preview: string;
@@ -40,6 +47,35 @@ const EditModal: React.FC<EditModalProps> = ({
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
+  const [categories, setCategories] = useState([]);
+
+  const buttonsType = [
+    { id: "apply_now", name: "Apply Now" },
+    { id: "book_now", name: "Book Now" },
+    { id: "download_app", name: "Download App" },
+    { id: "sign_up", name: "Sign Up" },
+    { id: "get_offer", name: "Get Offer" },
+    { id: "get_quote", name: "Get Quote" },
+    { id: "learn_more", name: "Learn More" },
+    { id: "know_more", name: "Know More" },
+    { id: "shop_now", name: "Shop Now" },
+  ];
+
+    useEffect(() => {
+      axios
+        .get("http://localhost:5000/api/category")
+        .then((response) => {
+          console.log(response, "category");
+          setCategories(response.data);
+        })
+        .catch((error) => {
+          if (error.response && error.response.status === 404) {
+            setCategories([]);
+          } else {
+            console.error("Error fetching categories:", error);
+          }
+        });
+    }, [categories]);
 
   // Find the row data based on the id
   useEffect(() => {
@@ -52,7 +88,7 @@ const EditModal: React.FC<EditModalProps> = ({
 
   const handleClose = () => {
     onClose();
-    router.push("/layout/home-section/money-smart", { scroll: false });
+    router.push("/layout/home-section/offer");
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,21 +97,25 @@ const EditModal: React.FC<EditModalProps> = ({
 
   const refreshData = () => setRefresh((prev) => !prev);
   const type = "money";
+  const handleUpdate = async () => {
+    if (!id) return;
 
- const handleUpdate = async () => {
-      if (!id) return;
-    
-      const result = await updateMoneyImage(id, type, editedData, mobileFile?.file, webFile?.file);
-    
-      if (result.success) {
-        refreshData();
-        handleClose();
-        toast.success("Slider data updated");
-      } else {
-        toast.error("Slider data not updated");
-      }
-    };
+    const result = await updateMoney(
+      id,
+      type,
+      editedData,
+      mobileFile?.file,
+      webFile?.file
+    );
 
+    if (result.success) {
+      refreshData();
+      handleClose();
+      toast.success(result.message);
+    } else {
+      toast.error(result.message);
+    }
+  };
   if (!selectedRow) return null;
 
   return (
@@ -107,27 +147,63 @@ const EditModal: React.FC<EditModalProps> = ({
               "updatedAt",
               "type",
               "thumbnail",
+              "userId",
             ].includes(key) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">
-                  {key === "mobileUrl"
-                    ? "mobile"
-                    : key === "webUrl"
-                    ? "web"
-                    : key}
+                  {key === "offerImage" ? "" : key}
                 </label>
-                {key.toLowerCase() === "mobileurl" ? (
-                  <ImageUpload
-                    files={mobileFile ? [mobileFile] : []}
-                    setFiles={(files) => setMobileFile(files[0] || null)}
+
+                {/* Handle Nested `offerImage` Object */}
+                {key === "offerImage" &&
+                typeof selectedRow[key] === "object" ? (
+                  <div className="space-y-3">
+                    {/* Web Image */}
+                    <div>
+                      <label className="block text-sm font-medium">Web</label>
+                      <ImageUpload
+                        files={webFile ? [webFile] : []}
+                        setFiles={(files) => setWebFile(files[0] || null)}
+                      />
+                    </div>
+
+                    {/* Mobile Image */}
+                    <div>
+                      <label className="block text-sm font-medium">
+                        Mobile
+                      </label>
+                      <ImageUpload
+                        files={mobileFile ? [mobileFile] : []}
+                        setFiles={(files) => setMobileFile(files[0] || null)}
+                      />
+                    </div>
+                  </div>
+                ) : key === "category" ? (
+                  /* Category Selection */
+                  <Select
+                    value={editedData[key] || ""}
+                    onValueChange={(value) =>
+                      setEditedData((prev) => ({ ...prev, [key]: value }))
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Category " />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category.id} value={category.title}>
+                          {category.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : key === "isActive" ? (
+                  <Switch
+                    checked={Boolean(editedData[key])}
+                    onCheckedChange={(value) =>
+                      setEditedData((prev) => ({ ...prev, [key]: value }))
+                    }
                   />
-                ) : key.toLowerCase() === "weburl" ? (
-                  <ImageUpload
-                    files={webFile ? [webFile] : []}
-                    setFiles={(files) => setWebFile(files[0] || null)}
-                  />
-                ) : key.toLowerCase() === "active" ? (
-                  <Switch checked={editedData[key]} onCheckedChange={(value) => console.log("New value:", value)} />
                 ) : (
                   <Input
                     name={key}

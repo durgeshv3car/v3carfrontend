@@ -6,7 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useRouter } from "next/navigation";
+
 
 import { SquarePen, Trash2, CalendarClock } from "lucide-react";
 
@@ -22,7 +22,7 @@ import { scheduleDeleteSliderImage,toggleSliderImageStatus,deleteSliderImage } f
 
 
 
-export const columnsSlider = (refreshData) => [
+export const columnsSlider = (refreshData,router,setSelectedDate,selectedDate,open,setOpen) => [
   {
     id: "select",
     header: ({ table }) => (
@@ -168,7 +168,7 @@ export const columnsSlider = (refreshData) => [
     header: "Action",
     enableHiding: false,
     cell: ({ row }) => {
-      const router = useRouter();
+     
     
       const handleDelete = async (id: string) => {
         const result = await deleteSliderImage(id);
@@ -232,9 +232,8 @@ export const columnsSlider = (refreshData) => [
     header: "schedulExpire",
     enableHiding: false,
     cell: ({ row }) => {
-      const [selectedDate, setSelectedDate] = React.useState(null);
-      const [open, setOpen] = React.useState(false);
-      const router = useRouter();
+    
+   
       const type = "slider";
   
       const handleDateSelect = (date) => {
