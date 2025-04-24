@@ -20,12 +20,12 @@ import { jwtDecode } from "jwt-decode";
 
 const ProfileInfo = async () => {
   const session = await auth();
-  let name = "";
+  let role = "";
   let email = "";
 
   if (session?.user?.token) {
     const decoded = jwtDecode(session.user.token);
-    name = decoded.username;
+    role = decoded.role;
     email= decoded.email;
   }
 
@@ -43,7 +43,7 @@ const ProfileInfo = async () => {
             /> */}
 
             <div className="text-sm font-medium  capitalize lg:block hidden  ">
-              {name}
+              {role}
             </div>
             <span className="text-base  me-2.5 lg:inline-block hidden">
               <Icon icon="heroicons-outline:chevron-down"></Icon>
@@ -62,7 +62,7 @@ const ProfileInfo = async () => {
 
             <div>
               <div className="text-sm font-medium text-default-800 capitalize ">
-                {name}
+                {role}
               </div>
               <Link
                 href="/dashboard"

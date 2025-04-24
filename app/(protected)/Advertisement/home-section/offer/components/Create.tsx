@@ -114,7 +114,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
       toast.error(result.message);
     }
   };
-  const excludedFields = ["schedulexpire", "isactive","isHome"];
+  const excludedFields = ["schedulexpire", "isactive","ishome"];
   return (
     <>
       <div
@@ -202,7 +202,8 @@ const CreateModal: React.FC<CreateModalProps> = ({
                     files={brandLogoFile ? [brandLogoFile] : []}
                     setFiles={(files) => setBrandLogoFile(files[0] || null)}
                   />
-                ) : (
+                ) 
+                : (
                   <Input
                     name={key}
                     value={formData[key]}

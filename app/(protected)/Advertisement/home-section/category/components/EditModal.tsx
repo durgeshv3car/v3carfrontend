@@ -7,32 +7,29 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { updateCategory } from "@/app/(protected)/services/categorys/api";
 
-interface TableRow {
-  id?: string; 
-  title?: string;
-}
-
-interface EditModalProps {
+// Match the same interface structure as in the main component
+interface EditModalProps<T> {
   id: string;
   onClose: () => void;
-  tableData: TableRow[];
+  tableData: T[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const EditModal: React.FC<EditModalProps> = ({
+const EditModal = <T extends Record<string, any>>({
   id,
   onClose,
   tableData,
   setRefresh,
-}: EditModalProps) => {
+}: EditModalProps<T>) => {
   const router = useRouter();
   const [editedData, setEditedData] = useState<Record<string, any>>({});
-  const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
+  const [selectedRow, setSelectedRow] = useState<T | null>(null);
 
   useEffect(() => {
     if (!id) return;
 
-    const foundRow = tableData?.find((row) => row.id === id) || null;
+    // Type assertion to handle the possibility that id might be a different type
+    const foundRow = tableData?.find((row) => (row as any).id === id) || null;
     setSelectedRow(foundRow);
     setEditedData(foundRow ? { ...foundRow } : {});
   }, [id, tableData]);
@@ -50,10 +47,10 @@ const EditModal: React.FC<EditModalProps> = ({
   };
 
   const refreshData = () => setRefresh((prev) => !prev);
-  console.log(editedData.title)
+
   const handleUpdate = async () => {
     if (!id) return;
-  
+    
     try {
       const result = await updateCategory(id, editedData.title);
       if (result.success) {
@@ -65,10 +62,10 @@ const EditModal: React.FC<EditModalProps> = ({
       }
     } catch (error) {
       console.error("Error updating category:", error);
+      toast.error("An error occurred while updating the category.");
     }
   };
-  
-
+    
   if (!selectedRow) return null;
 
   return (

@@ -47,50 +47,50 @@ import TablePagination from "./table-pagination";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 
-// Dynamically import different modals based on type
-const modalMap = {
+type ModalType = 'slider' | 'logo' | 'offer' | 'category';
+
+// Define the props interface for the edit modal components
+interface EditModalProps<T> {
+  id: string;
+  onClose: () => void;
+  tableData: T[];
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+// Define the props interface for the create modal components
+interface CreateModalProps {
+  onClose: () => void;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  columnsField: string[];
+  type: ModalType;
+}
+
+// Type for modal components
+type ModalComponent<T> = React.ComponentType<EditModalProps<T>>;
+type CreateComponent = React.ComponentType<CreateModalProps>;
+
+// Define modal map with proper typing
+const modalMap: Record<ModalType, {
+  create: CreateComponent;
+  edit: any; // Using any temporarily for dynamic imports
+}> = {
   slider: {
-    create: dynamic(() => import("../home-section/slider/components/Create"), {
-      ssr: false,
-    }),
-    edit: dynamic(() => import("../home-section/slider/components/EditModal"), {
-      ssr: false,
-    }),
+    create: dynamic(() => import("../home-section/slider/components/Create")) as CreateComponent,
+    edit: dynamic(() => import("../home-section/slider/components/EditModal")),
   },
- 
   logo: {
-    create: dynamic(() => import("../home-section/logo/components/Create"), {
-      ssr: false,
-    }),
-    edit: dynamic(() => import("../home-section/logo/components/EditModal"), {
-      ssr: false,
-    }),
+    create: dynamic(() => import("../home-section/logo/components/Create")) as CreateComponent,
+    edit: dynamic(() => import("../home-section/logo/components/EditModal")),
   },
- 
   offer: {
-    create: dynamic(
-      () => import("../home-section/offer/components/Create"),
-      { ssr: false }
-    ),
-    edit: dynamic(() => import("../home-section/offer/components/EditModal"), {
-      ssr: false,
-    }),
+    create: dynamic(() => import("../home-section/offer/components/Create")) as CreateComponent,
+    edit: dynamic(() => import("../home-section/offer/components/EditModal")),
   },
   category: {
-    create: dynamic(
-      () => import("../home-section/category/components/Create"),
-      { ssr: false }
-    ),
-    edit: dynamic(() => import("../home-section/category/components/EditModal"), {
-      ssr: false,
-    }),
+    create: dynamic(() => import("../home-section/category/components/Create")) as CreateComponent,
+    edit: dynamic(() => import("../home-section/category/components/EditModal")),
   },
 };
-
-
-type ModalType = keyof typeof modalMap;
-
-
 
 interface TableProps<T> {
   tableColumns: ColumnDef<T>[];
@@ -100,7 +100,6 @@ interface TableProps<T> {
   type: ModalType;
 }
 
-
 const ExampleTwo = <T,>({
   tableHeading,
   tableData,
@@ -108,13 +107,10 @@ const ExampleTwo = <T,>({
   setRefresh,
   type,
 }: TableProps<T>) => {
-  console.log(tableData, `${type} Data`);
-
   const searchParams = useSearchParams();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isCreateOpen, setIsCreateOpen] = React.useState(false);
   const leadId = searchParams?.get("id") || "";
-  console.log(typeof leadId, "leadId");
 
   React.useEffect(() => {
     setIsModalOpen(!!leadId);
@@ -163,10 +159,9 @@ const ExampleTwo = <T,>({
     setColumnsField(headers);
   }, [table]);
 
-  // Select modals based on the `type`
+  // Select modals based on the type
   const CreateModalComponent = modalMap[type]?.create;
   const EditModalComponent = modalMap[type]?.edit;
-
 
   return (
     <div className="w-full">
@@ -205,9 +200,9 @@ const ExampleTwo = <T,>({
 
           {/* Select for Column Visibility */}
           <label className="text-sm text-gray-600">Hide Column:</label>
-          <DropdownMenu  onOpenChange={(open) => console.log("Dropdown state:", open)}>
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto" onClick={() => console.log("Dropdown clicked")}>
+              <Button variant="outline" className="ml-auto">
                 Columns
               </Button>
             </DropdownMenuTrigger>
@@ -268,6 +263,9 @@ const ExampleTwo = <T,>({
                                     <Icon icon="heroicons:arrow-up" />
                                   </span>
                                 </TooltipTrigger>
+                                <TooltipContent>
+                                  Sort Ascending
+                                </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
                           ) : (
@@ -278,6 +276,9 @@ const ExampleTwo = <T,>({
                                     <Icon icon="heroicons:arrow-down" />
                                   </span>
                                 </TooltipTrigger>
+                                <TooltipContent>
+                                  Sort Descending
+                                </TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
                           )}
@@ -315,6 +316,8 @@ const ExampleTwo = <T,>({
         </TableBody>
       </Table>
       <TablePagination table={table} />
+      
+      {/* Create Modal */}
       {isCreateOpen && CreateModalComponent && (
         <CreateModalComponent
           onClose={closeCreateModal}
@@ -323,9 +326,11 @@ const ExampleTwo = <T,>({
           type={type}
         />
       )}
+      
+      {/* Edit Modal */}
       {isModalOpen && EditModalComponent && (
         <EditModalComponent
-          id={leadId as string}
+          id={leadId}
           onClose={closeModal}
           tableData={tableData}
           setRefresh={setRefresh}

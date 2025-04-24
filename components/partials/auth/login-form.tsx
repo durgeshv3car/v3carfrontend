@@ -15,14 +15,15 @@ import { loginUser } from "@/action/auth-action";
 import { toast } from "sonner";
 import { useRouter } from "@/components/navigation";
 
+
 const schema = z.object({
   email: z.string().email({ message: "Your email is invalid." }),
   password: z.string().min(4),
 });
-const LoginForm = () => {
+const LoginForm = ({token}) => {
   
   const [isPending, startTransition] = React.useTransition();
-  const [token,setToken] = React.useState(null);
+
   const router = useRouter();
   const [passwordType, setPasswordType] = React.useState("password");
 
@@ -70,6 +71,11 @@ const LoginForm = () => {
       }
     });
   };
+
+  if (token){
+    router.push("/dashboard")
+    return
+  }
 
 
   return (

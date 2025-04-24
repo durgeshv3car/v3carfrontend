@@ -1,9 +1,21 @@
-import { Link } from '@/i18n/routing';
+import { Link } from "@/i18n/routing";
 import LoginForm from "@/components/partials/auth/login-form";
 import Image from "next/image";
 import Copyright from "@/components/partials/auth/copyright";
 import Logo from "@/components/partials/auth/logo";
-const Login = ({ params: { locale } }: { params: { locale: string } }) => {
+import { auth } from "@/lib/auth";
+const Login = async ({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) => {
+  const session = await auth();
+  let token = "";
+
+  if (session?.user?.token) {
+    token = session?.user?.token;
+  }
+
   return (
     <>
       <div className="flex w-full items-center overflow-hidden min-h-dvh h-dvh basis-full">
@@ -47,7 +59,7 @@ const Login = ({ params: { locale } }: { params: { locale: string } }) => {
                     Sign in to your account to start using CreditCircle
                   </div>
                 </div>
-                <LoginForm />
+                <LoginForm token={token} />
               </div>
               <div className="text-xs font-normal text-default-500  z-[999] pb-10 text-center">
                 <Copyright />

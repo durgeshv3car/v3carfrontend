@@ -9,13 +9,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import { Switch } from "@/components/ui/switch";
 import { updateMoney } from "@/app/(protected)/services/moneySmart/api";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+
 
 interface FileWithPreview extends File {
   preview: string;
@@ -24,7 +18,6 @@ interface FileWithPreview extends File {
 
 interface TableRow {
   id: string;
-  title?: string;
   imageUrl?: string;
   [key: string]: any;
 }
@@ -75,7 +68,7 @@ const EditModal: React.FC<EditModalProps> = ({
             console.error("Error fetching categories:", error);
           }
         });
-    }, [categories]);
+    }, []);
 
   // Find the row data based on the id
   useEffect(() => {
@@ -107,6 +100,7 @@ const EditModal: React.FC<EditModalProps> = ({
       mobileFile?.file,
       webFile?.file
     );
+    
 
     if (result.success) {
       refreshData();
@@ -148,6 +142,11 @@ const EditModal: React.FC<EditModalProps> = ({
               "type",
               "thumbnail",
               "userId",
+              "isHome",
+              "brandLogo",
+              "brandName",
+              "detailDescription",
+              "category"
             ].includes(key) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">
@@ -178,25 +177,6 @@ const EditModal: React.FC<EditModalProps> = ({
                       />
                     </div>
                   </div>
-                ) : key === "category" ? (
-                  /* Category Selection */
-                  <Select
-                    value={editedData[key] || ""}
-                    onValueChange={(value) =>
-                      setEditedData((prev) => ({ ...prev, [key]: value }))
-                    }
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select Category " />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((category) => (
-                        <SelectItem key={category.id} value={category.title}>
-                          {category.title}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                 ) : key === "isActive" ? (
                   <Switch
                     checked={Boolean(editedData[key])}

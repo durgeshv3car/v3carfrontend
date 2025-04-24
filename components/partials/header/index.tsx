@@ -15,20 +15,20 @@ import HeaderGreet from "./header-greet";
 const DashCodeHeader = async() => {
 
    const session = await auth();
-     let role = "";
+     let name = "";
     
       if (session?.user?.token) {
         const decoded = jwtDecode(session.user.token);
-        role = decoded.role;
+        name = decoded.username;
       }
-      console.log(role, "role");
+     
 
   return (
     <HeaderContent>
       <div className="flex gap-3 items-center">
         <HeaderLogo />
         {/* <SidebarToggle /> */}
-        <HeaderGreet admin={role} />
+        <HeaderGreet admin={name} />
        
       </div>
       <div className="nav-tools flex items-center md:gap-4 gap-3">

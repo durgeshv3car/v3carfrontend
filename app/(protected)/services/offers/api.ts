@@ -34,6 +34,7 @@ export const updateOffer = async (
     formDataSend.append("type", type);
 
     if (editedData.title) formDataSend.append("title", editedData.title);
+    if (editedData.buttonType) formDataSend.append("buttonType", editedData.buttonType);
     if (editedData.description)
       formDataSend.append("description", editedData.description);
     if (editedData.detailDescription) formDataSend.append("detailDescription", editedData.detailDescription);
