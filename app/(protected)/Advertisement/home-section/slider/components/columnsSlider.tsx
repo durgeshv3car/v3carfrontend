@@ -132,14 +132,9 @@ export const columnsSlider = (refreshData,router,setSelectedDate,selectedDate,op
   {
     accessorKey: "active",
     header: "isActive",
-    cell: ({ row }) => <ActiveToggleCell row={row} />,
+    cell: ({ row }) => <ActiveToggleCell row={row} refreshData={refreshData} />,
   },
   
-  
-  
-  
-  
-
   {
     id: "actions",
     header: "Action",

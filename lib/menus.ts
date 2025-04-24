@@ -70,13 +70,6 @@ export function getMenuList(pathname: string, role: string): Group[] {
               children: [],
             },
             {
-              href: "/Lms/lms-section/offerleads",
-              label: "offerleads",
-              active: pathname === "/Lms/lms-section/offerleads",
-              icon: "heroicons-outline:gift", // offers icon
-              children: [],
-            },
-            {
               href: "/Lms/lms-section/loanapplications",
               label: "loanapplications",
               active: pathname === "/Lms/lms-section/loanapplications",

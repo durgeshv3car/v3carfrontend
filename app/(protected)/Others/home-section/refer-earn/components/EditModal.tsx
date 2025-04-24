@@ -52,7 +52,7 @@ const EditModal: React.FC<EditModalProps> = ({
 
   const handleClose = () => {
     onClose();
-    router.push("/layout/home-section/refer-earn", { scroll: false });
+    router.push("/Others/home-section/refer-earn", { scroll: false });
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

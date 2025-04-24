@@ -177,7 +177,7 @@ export const columnsRecommend = (
   {
     accessorKey: "active",
     header: "isActive",
-    cell: ({ row }) => <ActiveToggleCell row={row} type={type} />,
+    cell: ({ row }) => <ActiveToggleCell row={row} type={type} setRefresh={setRefresh} />,
   },
   {
     id: "actions",
@@ -190,7 +190,7 @@ export const columnsRecommend = (
           const result = await deleteService(id);
           if (result.success) {
             toast.success("Offer data deleted");
-            setRefresh((prev) => !prev); // Trigger refresh
+            setRefresh((prev) => !prev); 
           } else {
             toast.error("Offer data not deleted");
           }

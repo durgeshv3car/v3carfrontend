@@ -123,7 +123,7 @@ const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }
 
       <div className="flex items-center justify-between py-4 px-5">
         <div className="text-xl font-medium text-default-900">
-          OfferLeads Data
+          Analytics Data
         </div>
         <div className="flex items-center gap-4">
           {/* Select for Rows per Page */}

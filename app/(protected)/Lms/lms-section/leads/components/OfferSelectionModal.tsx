@@ -6,6 +6,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from "sonner";
 
 // Define types for props
 interface Offer {
@@ -96,19 +97,23 @@ const OfferSelectionModal: React.FC<OfferSelectionModalProps> = ({ isOpen, onClo
       });
 
       if (!response.ok) {
+        toast.error("Notification not send again")
+        onClose()
         throw new Error(`HTTP error! Status: ${response.status}`);
+        
+        
       }
 
       const result = await response.json();
       console.log("Offer submitted successfully:", result);
       if (type === "Email") {
-        router.push("/messageCenter/email");
+        router.push("/Tools/messageCenter/email");
       } else if (type === "Notification") {
-        router.push("/messageCenter/application");
+        router.push("/Tools/messageCenter/application");
       } else if (type === "Sms") {
-        router.push("/messageCenter/sms");
+        router.push("/Tools/messageCenter/sms");
       } else if (type === "Whatsapp") {
-        router.push("/messageCenter/whatsapp");
+        router.push("/Tools/messageCenter/whatsapp");
       }
 
       // Notify parent component
@@ -118,6 +123,7 @@ const OfferSelectionModal: React.FC<OfferSelectionModalProps> = ({ isOpen, onClo
       onClose();
     } catch (error: any) {
       console.error("Error submitting offer:", error.message);
+      onClose();
     } finally {
       setLoading(false);
     }

@@ -315,7 +315,7 @@ const ExampleTwo = ({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={tableColumns.length}
                   className="h-24 text-center"
                 >
                   No results.

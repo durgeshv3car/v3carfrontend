@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { toggleServiceStatus } from "@/app/(protected)/services/ourServices/api"; 
 
-const ActiveToggleCell = ({ row,type }: { row: any; type: string }) => {
+const ActiveToggleCell = ({ row,type,setRefresh }: { row: any; type: string }) => {
   const activeData = row?.original?.active ;
   const id= row?.original?.id  ;
   const [isActive, setIsActive] = React.useState(activeData);
@@ -18,6 +18,8 @@ const ActiveToggleCell = ({ row,type }: { row: any; type: string }) => {
       const result = await toggleServiceStatus(id, type, value);
       if (result.success) {
         toast.success(`${type} ${value ? "activated" : "deactivated"} successfully`);
+        setIsActive(value)
+        setRefresh((prev) => !prev); 
       } else {
         setIsActive(previousState); 
         toast.error("Failed to update status");

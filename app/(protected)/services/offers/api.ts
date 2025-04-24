@@ -48,8 +48,10 @@ export const updateOffer = async (
    
     if (editedData.companyUrl)
       formDataSend.append("companyUrl", editedData.companyUrl);
-    if (editedData.active !== undefined)
+    if (editedData.isActive !== undefined)
       formDataSend.append("isActive", editedData.isActive);
+    if (editedData.isHome !== undefined)
+      formDataSend.append("isHome", editedData.isHome);
 
     await axios.put(`${API_BASE_URL}/offers`, formDataSend, {
       headers: { "Content-Type": "multipart/form-data" },

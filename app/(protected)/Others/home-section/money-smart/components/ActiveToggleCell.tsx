@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { toggleMoneyStatus } from "@/app/(protected)/services/moneySmart/api"; 
 
-const ActiveToggleCell = ({ row }: { row: any }) => {
+const ActiveToggleCell = ({ row,refreshData }: { row: any }) => {
   const [isActive, setIsActive] = React.useState(row.original.isActive);
 
   const handleToggle = async (value: boolean) => {
@@ -14,6 +14,7 @@ const ActiveToggleCell = ({ row }: { row: any }) => {
       if (result.success) {
         toast.success(`Money ${value ? "activated" : "deactivated"} successfully`);
         setIsActive(value);
+        refreshData()
       } else {
         toast.error("Failed to update status");
       }

@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { toggleOfferStatus } from "@/app/(protected)/services/offers/api"; 
 
-const ActiveToggleCell = ({ row }: { row: any }) => {
+const ActiveToggleCell = ({ row,setRefresh }: { row: any }) => {
   const [isActive, setIsActive] = React.useState(row.original.isActive);
 
   const handleToggle = async (value: boolean) => {
@@ -16,6 +16,7 @@ const ActiveToggleCell = ({ row }: { row: any }) => {
       if (result.success) {
         toast.success(`Offer ${value ? "activated" : "deactivated"} successfully`);
         setIsActive(value);
+        setRefresh((prev) => !prev);
       } else {
         setIsActive(previousState); 
         toast.error("Failed to update status");

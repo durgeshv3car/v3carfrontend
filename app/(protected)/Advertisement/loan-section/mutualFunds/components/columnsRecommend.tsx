@@ -177,7 +177,7 @@ export const columnsRecommend = (
   {
     accessorKey: "active",
     header: "isActive",
-    cell: ({ row }) => <ActiveToggleCell row={row} type={type} />,
+    cell: ({ row }) => <ActiveToggleCell row={row} type={type} setRefresh={setRefresh} />,
   },
   {
     id: "actions",

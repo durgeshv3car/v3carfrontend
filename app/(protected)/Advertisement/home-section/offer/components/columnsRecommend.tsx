@@ -235,12 +235,12 @@ export const columnsRecommend = (
   {
     accessorKey: "active",
     header: "isActive",
-    cell: ({ row }) => <ActiveToggleCell row={row} />,
+    cell: ({ row }) => <ActiveToggleCell row={row} setRefresh={setRefresh} />,
   },
   {
     accessorKey: "home",
     header: "isHome",
-    cell: ({ row }) => <HomeToggleCell row={row} />,
+    cell: ({ row }) => <HomeToggleCell row={row} setRefresh={setRefresh} />,
   },
   {
     id: "actions",

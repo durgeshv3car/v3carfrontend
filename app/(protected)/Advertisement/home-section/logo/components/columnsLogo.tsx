@@ -147,7 +147,7 @@ export const columnsLogo = ({
   {
     accessorKey: "active",
     header: "isActive",
-    cell: ({ row }: { row: Row<LogoData> }) => <ActiveToggleCell row={row} />,
+    cell: ({ row }: { row: Row<LogoData> }) => <ActiveToggleCell row={row} refreshData={fetchData} />,
   },
   {
     id: "actions",

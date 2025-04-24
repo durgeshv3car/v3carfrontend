@@ -135,7 +135,7 @@ export const columnsRefer = (refreshData,router,setSelectedDate,selectedDate,ope
   {
     accessorKey: "active",
     header: "isActive",
-    cell: ({ row }) => <ActiveToggleCell row={row} />,
+    cell: ({ row }) => <ActiveToggleCell row={row} refreshData={refreshData} />,
   },
 
   {
@@ -166,7 +166,7 @@ export const columnsRefer = (refreshData,router,setSelectedDate,selectedDate,ope
                   className="w-7 h-7 border-default-200 dark:border-default-300 text-default-400"
                   onClick={() =>
                     router.push(
-                      `/layout/home-section/refer-earn?id=${row.original.id}`
+                      `/Others/home-section/refer-earn?id=${row.original.id}`
                     )
                   }
                 >

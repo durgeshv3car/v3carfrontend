@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { toggleSliderImageStatus } from "@/app/(protected)/services/sliders/api"; 
 
-const ActiveToggleCell = ({ row ,refreshData}: { row: any }) => {
+const ActiveToggleCell = ({ row }: { row: any }) => {
   const [isActive, setIsActive] = React.useState(row.original.active);
 
   const handleToggle = async (value: boolean) => {
@@ -14,7 +14,6 @@ const ActiveToggleCell = ({ row ,refreshData}: { row: any }) => {
       if (result.success) {
         toast.success(`Slider ${value ? "activated" : "deactivated"} successfully`);
         setIsActive(value);
-        refreshData()
       } else {
         toast.error("Failed to update status");
       }

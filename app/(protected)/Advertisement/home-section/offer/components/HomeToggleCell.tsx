@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { toggleHomeStatus } from "@/app/(protected)/services/offers/api"; 
 
-const HomeToggleCell = ({ row }: { row: any }) => {
+const HomeToggleCell = ({ row,setRefresh }: { row: any }) => {
   const [isActive, setIsActive] = React.useState(row.original.isHome);
 
   const handleToggle = async (value: boolean) => {
@@ -14,6 +14,7 @@ const HomeToggleCell = ({ row }: { row: any }) => {
       if (result.success) {
         toast.success(`Offer home ${value ? "activated" : "deactivated"} successfully`);
         setIsActive(value);
+        setRefresh((prev) => !prev);
       } else {
         toast.error("Failed to update status");
       }

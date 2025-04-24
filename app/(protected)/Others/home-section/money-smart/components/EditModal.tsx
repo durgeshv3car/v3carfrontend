@@ -146,7 +146,8 @@ const EditModal: React.FC<EditModalProps> = ({
               "brandLogo",
               "brandName",
               "detailDescription",
-              "category"
+              "category",
+              "offerBanner"
             ].includes(key) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">

@@ -108,7 +108,7 @@ const ExampleTwo = ({
           <Button
             variant="ghost"
             onClick={() =>
-              router.push("/dashboard/leads?createnotification=true&&type=Sms")
+              router.push("/Lms/lms-section/leads?createnotification=true&&type=Sms")
             }
             className="flex items-center space-x-1 border border-neutral-700 rounded-md"
           >

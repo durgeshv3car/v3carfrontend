@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { toggleLogoImageStatus } from "@/app/(protected)/services/logos/api"; 
 
-const ActiveToggleCell = ({ row }: { row: any }) => {
+const ActiveToggleCell = ({ row,refreshData }: { row: any }) => {
   const [isActive, setIsActive] = React.useState(row.original.active);
 
   const handleToggle = async (value: boolean) => {
@@ -16,6 +16,7 @@ const ActiveToggleCell = ({ row }: { row: any }) => {
       if (result.success) {
         toast.success(`Logo ${value ? "activated" : "deactivated"} successfully`);
         setIsActive(value);
+        refreshData()
       } else {
         setIsActive(previousState); 
         toast.error("Failed to update status");

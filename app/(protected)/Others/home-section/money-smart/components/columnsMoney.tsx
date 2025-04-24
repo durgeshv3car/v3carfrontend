@@ -150,7 +150,7 @@ export const columnsMoney = (refreshData,router,setSelectedDate,selectedDate,ope
   {
     accessorKey: "active",
     header: "isActive",
-    cell: ({ row }) => <ActiveToggleCell row={row} />,
+    cell: ({ row }) => <ActiveToggleCell row={row} refreshData={refreshData} />,
   },
   {
     id: "actions",
