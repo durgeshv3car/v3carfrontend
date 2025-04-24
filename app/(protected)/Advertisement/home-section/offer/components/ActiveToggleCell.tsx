@@ -9,15 +9,19 @@ const ActiveToggleCell = ({ row }: { row: any }) => {
   const [isActive, setIsActive] = React.useState(row.original.isActive);
 
   const handleToggle = async (value: boolean) => {
+    const previousState = isActive; 
+    setIsActive(value); 
     try {
       const result = await toggleOfferStatus(row.original.id, value);
       if (result.success) {
         toast.success(`Offer ${value ? "activated" : "deactivated"} successfully`);
         setIsActive(value);
       } else {
+        setIsActive(previousState); 
         toast.error("Failed to update status");
       }
     } catch (error) {
+      setIsActive(previousState); 
       console.error("Error updating isActive:", error);
       toast.error("Failed to update status");
     }

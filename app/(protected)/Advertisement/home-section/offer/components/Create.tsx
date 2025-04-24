@@ -38,6 +38,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const [fieldDescription, setFieldDescription] = useState<string>("");
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
+  const [bannerFile, setBannerFile] = useState<FileWithPreview | null>(null);
   const [brandLogoFile, setBrandLogoFile] = useState<FileWithPreview | null>(
     null
   );
@@ -99,6 +100,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
       { ...formData, fieldDescription: fieldDescription },
       mobileFile?.file,
       webFile?.file,
+      bannerFile?.file,
       brandLogoFile?.file,
       
     );
@@ -107,6 +109,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
       toast.success(result.message);
       setMobileFile(null);
       setWebFile(null);
+      setBannerFile(null)
       setBrandLogoFile(null);
       refreshData();
       handleClose();
@@ -186,7 +189,14 @@ const CreateModal: React.FC<CreateModalProps> = ({
                       </SelectContent>
                     </Select>
                   </div>
-                ) : /* Image Uploads */
+                ) : 
+                 
+                key.toLowerCase() === "banner" ? (
+                  <ImageUpload
+                    files={bannerFile ? [bannerFile] : []}
+                    setFiles={(files) => setBannerFile(files[0] || null)}
+                  />
+                ):
                 key.toLowerCase() === "web" ? (
                   <ImageUpload
                     files={webFile ? [webFile] : []}

@@ -33,9 +33,10 @@ export const updateService = async (
     formDataSend.append("type", type);
 
     if (editedData.title) formDataSend.append("title", editedData.title);
-    if (editedData.fieldDescription)
-      formDataSend.append("description", editedData.fieldDescription );
+    if (editedData.description)
+      formDataSend.append("description", editedData.description );
     if (mobileFile) formDataSend.append("mobile", mobileFile);
+    if (editedData.buttonType) formDataSend.append("buttonType", editedData.buttonType);
     if (webFile) formDataSend.append("web", webFile);
     if (editedData.companyUrl)
       formDataSend.append("companyUrl", editedData.companyUrl);

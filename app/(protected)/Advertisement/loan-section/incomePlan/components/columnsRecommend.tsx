@@ -128,7 +128,7 @@ export const columnsRecommend = (
       return (
         <div className="flex gap-3 items-center">
           <Avatar className="w-8 h-8 rounded-none bg-transparent shadow-none border-none">
-            {imageUrls?.brandMobile ? (
+            {imageUrls?.mobile ? (
               <AvatarImage src={imageUrls.mobile} className="rounded-none" />
             ) : (
               <AvatarFallback className="rounded-none">NA</AvatarFallback>

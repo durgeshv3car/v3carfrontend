@@ -31,6 +31,8 @@ interface RowData {
   description?: string;
   thumbnail?: string | { web?: string; mobile?: string };
   brandthumbnail?: string | { web?: string; mobile?: string };
+  offerBanner?: string | { banner?: string;  };
+  brandLogo?: string | { logo?: string;  };
   buttonType: string;
   redirectUrl: string;
   active: boolean;
@@ -109,6 +111,30 @@ export const columnsRecommend = (
     ),
   },
   {
+    accessorKey: "banner",
+    header: "Banner",
+    cell: ({ row }: { row: { original: RowData } }) => {
+      const BannerData = row.original.offerBanner;
+
+      const imageUrls =
+      BannerData && typeof BannerData === "string"
+          ? JSON.parse(BannerData)
+          : BannerData;
+
+      return (
+        <div className="flex gap-3 items-center">
+          <Avatar className="w-8 h-8 rounded-none bg-transparent shadow-none border-none">
+            {imageUrls?.banner ? (
+              <AvatarImage src={imageUrls.banner} className="rounded-none" />
+            ) : (
+              <AvatarFallback className="rounded-none">NA</AvatarFallback>
+            )}
+          </Avatar>
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: "thumbnail.web",
     header: "Web",
     cell: ({ row }: { row: { original: RowData } }) => {
@@ -161,7 +187,7 @@ export const columnsRecommend = (
     accessorKey: "brandthumbnail.logo",
     header: "Brand Logo",
     cell: ({ row }: { row: { original: RowData } }) => {
-      const brandThumbnailData = row.original.thumbnail;
+      const brandThumbnailData = row.original.brandLogo;
 
       const imageUrls =
         brandThumbnailData && typeof brandThumbnailData === "string"
@@ -171,8 +197,8 @@ export const columnsRecommend = (
       return (
         <div className="flex gap-3 items-center">
           <Avatar className="w-8 h-8 rounded-none bg-transparent shadow-none border-none">
-            {imageUrls?.brandLogo ? (
-              <AvatarImage src={imageUrls.brandLogo} className="rounded-none" />
+            {imageUrls?.logo ? (
+              <AvatarImage src={imageUrls.logo} className="rounded-none" />
             ) : (
               <AvatarFallback className="rounded-none">NA</AvatarFallback>
             )}

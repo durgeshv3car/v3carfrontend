@@ -97,7 +97,7 @@ const EditModal: React.FC<EditModalProps> = ({
 
   const handleClose = () => {
     onClose();
-    router.push("/service/loan-section/creditCard");
+    router.push("/Advertisement/loan-section/creditCard");
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {

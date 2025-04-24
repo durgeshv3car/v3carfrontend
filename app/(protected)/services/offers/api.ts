@@ -24,7 +24,8 @@ export const updateOffer = async (
   editedData: any,
   mobileFile?: File,
   webFile?: File,
-  brandLogoImage?: File,
+  bannerFile?:File,
+  brandLogoFile?: File,
 ) => {
   if (!id) return { success: false, message: "ID is required" };
 
@@ -35,17 +36,20 @@ export const updateOffer = async (
 
     if (editedData.title) formDataSend.append("title", editedData.title);
     if (editedData.buttonType) formDataSend.append("buttonType", editedData.buttonType);
+    if (editedData.brandName) formDataSend.append("brandName", editedData.brandName);
+    if (editedData.category) formDataSend.append("category", editedData.category);
     if (editedData.description)
       formDataSend.append("description", editedData.description);
     if (editedData.detailDescription) formDataSend.append("detailDescription", editedData.detailDescription);
     if (mobileFile) formDataSend.append("mobile", mobileFile);
     if (webFile) formDataSend.append("web", webFile);
-    if (brandLogoImage) formDataSend.append("brandLogo", brandLogoImage);
+    if (bannerFile) formDataSend.append("banner", bannerFile);
+    if (brandLogoFile) formDataSend.append("brandLogo", brandLogoFile);
    
     if (editedData.companyUrl)
       formDataSend.append("companyUrl", editedData.companyUrl);
     if (editedData.active !== undefined)
-      formDataSend.append("active", editedData.active);
+      formDataSend.append("isActive", editedData.isActive);
 
     await axios.put(`${API_BASE_URL}/offers`, formDataSend, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -63,7 +67,8 @@ export const addOffer = async (
   formData: any,
   mobileFile?: File,
   webFile?: File,
-  brandLogoImage?: File,
+  bannerFile?: File,
+  brandLogoFile?: File,
 ) => {
   try {
     
@@ -78,7 +83,8 @@ export const addOffer = async (
 
     if (mobileFile) formDataSend.append("mobile", mobileFile);
     if (webFile) formDataSend.append("web", webFile);
-    if (brandLogoImage) formDataSend.append("brandLogo", brandLogoImage);
+    if (brandLogoFile) formDataSend.append("brandLogo", brandLogoFile);
+    if (bannerFile) formDataSend.append("banner", bannerFile);
    
 
     formDataSend.append("redirectUrl", formData["Company URL"] || "");
@@ -98,12 +104,12 @@ export const addOffer = async (
   }
 };
 
-export const toggleOfferStatus = async (id: string, value: boolean) => {
+export const toggleOfferStatus = async (id: string, isActive: boolean) => {
   try {
     const formDataSend = new FormData();
     formDataSend.append("id", id);
     formDataSend.append("type", "offer");
-    formDataSend.append("isActive", String(value));
+    formDataSend.append("isActive", String(isActive));
 
     await axios.put(`${API_BASE_URL}/offers`, formDataSend, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -111,19 +117,19 @@ export const toggleOfferStatus = async (id: string, value: boolean) => {
 
     return {
       success: true,
-      message: `Recommend ${value ? "activated" : "deactivated"} successfully`,
+      message: `Recommendedit ${isActive ? "activated" : "deactivated"} successfully`,
     };
   } catch (error) {
     console.error("Error updating isActive:", error);
     return { success: false, message: "Failed to update status" };
   }
 };
-export const toggleHomeStatus = async (id: string, value: boolean) => {
+export const toggleHomeStatus = async (id: string, isHome: boolean) => {
   try {
     const formDataSend = new FormData();
     formDataSend.append("id", id);
     formDataSend.append("type", "offer");
-    formDataSend.append("isHome", String(value));
+    formDataSend.append("isHome", String(isHome));
 
     await axios.put(`${API_BASE_URL}/offers`, formDataSend, {
       headers: { "Content-Type": "multipart/form-data" },
@@ -131,7 +137,7 @@ export const toggleHomeStatus = async (id: string, value: boolean) => {
 
     return {
       success: true,
-      message: `Recommend ${value ? "activated" : "deactivated"} successfully`,
+      message: `Recommend ${isHome ? "activated" : "deactivated"} successfully`,
     };
   } catch (error) {
     console.error("Error updating isActive:", error);

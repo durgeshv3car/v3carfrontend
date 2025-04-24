@@ -64,9 +64,15 @@ const EditModal: React.FC<EditModalProps> = ({
 
   const handleUpdate = async () => {
     if (!id) return;
-  
-    const result = await updateSliderImage(id, type, editedData, mobileFile?.file, webFile?.file);
-  
+
+    const result = await updateSliderImage(
+      id,
+      type,
+      editedData,
+      mobileFile?.file,
+      webFile?.file
+    );
+
     if (result.success) {
       refreshData();
       handleClose();
@@ -127,7 +133,12 @@ const EditModal: React.FC<EditModalProps> = ({
                     setFiles={(files) => setWebFile(files[0] || null)}
                   />
                 ) : key.toLowerCase() === "active" ? (
-                  <Switch checked={editedData[key]} onCheckedChange={(value) => console.log("New value:", value)} />
+                  <Switch
+                    checked={Boolean(editedData[key])}
+                    onCheckedChange={(value) =>
+                      setEditedData((prev) => ({ ...prev, [key]: value }))
+                    }
+                  />
                 ) : (
                   <Input
                     name={key}

@@ -48,6 +48,7 @@ const EditModal: React.FC<EditModalProps> = ({
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
+  const [bannerFile, setBannerFile] = useState<FileWithPreview | null>(null);
   const [brandLogoFile, setBrandLogoFile] = useState<FileWithPreview | null>(
     null
   );
@@ -110,7 +111,10 @@ const EditModal: React.FC<EditModalProps> = ({
       type,
       editedData,
       mobileFile?.file,
-      webFile?.file
+      webFile?.file,
+      bannerFile?.file,
+      brandLogoFile?.file
+
     );
 
     if (result.success) {
@@ -156,10 +160,28 @@ const EditModal: React.FC<EditModalProps> = ({
             ].includes(key) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">
-                  {key === "offerImage" || key === "brandLogo" ? "" : key}
+                  { key === "offerBanner" || key === "offerImage" || key === "brandLogo" ? "" : key}
                 </label>
 
-                {key === "offerImage" &&
+                {
+                   key === "offerBanner" &&
+                  typeof selectedRow[key] === "object" ? (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-sm font-medium">
+                        Banner
+                      </label>
+                      <ImageUpload
+                        files={bannerFile ? [bannerFile] : []}
+                        setFiles={(files) => setBannerFile(files[0] || null)}
+                      />
+                    </div>
+
+                   
+                  </div>
+                ):
+                
+                key === "offerImage" &&
                 typeof selectedRow[key] === "object" ? (
                   <div className="space-y-3">
                     <div>
