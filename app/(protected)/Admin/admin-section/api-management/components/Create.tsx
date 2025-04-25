@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { addCategory } from "@/app/(protected)/services/categorys/api";
+import { addApi } from "@/app/(protected)/services/apiManagement/api";
 
 interface CreateModalProps {
   onClose: () => void;
@@ -30,7 +30,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
 
   const handleSubmit = async () => {
     try {
-      const result = await addCategory(title);
+      const result = await addApi(title);
       if (result.success) {
         toast.success("Title added successfully");
         setTitle("");

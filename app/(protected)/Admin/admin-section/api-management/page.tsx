@@ -1,20 +1,21 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
-
-import ExampleTwo from "../../adminTable";
-
 import { notFound } from "next/navigation";
 import { useRouter } from "@/i18n/routing";
+import dynamic from "next/dynamic";
+import { fetchApis } from "@/app/(protected)/services/apiManagement/api";
+
+// Dynamic imports
+const ExampleTwo = dynamic(() => import("../../adminTable"), {
+  ssr: false,
+});
 
 
 
-import { columnsCategory } from "./components/columnsCategory";
-import { fetchCategories } from "@/app/(protected)/services/categorys/api";
 interface DataProps {
   id: string;
   title: string;
-
- 
 }
 
 function Category() {
@@ -23,16 +24,28 @@ function Category() {
   if (!allowed.includes(role)) {
     notFound();
   }
+  
   const router = useRouter();
   const [data, setData] = useState<DataProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
+  const [columns, setColumns] = useState<any>(null);
   const type = "api";
+  
+  // Fetch columns dynamically
+  useEffect(() => {
+    const loadColumns = async () => {
+      const columnsModule = await import("./components/columnsCategory");
+      setColumns(() => columnsModule.columnsCategory(fetchData, router));
+    };
+    
+    loadColumns();
+  }, [router]);
+
   const fetchData = async () => {
     try {
-      const result = await fetchCategories();
+      const result = await fetchApis();
       console.log("result", result.status);
-
       setData(result);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -45,14 +58,15 @@ function Category() {
     fetchData();
   }, [refresh]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading || !columns) return <div>Loading...</div>;
+  
   return (
     <>
       <div className="space-y-6">
-        <ExampleTwo<DataProps>
+        <ExampleTwo
           tableHeading="Api List"
           tableData={data}
-          tableColumns={columnsCategory(fetchData, router)}
+          tableColumns={columns}
           setRefresh={setRefresh}
           type={type}
         />
@@ -61,4 +75,5 @@ function Category() {
   );
 }
 
-export default Category;
+export default Category
+

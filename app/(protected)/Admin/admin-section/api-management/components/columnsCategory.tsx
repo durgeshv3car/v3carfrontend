@@ -10,9 +10,10 @@ import { SquarePen, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { deleteCategory } from "@/app/(protected)/services/categorys/api";
 import { NextRouter } from "next/router";
 import { ColumnDef } from "@tanstack/react-table";
+import ActiveToggleCell from "./ActiveToggleCell";
+import { deleteAPi } from "@/app/(protected)/services/apiManagement/api";
 
 interface Category {
   id: string;
@@ -71,13 +72,18 @@ export const columnsCategory = (
     ),
   },
   {
+    accessorKey: "active",
+    header: "isActive",
+    cell: ({ row }) => <ActiveToggleCell row={row} refreshData={fetchData} />,
+  },
+  {
     id: "actions",
     header: "Action",
     enableHiding: false,
     cell: ({ row }) => {
       const handleDelete = async (id: string) => {
         try {
-          const result = await deleteCategory(id);
+          const result = await deleteAPi(id);
           if (result.success) {
             toast.success("Category data deleted");
             fetchData();
@@ -100,7 +106,7 @@ export const columnsCategory = (
                   size="icon"
                   className="w-7 h-7 border-default-200 dark:border-default-300 text-default-400"
                   onClick={() =>
-                    router.push(`/Advertisement/home-section/category?id=${row.original.id}`)
+                    router.push(`/Admin/admin-section/api-management?id=${row.original.id}`)
                   }
                 >
                   <SquarePen className="w-3 h-3" />

@@ -4,8 +4,9 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch"; // Added missing import
 import { toast } from "sonner";
-import { updateCategory } from "@/app/(protected)/services/categorys/api";
+import { updateApi } from "@/app/(protected)/services/apiManagement/api";
 
 // Match the same interface structure as in the main component
 interface EditModalProps<T> {
@@ -36,7 +37,7 @@ const EditModal = <T extends Record<string, any>>({
 
   const handleClose = () => {
     onClose();
-    router.push("/Advertisement/home-section/category", { scroll: false });
+    router.push("/Admin/admin-section/api-management", { scroll: false });
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,7 +53,7 @@ const EditModal = <T extends Record<string, any>>({
     if (!id) return;
     
     try {
-      const result = await updateCategory(id, editedData.title);
+      const result = await updateApi(id, editedData.title,editedData.isActive);
       if (result.success) {
         toast.success("Category data updated successfully.");
         refreshData();
@@ -89,21 +90,38 @@ const EditModal = <T extends Record<string, any>>({
         </div>
 
         <div className="space-y-3">
-          {Object.keys(selectedRow).map((key) =>
-            !["id", "action", "createdAt", "updatedAt", "type"].includes(
-              key
-            ) ? (
-              <div key={key}>
-                <label className="block text-sm font-medium">{key}</label>
-                <Input
-                  name={key}
-                  value={editedData[key] || ""}
-                  onChange={onInputChange}
-                  className="w-full"
-                />
-              </div>
-            ) : null
-          )}
+          {Object.keys(selectedRow).map((key) => {
+            // Skip these fields
+            if (["id", "action", "createdAt", "updatedAt", "type"].includes(key)) {
+              return null;
+            }
+            
+            // Render appropriate input based on field type
+            if (key.toLowerCase() === "active" || typeof editedData[key] === "boolean") {
+              return (
+                <div key={key} className="flex flex-col space-y-1">
+                  <label className="text-sm font-medium">{key}</label>
+                  <Switch
+                    checked={Boolean(editedData[key])}
+                    onCheckedChange={(value) =>
+                      setEditedData((prev) => ({ ...prev, [key]: value }))
+                    }
+                  />
+                </div>
+              );
+            } else {
+              return (
+                <div key={key} className="flex flex-col space-y-1">
+                  <label className="text-sm font-medium">{key}</label>
+                  <Input
+                    name={key}
+                    value={editedData[key] || ""}
+                    onChange={onInputChange}
+                  />
+                </div>
+              );
+            }
+          })}
         </div>
 
         <div className="mt-4 flex justify-end gap-2">

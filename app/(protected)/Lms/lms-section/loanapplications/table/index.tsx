@@ -7,6 +7,7 @@ import {
   VisibilityState,
   flexRender,
   getCoreRowModel,
+  PaginationState,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -69,8 +70,12 @@ const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedOffer, setSelectedOffer] = React.useState(null);
   const [selectedRowsData, setSelectedRowsData] = React.useState([]);
-  const [isCreatingNotification, setIsCreatingNotification] =
-    React.useState(false);
+  const [isCreatingNotification, setIsCreatingNotification] =React.useState(false);
+   const [pagination, setPagination] = React.useState<PaginationState>({
+      pageIndex: 0,
+      pageSize
+    })
+    
 
   const [type, setType] = React.useState(null);
   const table = useReactTable({
@@ -82,6 +87,7 @@ const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    onPaginationChange: setPagination,
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     state: {
@@ -89,7 +95,7 @@ const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination: { pageIndex: 0, pageSize }, // Page size included
+      pagination
     },
   });
   React.useEffect(() => {

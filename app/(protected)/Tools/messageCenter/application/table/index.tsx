@@ -7,6 +7,7 @@ import {
   VisibilityState,
   flexRender,
   getCoreRowModel,
+  PaginationState,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -50,6 +51,11 @@ const ExampleTwo = ({ selectedValues, setSelectedValues, tableData, tableColumns
   const [rowSelection, setRowSelection] = React.useState({});
 
   const [pageSize, setPageSize] = React.useState(20);
+  const [pagination, setPagination] = React.useState<PaginationState>({
+      pageIndex: 0,
+      pageSize
+    })
+  
 
   const table = useReactTable({
     data: tableData,
@@ -61,13 +67,14 @@ const ExampleTwo = ({ selectedValues, setSelectedValues, tableData, tableColumns
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    onPaginationChange:setPagination,
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination: { pageIndex: 0, pageSize },
+      pagination
     },
   });
 

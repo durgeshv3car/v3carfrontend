@@ -8,6 +8,7 @@ import {
   SortingState,
   VisibilityState,
   getCoreRowModel,
+  PaginationState,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -43,7 +44,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import TablePagination from "./table-pagination";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 
@@ -70,6 +70,10 @@ type ModalComponent<T> = React.ComponentType<EditModalProps<T>>;
 type CreateComponent = React.ComponentType<CreateModalProps>;
 
 // Define modal map with proper typing
+const TablePagination = dynamic(() => import("./table-pagination"), {
+  ssr: false,
+});
+
 const modalMap: Record<ModalType, {
   create: CreateComponent;
   edit: any; // Using any temporarily for dynamic imports
@@ -115,6 +119,11 @@ const ExampleTwo = <T,>({
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnsField, setColumnsField] = React.useState<string[]>([]);
   const [pageSize, setPageSize] = React.useState(20);
+  const [pagination, setPagination] = React.useState<PaginationState>({
+      pageIndex: 0,
+      pageSize
+    })
+  
 
   const table = useReactTable({
     data: tableData,
@@ -126,6 +135,7 @@ const ExampleTwo = <T,>({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setPagination,
     onRowSelectionChange: setRowSelection,
     state: {
       sorting,

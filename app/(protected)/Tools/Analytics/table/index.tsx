@@ -8,6 +8,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  PaginationState,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -45,13 +46,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-
 import TablePagination from "./table-pagination";
 import Filter from "../components/Filter";
 import { useRouter } from "next/navigation";
 import { filters } from "../../leads/components/Filter";
 
-const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }) => {
+const ExampleTwo = ({
+  selectedValues,
+  setSelectedValues,
+  tableData,
+  tableColumns,
+}) => {
   const router = useRouter();
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -65,12 +70,16 @@ const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }
   >();
   const [rowSelection, setRowSelection] = React.useState({});
   const [pageSize, setPageSize] = React.useState(20); // Default to 20 rows per page
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize,
+  });
 
   const [selectedRowsData, setSelectedRowsData] = React.useState([]);
 
   const table = useReactTable({
-    data:tableData,
-    columns:tableColumns,
+    data: tableData,
+    columns: tableColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -78,13 +87,14 @@ const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setPagination,
     onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination: { pageIndex: 0, pageSize }, // Page size included
+      pagination,
     },
   });
   React.useEffect(() => {
@@ -104,21 +114,18 @@ const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }
     { label: "Phone", key: "phone", value: selectedValues.phone },
     { label: "User", key: "user", value: selectedValues.user },
   ].filter((filter) => filter.value && filter.value.trim() !== "");
-  
 
   return (
     <div className="w-full">
       {/* Header & Filter Section */}
-     
 
       {/* Display Selected Values */}
       <div className="mt-5  flex items-center justify-between">
-      <Filter
-        selectedValues={selectedValues}
-        setSelectedValues={setSelectedValues}
-        data={tableData}
-      />
-       
+        <Filter
+          selectedValues={selectedValues}
+          setSelectedValues={setSelectedValues}
+          data={tableData}
+        />
       </div>
 
       <div className="flex items-center justify-between py-4 px-5">

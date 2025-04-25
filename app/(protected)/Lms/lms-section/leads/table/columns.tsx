@@ -123,7 +123,7 @@ export const columns =(fetchData,router)=> [
                   variant="outline"
                   size="icon"
                   className="w-7 h-7 text-default-400"
-                  onClick={() => router.push(`/dashboard/leads/?id=${row.original.id}`)}
+                  onClick={() => router.push(`/Lms/lms-section/leads/?id=${row.original.id}`)}
                 >
                   <SquarePen className="w-3 h-3" />
                 </Button>

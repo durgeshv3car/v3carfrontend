@@ -39,7 +39,7 @@ const EditModal: React.FC<EditModalProps> = ({
 
   const handleClose = () => {
     onClose();
-    router.push("/dashboard/leads", { scroll: false });
+    router.push("/Lms/lms-section/leads", { scroll: false });
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,7 +93,7 @@ const EditModal: React.FC<EditModalProps> = ({
 
         <div className="space-y-3">
           {Object.keys(selectedRow).map((key) =>
-            !["id", "action", "createdAt", "updatedAt", "type",'otp','otpExpiry','fcm_token','jwt_token','whatsApp','movieGenres','isCompleted'].includes(
+            !["id", "action", "createdAt", "updatedAt", "type",'otp','otpExpiry','fcm_token','jwt_token','whatsApp','movieGenres','isCompleted',"LoanApplication"].includes(
               key
             ) ? (
               <div key={key}>

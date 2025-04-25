@@ -3,17 +3,18 @@
 import React from "react";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { toggleSliderImageStatus } from "@/app/(protected)/services/sliders/api"; 
+import { updateApi } from "@/app/(protected)/services/apiManagement/api";
 
-const ActiveToggleCell = ({ row }: { row: any }) => {
-  const [isActive, setIsActive] = React.useState(row.original.active);
+const ActiveToggleCell = ({ row,refreshData }: { row: any }) => {
+  const [isActive, setIsActive] = React.useState(row.original.isActive);
 
   const handleToggle = async (value: boolean) => {
     try {
-      const result = await toggleSliderImageStatus(row.original.id, value);
+      const result = await updateApi(row.original.id,row.original.title, value);
       if (result.success) {
-        toast.success(`Slider ${value ? "activated" : "deactivated"} successfully`);
+        toast.success(`Api-Management ${value ? "activated" : "deactivated"} successfully`);
         setIsActive(value);
+        refreshData()
       } else {
         toast.error("Failed to update status");
       }

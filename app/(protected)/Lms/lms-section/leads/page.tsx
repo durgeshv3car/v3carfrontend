@@ -5,7 +5,7 @@ import { fetchUsers } from "../../../services/users/api";
 import { ColumnDef } from "@tanstack/react-table"; 
 import { DataProps } from "./table/columns"; 
 import { useRouter } from "next/navigation";
-import { columns } from "./table/columns";
+
 
 
 interface SelectedValues {

@@ -5,6 +5,7 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  PaginationState,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -97,6 +98,11 @@ const ExampleTwo = ({
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnsField, setColumnsField] = React.useState([]);
   const [pageSize, setPageSize] = React.useState(20);
+    const [pagination, setPagination] = React.useState<PaginationState>({
+        pageIndex: 0,
+        pageSize
+      })
+  
 
   const table = useReactTable({
     data: tableData,
@@ -108,13 +114,14 @@ const ExampleTwo = ({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setPagination,
     onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination: { pageIndex: 0, pageSize },
+      pagination
     },
   });
 

@@ -5,6 +5,7 @@ import {
   ColumnFiltersState,
   SortingState,
   VisibilityState,
+  PaginationState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -104,6 +105,11 @@ const ExampleTwo = ({
   const [pageSize, setPageSize] = React.useState(20); // Default to 20 rows per page
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedOffer, setSelectedOffer] = React.useState(null);
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize
+  })
+
 
   const leadId = searchParams.get("id") || "";
   const [selectedRowsData, setSelectedRowsData] = React.useState([]);
@@ -126,13 +132,14 @@ const ExampleTwo = ({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setPagination,
     onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination: { pageIndex: 0, pageSize }, // Page size included
+      pagination
     },
   });
   React.useEffect(() => {
