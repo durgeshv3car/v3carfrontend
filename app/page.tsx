@@ -1,9 +1,13 @@
 import { Link } from "@/i18n/routing";
-import LoginForm from "@/components/partials/auth/login-form";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import Copyright from "@/components/partials/auth/copyright";
 import Logo from "@/components/partials/auth/logo";
 import { auth } from "@/lib/auth";
+
+const LoginForm = dynamic(() => import("@/components/partials/auth/login-form"), {
+  ssr: false,
+});
 const Login = async ({
   params: { locale },
 }: {
