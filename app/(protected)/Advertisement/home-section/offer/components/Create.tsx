@@ -16,10 +16,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { addOffer } from "@/app/(protected)/services/offers/api";
-
-interface FileWithPreview extends File {
-  preview: string;
-}
+import type { FileWithPreview } from "../../../components/ImageUpload";
 
 interface CreateModalProps {
   onClose: () => void;
@@ -27,6 +24,10 @@ interface CreateModalProps {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   type: string;
 }
+type Category = {
+  id: string;
+  title: string;
+};
 
 const CreateModal: React.FC<CreateModalProps> = ({
   onClose,
@@ -55,7 +56,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
       setFormData(initialData);
     }
   }, [columnsField]);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const buttonsType = [
     { id: "apply_now", name: "Apply Now" },
     { id: "book_now", name: "Book Now" },
@@ -101,15 +102,14 @@ const CreateModal: React.FC<CreateModalProps> = ({
       mobileFile?.file,
       webFile?.file,
       bannerFile?.file,
-      brandLogoFile?.file,
-      
+      brandLogoFile?.file
     );
 
     if (result.success) {
       toast.success(result.message);
       setMobileFile(null);
       setWebFile(null);
-      setBannerFile(null)
+      setBannerFile(null);
       setBrandLogoFile(null);
       refreshData();
       handleClose();
@@ -117,7 +117,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
       toast.error(result.message);
     }
   };
-  const excludedFields = ["schedulexpire", "isactive","ishome"];
+  const excludedFields = ["schedulexpire", "isactive", "ishome"];
   return (
     <>
       <div
@@ -151,11 +151,10 @@ const CreateModal: React.FC<CreateModalProps> = ({
                     : key}
                 </label>
 
-                {/* Select Dropdown for Category Name */}
                 {key.toLowerCase() === "category name" ? (
                   <Select
                     onValueChange={(value) =>
-                      onInputChange({ target: { name: key, value } })
+                      setFormData((prev) => ({ ...prev, [key]: value }))
                     }
                   >
                     <SelectTrigger className="w-full">
@@ -169,12 +168,11 @@ const CreateModal: React.FC<CreateModalProps> = ({
                       ))}
                     </SelectContent>
                   </Select>
-                ) : /* Dynamic Buttons from Array */
-                key.toLowerCase() === "button name" ? (
+                ) : key.toLowerCase() === "button name" ? (
                   <div className="flex gap-2 flex-wrap">
                     <Select
                       onValueChange={(value) =>
-                        onInputChange({ target: { name: key, value } })
+                        setFormData((prev) => ({ ...prev, [key]: value }))
                       }
                     >
                       <SelectTrigger className="w-full">
@@ -189,15 +187,12 @@ const CreateModal: React.FC<CreateModalProps> = ({
                       </SelectContent>
                     </Select>
                   </div>
-                ) : 
-                 
-                key.toLowerCase() === "banner" ? (
+                ) : key.toLowerCase() === "banner" ? (
                   <ImageUpload
                     files={bannerFile ? [bannerFile] : []}
                     setFiles={(files) => setBannerFile(files[0] || null)}
                   />
-                ):
-                key.toLowerCase() === "web" ? (
+                ) : key.toLowerCase() === "web" ? (
                   <ImageUpload
                     files={webFile ? [webFile] : []}
                     setFiles={(files) => setWebFile(files[0] || null)}
@@ -212,8 +207,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
                     files={brandLogoFile ? [brandLogoFile] : []}
                     setFiles={(files) => setBrandLogoFile(files[0] || null)}
                   />
-                ) 
-                : (
+                ) : (
                   <Input
                     name={key}
                     value={formData[key]}

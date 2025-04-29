@@ -79,7 +79,7 @@ const ExampleTwo = ({
   const searchParams = useSearchParams();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isCreateOpen, setIsCreateOpen] = React.useState(false);
-  const leadId = searchParams.get("id");
+  const leadId = searchParams?.get("id");
 
   React.useEffect(() => {
     setIsModalOpen(!!leadId);
@@ -136,9 +136,7 @@ const ExampleTwo = ({
   // Select modals based on the `type`
   const CreateModalComponent = modalMap[type]?.create;
   const EditModalComponent = modalMap[type]?.edit;
-  console.log(isCreateOpen, "isCreateOpen")
-  console.log(isModalOpen, "isModalOpen")
-  console.log(CreateModalComponent, "CreateModalComponent")
+ 
 
   return (
     <div className="w-full">
@@ -205,9 +203,9 @@ const ExampleTwo = ({
           {/* Input for Filtering */}
           <Input
             placeholder="Filter Name..."
-            value={table.getColumn("name")?.getFilterValue() ?? ""}
+            value={table.getColumn("title")?.getFilterValue() ?? ""}
             onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
+              table.getColumn("title")?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
           />

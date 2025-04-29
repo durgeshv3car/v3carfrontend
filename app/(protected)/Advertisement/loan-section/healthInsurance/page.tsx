@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useCallback,useState, useEffect } from "react";
 
 import ExampleTwo from "../../LoanTable";
 
@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 
 import { columnsRecommend } from "./components/columnsRecommend";
 import { fetchServices } from "@/app/(protected)/services/ourServices/api";
+import { RowData } from "./components/columnsRecommend";
+
 
 function Users() {
   const allowed = ["superadmin", "admin"];
@@ -17,13 +19,13 @@ function Users() {
   }
   const router = useRouter();
 
-  const [data, setData] = useState<DataProps[]>([]);
+  const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
   
-  const [type,setType] = useState<string>("healthinsurance");
+  const type ="healthinsurance";
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const result = await fetchServices(type);
       setData(result);
@@ -32,11 +34,11 @@ function Users() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [type]);
 
   useEffect(() => {
     fetchData();
-  }, [refresh]);
+  }, [refresh,fetchData]);
 
   if (loading) return <p>Loading...</p>;
   return (
@@ -45,7 +47,7 @@ function Users() {
         <ExampleTwo
           tableHeading="HealthInsurance List"
           tableData={data}
-          tableColumns={columnsRecommend(setRefresh,type,router)}
+          tableColumns={columnsRecommend({setRefresh,type,router})}
           setRefresh={setRefresh}
           type={type}
         />

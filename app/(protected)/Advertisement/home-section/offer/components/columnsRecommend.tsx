@@ -23,8 +23,9 @@ import {
   deleteOffer,
   toggleHomeStatus,
 } from "@/app/(protected)/services/offers/api";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
-interface RowData {
+export interface RowData {
   id: string;
   category: string;
   title: string;
@@ -36,11 +37,12 @@ interface RowData {
   buttonType: string;
   redirectUrl: string;
   active: boolean;
+  brandName: string;
 }
 
 export const columnsRecommend = (
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>,
-  router
+  router:AppRouterInstance
 ) => [
   {
     id: "select",
@@ -235,12 +237,12 @@ export const columnsRecommend = (
   {
     accessorKey: "active",
     header: "isActive",
-    cell: ({ row }) => <ActiveToggleCell row={row} setRefresh={setRefresh} />,
+    cell: ({ row }: { row: { original: RowData } }) => <ActiveToggleCell row={row} setRefresh={setRefresh} />,
   },
   {
     accessorKey: "home",
     header: "isHome",
-    cell: ({ row }) => <HomeToggleCell row={row} setRefresh={setRefresh} />,
+    cell: ({ row }: { row: { original: RowData } }) => <HomeToggleCell row={row} setRefresh={setRefresh} />,
   },
   {
     id: "actions",

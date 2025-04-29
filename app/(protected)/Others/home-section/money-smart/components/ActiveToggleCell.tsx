@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { toggleMoneyStatus } from "@/app/(protected)/services/moneySmart/api"; 
 
-const ActiveToggleCell = ({ row,refreshData }: { row: any }) => {
+const ActiveToggleCell = ({ row,refreshData }: { row: any,refreshData:()=>void }) => {
   const [isActive, setIsActive] = React.useState(row.original.isActive);
 
   const handleToggle = async (value: boolean) => {

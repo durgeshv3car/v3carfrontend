@@ -16,9 +16,7 @@ import { useConfig } from "@/hooks/use-config";
 import MenuLabel from "../common/menu-label";
 import MenuItem from "../common/menu-item";
 import { CollapseMenuButton } from "../common/collapse-menu-button";
-import MenuWidget from "../common/menu-widget";
-import SearchBar from "@/components/partials/sidebar/common/search-bar";
-import TeamSwitcher from "../common/team-switcher";
+
 
 import { useParams } from "next/navigation";
 

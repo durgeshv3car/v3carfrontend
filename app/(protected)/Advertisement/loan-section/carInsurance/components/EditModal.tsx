@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import { Switch } from "@/components/ui/switch";
 import { updateService } from "@/app/(protected)/services/ourServices/api";
+import type { FileWithPreview } from "../../../components/ImageUpload";
 
 import {
   Select,
@@ -19,14 +20,12 @@ import {
 } from "@/components/ui/select";
 import TextEditor from "../components/SunEditor";
 
-interface FileWithPreview extends File {
-  preview: string;
-  file?: File; // Added file property
-}
+
 
 interface TableRow {
   id: string;
   name?: string;
+
   imageUrl?: string;
   [key: string]: any;
   type?:string
@@ -37,7 +36,7 @@ interface EditModalProps {
   onClose: () => void;
   tableData: TableRow[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  type: string |null;
+  type: string ;
 }
 
 const EditModal: React.FC<EditModalProps> = ({
@@ -93,6 +92,12 @@ const EditModal: React.FC<EditModalProps> = ({
       const foundRow = tableData.find((row) => row.id === id) || null;
       setSelectedRow(foundRow);
       setEditedData(foundRow || {});
+      if (foundRow?.mobileUrl) {
+        setMobileFile({ preview: foundRow.mobileUrl } as FileWithPreview);
+      }
+      if (foundRow?.webUrl) {
+        setWebFile({ preview: foundRow.webUrl } as FileWithPreview);
+      }
     }
   }, [id, tableData]);
 
@@ -116,7 +121,9 @@ const EditModal: React.FC<EditModalProps> = ({
       type,
       editedData,
       mobileFile?.file,
-      webFile?.file
+      webFile?.file,
+      mobileFile?.preview,
+      webFile?.preview
     );
 
     if (result.success) {

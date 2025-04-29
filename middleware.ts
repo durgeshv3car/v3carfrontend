@@ -31,12 +31,34 @@
 //   matcher: ['/', '/(ar|en)/:path*']
 // };
 
-import { NextRequest, NextResponse } from "next/server";
+// import { NextRequest, NextResponse } from "next/server";
+
+// export function middleware(request: NextRequest) {
+//   return NextResponse.next(); // Just passes the request forward
+// }
+
+// export const config = {
+//   matcher: "/", 
+// };
+
+
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  return NextResponse.next(); // Just passes the request forward
+  const response = NextResponse.next();
+  
+  // Add caching headers for static assets
+  if (request.nextUrl.pathname.startsWith('/_next/static') || 
+      request.nextUrl.pathname.match(/\.(jpg|jpeg|png|gif|svg|ico|css|js)$/)) {
+    response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+  }
+  
+  return response;
 }
 
 export const config = {
-  matcher: "/", 
+  matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+  ],
 };

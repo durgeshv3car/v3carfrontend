@@ -78,7 +78,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
         console.error("Error submitting:", error);
       }
     };
-  const excludedFields = ["schedulexpire", "isactive"];
+  const excludedFields = ["Schedule Expire", "isactive"];
 
   return (
     <>

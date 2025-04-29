@@ -4,7 +4,7 @@ import Image from "next/image";
 import Social from "@/components/partials/auth/social";
 import Copyright from "@/components/partials/auth/copyright";
 import Logo from "@/components/partials/auth/logo";
-const Login = ({ params: { locale } }: { params: { locale: string } }) => {
+const Login = () => {
   return (
     <>
       <div className="flex w-full items-center overflow-hidden min-h-dvh h-dvh basis-full">

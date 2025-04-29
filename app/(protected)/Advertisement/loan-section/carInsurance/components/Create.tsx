@@ -16,10 +16,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { addService } from "@/app/(protected)/services/ourServices/api";
-
-interface FileWithPreview extends File {
-  preview: string;
-}
+import type { FileWithPreview } from "../../../components/ImageUpload";
 
 interface CreateModalProps {
   onClose: () => void;
@@ -100,8 +97,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
       type,
       { ...formData, fieldDescription: fieldDescription },
       mobileFile?.file,
-      webFile?.file,
-  
+      webFile?.file
     );
 
     if (result.success) {
@@ -152,17 +148,16 @@ const CreateModal: React.FC<CreateModalProps> = ({
 
                 {/* Select Dropdown for Category Name */}
                 {key.toLowerCase() === "description" ? (
-                   <TextEditor
-                   value={fieldDescription}
-                   onChange={setFieldDescription}
-                 />
-                 
+                  <TextEditor
+                    value={fieldDescription}
+                    onChange={setFieldDescription}
+                  />
                 ) : /* Dynamic Buttons from Array */
                 key.toLowerCase() === "button name" ? (
                   <div className="flex gap-2 flex-wrap">
                     <Select
                       onValueChange={(value) =>
-                        onInputChange({ target: { name: key, value } })
+                        setFormData((prev) => ({ ...prev, [key]: value }))
                       }
                     >
                       <SelectTrigger className="w-full">
@@ -209,7 +204,6 @@ const CreateModal: React.FC<CreateModalProps> = ({
               </div>
             ) : null
           )}
-         
         </div>
 
         <div className="mt-4 flex justify-end gap-2">

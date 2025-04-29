@@ -6,6 +6,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  ColumnDef,
+  Row,
+  Table,
+} from '@tanstack/react-table';
 
 import { SquarePen, Trash2, CalendarClock, Timer } from "lucide-react";
 
@@ -14,14 +19,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
-import ActiveToggleCell from "./ActiveToggleCell";
+import ActiveToggleCell from "../../../components/ActiveToggleCell";
 import HomeToggleCell from "./HomeToggleCell";
 import { Calendar } from "@/components/ui/calendar";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 import { deleteService } from "@/app/(protected)/services/ourServices/api";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
-interface RowData {
+export interface RowData {
   id: string;
   category: string;
   title: string;
@@ -32,12 +38,18 @@ interface RowData {
   buttonType: string;
   active: boolean;
 }
+interface ColumnsLogoProps {
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  router: AppRouterInstance;
+  type: string;
+}
 
-export const columnsRecommend = (
-  setRefresh: React.Dispatch<React.SetStateAction<boolean>>,
+
+export const columnsRecommend = ({
+  setRefresh,
   type,
   router
-) => [
+}: ColumnsLogoProps): ColumnDef<RowData>[] => [
   {
     id: "select",
     header: ({ table }: { table: any }) => (
@@ -177,7 +189,7 @@ export const columnsRecommend = (
   {
     accessorKey: "active",
     header: "isActive",
-    cell: ({ row }) => <ActiveToggleCell row={row} type={type} setRefresh={setRefresh}  />,
+    cell: ({ row }) => <ActiveToggleCell row={row} type={type} setRefresh={setRefresh} />,
   },
   {
     id: "actions",
@@ -209,7 +221,7 @@ export const columnsRecommend = (
                   className="w-7 h-7 border-default-200 dark:border-default-300 text-default-400"
                   onClick={() =>
                     router.push(
-                      `/service/loan-section/creditList?id=${row.original.id}`
+                      `/Advertisement/loan-section/creditList?id=${row.original.id}`
                     )
                   }
                 >

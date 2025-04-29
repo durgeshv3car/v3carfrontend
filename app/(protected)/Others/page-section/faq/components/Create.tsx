@@ -36,7 +36,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
         toast.success("Faq added successfully");
         setTitle("");
         setDescription("");
-        refreshData("");
+        refreshData();
         handleClose();
       } else {
         toast.error("Failed to add faq");

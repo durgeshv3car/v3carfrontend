@@ -10,12 +10,7 @@ import axios from "axios";
 import { Switch } from "@/components/ui/switch";
 import { updateMoney } from "@/app/(protected)/services/moneySmart/api";
 
-
-interface FileWithPreview extends File {
-  preview: string;
-  file?: File; // Added file property
-}
-
+import { FileWithPreview } from "../../../components/ImageUpload";
 interface TableRow {
   id: string;
   imageUrl?: string;
@@ -76,6 +71,13 @@ const EditModal: React.FC<EditModalProps> = ({
       const foundRow = tableData.find((row) => row.id === id) || null;
       setSelectedRow(foundRow);
       setEditedData(foundRow || {});
+         
+      if (foundRow?.offerImage?.mobile) {
+        setMobileFile({ preview: foundRow.offerImage.mobile } as FileWithPreview);
+      }
+      if (foundRow?.offerImage?.web) {
+        setWebFile({ preview: foundRow.offerImage.web } as FileWithPreview);
+      }
     }
   }, [id, tableData]);
 
@@ -98,16 +100,18 @@ const EditModal: React.FC<EditModalProps> = ({
       type,
       editedData,
       mobileFile?.file,
-      webFile?.file
+      webFile?.file,
+      mobileFile?.preview,
+      webFile?.preview
     );
     
 
-    if (result.success) {
+    if (result?.success) {
       refreshData();
       handleClose();
       toast.success(result.message);
     } else {
-      toast.error(result.message);
+      toast.error(result?.message || "An error occurred.");
     }
   };
   if (!selectedRow) return null;
@@ -147,7 +151,8 @@ const EditModal: React.FC<EditModalProps> = ({
               "brandName",
               "detailDescription",
               "category",
-              "offerBanner"
+              "offerBanner",
+              "deletionDate"
             ].includes(key) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">

@@ -56,7 +56,7 @@ const EditModal: React.FC<EditModalProps> = ({
     if (!id) return;
   
     try {
-      const result = await updatepolicy(id, editedData.title,editedData.description);
+      const result = await updatepolicy(id, editedData.title || "",editedData.description || "");
       if (result.success) {
         toast.success("Policy data updated successfully.");
         refreshData();

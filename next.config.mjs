@@ -1,9 +1,7 @@
-
 import nextra from "nextra";
-import { hostname } from "os";
+
 
 /** @type {import('next').NextConfig} */
-
 
 const withNextra = nextra({
   theme: "nextra-theme-docs",
@@ -11,6 +9,13 @@ const withNextra = nextra({
   reactStrictMode: false,
 });
 const nextConfig = {
+  experimental: {
+    optimizeCss: true,
+    scrollRestoration: true,
+  },
+
+  compress: true,
+
   images: {
     remotePatterns: [
       {
@@ -34,11 +39,11 @@ const nextConfig = {
         hostname: "i.pravatar.cc",
       },
       {
-        protocol: "https",
-        hostname: "dummyjson.com",
-
-      }
-    
+        protocol: "http",
+        hostname: "localhost",
+        port: "5000",
+        pathname: "/uploads/**",
+      },
     ],
   },
 };

@@ -17,12 +17,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import TextEditor from "../components/SunEditor";
-
-interface FileWithPreview extends File {
-  preview: string;
-  file?: File; // Added file property
-}
-
+import { FileWithPreview } from "../../../components/ImageUpload";
 interface TableRow {
   id: string;
   name?: string;
@@ -36,7 +31,7 @@ interface EditModalProps {
   onClose: () => void;
   tableData: TableRow[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  type: string |null;
+  type: string ;
 }
 
 const EditModal: React.FC<EditModalProps> = ({
@@ -92,12 +87,18 @@ const EditModal: React.FC<EditModalProps> = ({
       const foundRow = tableData.find((row) => row.id === id) || null;
       setSelectedRow(foundRow);
       setEditedData(foundRow || {});
+      if (foundRow?.mobileUrl) {
+        setMobileFile({ preview: foundRow.mobileUrl } as FileWithPreview);
+      }
+      if (foundRow?.webUrl) {
+        setWebFile({ preview: foundRow.webUrl } as FileWithPreview);
+      }
     }
   }, [id, tableData]);
 
   const handleClose = () => {
     onClose();
-    router.push("/Advertisement/loan-section/creditCard");
+    router.push("/Advertisement/loan-section/creditList");
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,7 +115,9 @@ const EditModal: React.FC<EditModalProps> = ({
       type,
       editedData,
       mobileFile?.file,
-      webFile?.file
+      webFile?.file,
+      mobileFile?.preview,
+      webFile?.preview
     );
 
     if (result.success) {

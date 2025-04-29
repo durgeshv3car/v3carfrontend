@@ -2,25 +2,25 @@
 import React from "react";
 
 function HeaderGreet({ admin }) {
-  const [greeting, setGreeting] = React.useState("Hello");
-
-  React.useEffect(() => {
+  const getGreeting = () => {
     const hour = new Date().getHours();
-
     if (hour >= 5 && hour < 12) {
-      setGreeting("Good morning");
+      return "Good morning";
     } else if (hour >= 12 && hour < 17) {
-      setGreeting("Good afternoon");
+      return "Good afternoon";
     } else if (hour >= 17 && hour < 21) {
-      setGreeting("Good evening");
+      return "Good evening";
     } else {
-      setGreeting("Good night");
+      return "Good night";
     }
-  }, []);
+  };
+
+  const greeting = getGreeting();
+
   return (
-    <div>
+    <>
       {greeting}, {admin}
-    </div>
+    </>
   );
 }
 

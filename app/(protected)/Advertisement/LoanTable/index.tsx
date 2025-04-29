@@ -2,10 +2,14 @@
 
 import * as React from "react";
 import {
+  ColumnDef,
   flexRender,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
   getCoreRowModel,
-  getFilteredRowModel,
   PaginationState,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -44,84 +48,148 @@ import TablePagination from "./table-pagination";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 
-// Dynamically import different modals based on type
-const modalMap = {
 
+type ModalType = 'incomeplan' | 'stockmarket' | 'mutualfund' | 'healthinsurance' | 'lifeinsurance' | 'creditcard' | 'carinsurance';
+
+// Define the props interface for the edit modal components
+interface EditModalProps<T> {
+  id: string;
+  onClose: () => void;
+  tableData: T[];
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+// Define the props interface for the create modal components
+interface CreateModalProps {
+  onClose: () => void;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  columnsField: string[];
+  type: ModalType;
+}
+
+// Type for modal components
+type ModalComponent<T> = React.ComponentType<EditModalProps<T>>;
+type CreateComponent = React.ComponentType<CreateModalProps>;
+
+
+// Dynamically import different modals based on type
+const modalMap: Record<ModalType, {
+  create: CreateComponent;
+  edit: any; 
+}>  = {
   incomeplan: {
-    create: dynamic(() => import("../loan-section/incomePlan/components/Create"), {
-      ssr: false,
-    }),
-    edit: dynamic(() => import("../loan-section/incomePlan/components/EditModal"), {
-      ssr: false,
-    }),
+    create: dynamic(
+      () => import("../loan-section/incomePlan/components/Create"),
+      {
+        ssr: false,
+      }
+    ) as CreateComponent,
+    edit: dynamic(
+      () => import("../loan-section/incomePlan/components/EditModal"),
+      {
+        ssr: false,
+      }
+    ),
   },
   stockmarket: {
-    create: dynamic(() => import("../loan-section/stockMarket/components/Create"), {
-      ssr: false,
-    }),
-    edit: dynamic(() => import("../loan-section/stockMarket/components/EditModal"), {
-      ssr: false,
-    }),
+    create: dynamic(
+      () => import("../loan-section/stockMarket/components/Create"),
+      {
+        ssr: false,
+      }
+    )as CreateComponent,
+    edit: dynamic(
+      () => import("../loan-section/stockMarket/components/EditModal"),
+      {
+        ssr: false,
+      }
+    ),
   },
   mutualfund: {
     create: dynamic(
       () => import("../loan-section/mutualFunds/components/Create"),
       { ssr: false }
+    ) as CreateComponent,
+    edit: dynamic(
+      () => import("../loan-section/mutualFunds/components/EditModal"),
+      {
+        ssr: false,
+      }
     ),
-    edit: dynamic(() => import("../loan-section/mutualFunds/components/EditModal"), {
-      ssr: false,
-    }),
   },
   healthinsurance: {
-    create: dynamic(() => import("../loan-section/healthInsurance/components/Create"), {
-      ssr: false,
-    }),
-    edit: dynamic(() => import("../loan-section/healthInsurance/components/EditModal"), {
-      ssr: false,
-    }),
+    create: dynamic(
+      () => import("../loan-section/healthInsurance/components/Create"),
+      {
+        ssr: false,
+      }
+    ) as CreateComponent,
+    edit: dynamic(
+      () => import("../loan-section/healthInsurance/components/EditModal"),
+      {
+        ssr: false,
+      }
+    ),
   },
   lifeinsurance: {
     create: dynamic(
       () => import("../loan-section/lifeInsurance/components/Create"),
       { ssr: false }
-    ),
-    edit: dynamic(() => import("../loan-section/lifeInsurance/components/EditModal"), {
-      ssr: false,
-    }),
+    ) as CreateComponent,
+    edit: dynamic(
+      () => import("../loan-section/lifeInsurance/components/EditModal"),
+      {
+        ssr: false,
+      }
+    ) ,
   },
   creditcard: {
     create: dynamic(
       () => import("../loan-section/creditList/components/Create"),
       { ssr: false }
+    ) as CreateComponent,
+    edit: dynamic(
+      () => import("../loan-section/creditList/components/EditModal"),
+      {
+        ssr: false,
+      }
     ),
-    edit: dynamic(() => import("../loan-section/creditList/components/EditModal"), {
-      ssr: false,
-    }),
   },
   carinsurance: {
     create: dynamic(
       () => import("../loan-section/carInsurance/components/Create"),
       { ssr: false }
+    ) as CreateComponent,
+    edit: dynamic(
+      () => import("../loan-section/carInsurance/components/EditModal"),
+      {
+        ssr: false,
+      }
     ),
-    edit: dynamic(() => import("../loan-section/carInsurance/components/EditModal"), {
-      ssr: false,
-    }),
   },
 };
 
-const ExampleTwo = ({
+interface TableProps<T> {
+  tableColumns: ColumnDef<T>[];
+  tableHeading: string;
+  tableData: T[];
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  type: ModalType;
+}
+
+const ExampleTwo =<T,> ({
   tableHeading,
   tableData,
   tableColumns,
   setRefresh,
   type,
-}) => {
+}: TableProps<T>)=> {
   console.log(tableData, `${type} Data`);
 
   const searchParams = useSearchParams();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isCreateOpen, setIsCreateOpen] = React.useState(false);
-  const leadId = searchParams.get("id") || "";
+  const leadId = searchParams?.get("id") || "";
   console.log(typeof leadId, "leadId");
 
   React.useEffect(() => {
@@ -131,18 +199,19 @@ const ExampleTwo = ({
   const closeModal = () => setIsModalOpen(false);
   const createPage = () => setIsCreateOpen(true);
   const closeCreateModal = () => setIsCreateOpen(false);
-
-  const [sorting, setSorting] = React.useState([]);
-  const [columnFilters, setColumnFilters] = React.useState([]);
-  const [columnVisibility, setColumnVisibility] = React.useState({});
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnsField, setColumnsField] = React.useState([]);
+  const [columnsField, setColumnsField] = React.useState<string[]>([]);
   const [pageSize, setPageSize] = React.useState(20);
   const [pagination, setPagination] = React.useState<PaginationState>({
-        pageIndex: 0,
-        pageSize
-      })
-
+    pageIndex: 0,
+    pageSize,
+  });
   const table = useReactTable({
     data: tableData,
     columns: tableColumns,
@@ -160,7 +229,7 @@ const ExampleTwo = ({
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination
+      pagination,
     },
   });
 
@@ -170,7 +239,7 @@ const ExampleTwo = ({
     const headers = table
       .getHeaderGroups()
       .flatMap((headerGroup) =>
-        headerGroup.headers.map((header) => header.column.columnDef.header)
+        headerGroup.headers.map((header) => String(header.column.columnDef.header))
       );
 
     setColumnsField(headers);
@@ -179,9 +248,9 @@ const ExampleTwo = ({
   // Select modals based on the `type`
   const CreateModalComponent = modalMap[type]?.create;
   const EditModalComponent = modalMap[type]?.edit;
-  console.log(isCreateOpen, "isCreateOpen")
-  console.log(isModalOpen, "isModalOpen")
-  console.log(CreateModalComponent, "CreateModalComponent")
+  console.log(isCreateOpen, "isCreateOpen");
+  console.log(isModalOpen, "isModalOpen");
+  console.log(CreateModalComponent, "CreateModalComponent");
 
   return (
     <div className="w-full">
@@ -220,9 +289,15 @@ const ExampleTwo = ({
 
           {/* Select for Column Visibility */}
           <label className="text-sm text-gray-600">Hide Column:</label>
-          <DropdownMenu  onOpenChange={(open) => console.log("Dropdown state:", open)}>
+          <DropdownMenu
+            onOpenChange={(open) => console.log("Dropdown state:", open)}
+          >
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto" onClick={() => console.log("Dropdown clicked")}>
+              <Button
+                variant="outline"
+                className="ml-auto"
+                onClick={() => console.log("Dropdown clicked")}
+              >
                 Columns
               </Button>
             </DropdownMenuTrigger>
@@ -248,7 +323,7 @@ const ExampleTwo = ({
           {/* Input for Filtering */}
           <Input
             placeholder="Filter Title..."
-            value={table.getColumn("title")?.getFilterValue() ?? ""}
+            value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("title")?.setFilterValue(event.target.value)
             }

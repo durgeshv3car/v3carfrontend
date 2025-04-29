@@ -206,68 +206,68 @@ export const columnsLogo = ({
       );
     },
   },
-  {
-    id: "schedulExpire",
-    header: "Schedule Expire",
-    enableHiding: false,
-    cell: ({ row }: { row: Row<LogoData> }) => {
-      const handleDateSelect = (date: Date | undefined) => {
-        if (date) {
-          setSelectedDate(date);
-        }
-      };
+  // {
+  //   id: "schedulExpire",
+  //   header: "Schedule Expire",
+  //   enableHiding: false,
+  //   cell: ({ row }: { row: Row<LogoData> }) => {
+  //     const handleDateSelect = (date: Date | undefined) => {
+  //       if (date) {
+  //         setSelectedDate(date);
+  //       }
+  //     };
 
-      const handleScheduleDelete = async () => {
-        if (!selectedDate) {
-          toast.error("Please select a date first");
-          return;
-        }
+  //     const handleScheduleDelete = async () => {
+  //       if (!selectedDate) {
+  //         toast.error("Please select a date first");
+  //         return;
+  //       }
 
-        const result = await scheduleDeleteLogoImage(row.original.id, "logo", selectedDate);
-        if (result.success) {
-          setOpen(false);
-          toast.success("Deletion scheduled successfully");
-        }
-      };
+  //       const result = await scheduleDeleteLogoImage(row.original.id, "logo", selectedDate);
+  //       if (result.success) {
+  //         setOpen(false);
+  //         toast.success("Deletion scheduled successfully");
+  //       }
+  //     };
 
-      return (
-        <div className="flex items-center gap-2">
-          <Dialog open={open} onOpenChange={setOpen}>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="w-7 h-7 border-default-200 dark:border-default-300 text-default-400"
-                      onClick={() => setOpen(true)}
-                    >
-                      <CalendarClock className="w-3 h-3" />
-                    </Button>
-                  </DialogTrigger>
-                </TooltipTrigger>
-                <TooltipContent side="top">
-                  <p>Auto Delete Calendar</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+  //     return (
+  //       <div className="flex items-center gap-2">
+  //         <Dialog open={open} onOpenChange={setOpen}>
+  //           <TooltipProvider>
+  //             <Tooltip>
+  //               <TooltipTrigger asChild>
+  //                 <DialogTrigger asChild>
+  //                   <Button
+  //                     variant="outline"
+  //                     size="icon"
+  //                     className="w-7 h-7 border-default-200 dark:border-default-300 text-default-400"
+  //                     onClick={() => setOpen(true)}
+  //                   >
+  //                     <CalendarClock className="w-3 h-3" />
+  //                   </Button>
+  //                 </DialogTrigger>
+  //               </TooltipTrigger>
+  //               <TooltipContent side="top">
+  //                 <p>Auto Delete Calendar</p>
+  //               </TooltipContent>
+  //             </Tooltip>
+  //           </TooltipProvider>
 
-            <DialogContent className="p-4">
-              <h2 className="text-lg font-semibold">Select Deletion Date</h2>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={handleDateSelect}
-                className="border rounded-md p-2"
-              />
-              <Button className="mt-4 w-full" onClick={handleScheduleDelete}>
-                Schedule Delete
-              </Button>
-            </DialogContent>
-          </Dialog>
-        </div>
-      );
-    },
-  }
+  //           <DialogContent className="p-4">
+  //             <h2 className="text-lg font-semibold">Select Deletion Date</h2>
+  //             <Calendar
+  //               mode="single"
+  //               selected={selectedDate}
+  //               onSelect={handleDateSelect}
+  //               className="border rounded-md p-2"
+  //             />
+  //             <Button className="mt-4 w-full" onClick={handleScheduleDelete}>
+  //               Schedule Delete
+  //             </Button>
+  //           </DialogContent>
+  //         </Dialog>
+  //       </div>
+  //     );
+  //   },
+  // }
 ];

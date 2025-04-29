@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { toggleOfferStatus } from "@/app/(protected)/services/offers/api"; 
 
-const ActiveToggleCell = ({ row,setRefresh }: { row: any }) => {
+const ActiveToggleCell = ({ row,setRefresh }: { row: any, setRefresh: React.Dispatch<React.SetStateAction<boolean>>  }) => {
   const [isActive, setIsActive] = React.useState(row.original.isActive);
 
   const handleToggle = async (value: boolean) => {

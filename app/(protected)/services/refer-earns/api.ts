@@ -78,12 +78,16 @@ export const updateReferImage = async (
     type: string,
     editedData: { title?: string; companyUrl?: string; active?: boolean },
     mobileFile?: File | null,
-    webFile?: File | null
+    webFile?: File | null,
+    mobileUrl?: string | null,
+    webUrl?: string | null
   ) => {
     try {
       const formDataSend = new FormData();
       formDataSend.append("id", id);
       formDataSend.append("type", type);
+      if (!mobileUrl) formDataSend.append("mobileUrl", "empty");
+      if (!webUrl) formDataSend.append("webUrl","empty");
   
       if (editedData.title) formDataSend.append("title", editedData.title);
       if (mobileFile) formDataSend.append("mobile", mobileFile);

@@ -317,6 +317,7 @@ const ExampleTwo = <T,>({
       <TablePagination table={table} />
       
       {/* Create Modal */}
+      <React.Suspense fallback={<div>Loading...</div>}>
       {isCreateOpen && CreateModalComponent && (
         <CreateModalComponent
           onClose={closeCreateModal}
@@ -325,8 +326,10 @@ const ExampleTwo = <T,>({
           type={type}
         />
       )}
+      </React.Suspense>
       
       {/* Edit Modal */}
+      <React.Suspense fallback={<div>Loading...</div>}>
       {isModalOpen && EditModalComponent && (
         <EditModalComponent
           id={leadId}
@@ -335,6 +338,7 @@ const ExampleTwo = <T,>({
           setRefresh={setRefresh}
         />
       )}
+      </React.Suspense>
     </div>
   );
 };

@@ -26,6 +26,10 @@ export const updateOffer = async (
   webFile?: File,
   bannerFile?:File,
   brandLogoFile?: File,
+  mobileUrl?: string | null,
+  webUrl?: string | null,
+  bannerUrl?: string | null,
+  logoUrl?: string | null,
 ) => {
   if (!id) return { success: false, message: "ID is required" };
 
@@ -33,6 +37,10 @@ export const updateOffer = async (
     const formDataSend = new FormData();
     formDataSend.append("id", id);
     formDataSend.append("type", type);
+    if (!mobileUrl) formDataSend.append("mobileUrl", "empty");
+    if (!webUrl) formDataSend.append("webUrl","empty");
+    if (!bannerUrl) formDataSend.append("bannerUrl", "empty");
+    if (!logoUrl) formDataSend.append("logoUrl", "empty");
 
     if (editedData.title) formDataSend.append("title", editedData.title);
     if (editedData.buttonType) formDataSend.append("buttonType", editedData.buttonType);

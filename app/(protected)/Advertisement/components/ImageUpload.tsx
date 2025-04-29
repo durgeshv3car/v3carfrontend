@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useEffect } from "react";
 
-interface FileWithPreview {
+export interface FileWithPreview {
   file: File;
   preview: string;
 }
@@ -58,9 +58,10 @@ const ImageUpload = ({ files, setFiles }: ImageUploadProps) => {
               <Icon icon="fa6-solid:xmark" />
             </span>
           </Button>
+       
           <Image
-            key={files[0].file.name}
-            alt={files[0].file.name}
+            key={files[0].file ? files[0].file.name : files[0].preview}
+            alt={files[0].file ? files[0].file.name : "Uploaded Image"}
             width={250}
             height={150}
             className="w-full h-full object-cover rounded-md"

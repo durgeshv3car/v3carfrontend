@@ -56,7 +56,7 @@ const EditModal: React.FC<EditModalProps> = ({
     if (!id) return;
   
     try {
-      const result = await updatefaq(id, editedData.title,editedData.description);
+      const result = await updatefaq(id, editedData.title || "", editedData.description || "");
       if (result.success) {
         toast.success("Faq data updated successfully.");
         refreshData();

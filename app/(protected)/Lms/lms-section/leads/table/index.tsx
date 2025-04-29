@@ -14,25 +14,16 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-
-
 import { Button } from "@/components/ui/button";
-const EditModal = dynamic(
-  () => import("../components/EditModal"),
-  {
-    ssr: false,
-    loading: () => <p>Loading modal...</p>,
-  }
-);
+const EditModal = dynamic(() => import("../components/EditModal"), {
+  ssr: false,
+  loading: () => <p>Loading modal...</p>,
+});
 
-const ImportExportButtons = dynamic(
-  () => import("../components/Download"),
-  {
-    ssr: false,
-    loading: () => <p>Loading modal...</p>,
-  }
-);
-
+const ImportExportButtons = dynamic(() => import("../components/Download"), {
+  ssr: false,
+  loading: () => <p>Loading modal...</p>,
+});
 
 import {
   DropdownMenu,
@@ -81,14 +72,13 @@ const TablePagination = dynamic(() => import("./table-pagination"), {
 
 import { useSearchParams } from "next/navigation";
 
-
 const ExampleTwo = ({
   selectedValues,
   setSelectedValues,
   tableData,
   tableColumns,
   setRefresh,
-  allFilterOptions
+  allFilterOptions,
 }) => {
   const searchParams = useSearchParams();
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -107,11 +97,10 @@ const ExampleTwo = ({
   const [selectedOffer, setSelectedOffer] = React.useState(null);
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
-    pageSize
-  })
+    pageSize,
+  });
 
-
-  const leadId = searchParams.get("id") || "";
+  const leadId = searchParams?.get("id") || "";
   const [selectedRowsData, setSelectedRowsData] = React.useState([]);
   const [isCreatingNotification, setIsCreatingNotification] =
     React.useState(false);
@@ -139,7 +128,7 @@ const ExampleTwo = ({
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination
+      pagination,
     },
   });
   React.useEffect(() => {
@@ -147,11 +136,11 @@ const ExampleTwo = ({
       .getSelectedRowModel()
       .rows.map((row) => row.original);
     setSelectedRowsData(selectedData);
-  }, [rowSelection]);
+  }, [table,rowSelection]);
 
   React.useEffect(() => {
-    const creatingNotification = searchParams.get("createnotification");
-    setType(searchParams.get("type"));
+    const creatingNotification = searchParams?.get("createnotification");
+    setType(searchParams?.get("type"));
 
     if (creatingNotification === "true") {
       console.log("creatingNotification detected");
@@ -166,12 +155,14 @@ const ExampleTwo = ({
     <div className="w-full">
       {/* Header & Filter Section */}
       <div className="py-4 px-5 mb-6 bg-white rounded-md">
-        <Filter
-          selectedValues={selectedValues}
-          setSelectedValues={setSelectedValues}
-          data={tableData}
-          allFilterOptions={allFilterOptions}
-        />
+        <React.Suspense fallback={<div>Loading...</div>}>
+          <Filter
+            selectedValues={selectedValues}
+            setSelectedValues={setSelectedValues}
+            data={tableData}
+            allFilterOptions={allFilterOptions}
+          />
+        </React.Suspense>
       </div>
 
       {/* Display Selected Values */}
@@ -181,7 +172,13 @@ const ExampleTwo = ({
           <div className="text-xl font-medium text-default-900">Users Data</div>
           <div className="flex items-center gap-4">
             {/* Select for Rows per Page */}
-            <ImportExportButtons setRefresh={setRefresh} filteredData={tableData} columns={tableColumns}/>
+            <React.Suspense fallback={<div>Loading...</div>}>
+              <ImportExportButtons
+                setRefresh={setRefresh}
+                filteredData={tableData}
+                columns={tableColumns}
+              />
+            </React.Suspense>
             <label className="text-sm text-gray-600">Rows per page:</label>
             <Select
               onValueChange={(value) => setPageSize(Number(value))}
@@ -240,15 +237,17 @@ const ExampleTwo = ({
             }
             className="max-w-sm"
           /> */}
-            {isCreatingNotification && (
-              <button
-                className="ml-auto bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
-                disabled={Object.keys(rowSelection).length === 0}
-                onClick={() => setIsModalOpenOffer(true)}
-              >
-                Send {type}
-              </button>
-            )}
+            <React.Suspense fallback={<div>Loading...</div>}>
+              {isCreatingNotification && (
+                <button
+                  className="ml-auto bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-50"
+                  disabled={Object.keys(rowSelection).length === 0}
+                  onClick={() => setIsModalOpenOffer(true)}
+                >
+                  Send {type}
+                </button>
+              )}
+            </React.Suspense>
           </div>
         </div>
 
@@ -334,23 +333,29 @@ const ExampleTwo = ({
       </div>
 
       {/* Pagination Component */}
-      <TablePagination table={table} />
-      {isModalOpenOffer && (
-        <OfferSelectionModal
-          selectedRowsData={selectedRowsData}
-          isOpen={isModalOpenOffer}
-          onClose={() => setIsModalOpenOffer(false)}
-          onSelectOffer={(offer) => setSelectedOffer(offer)}
-        />
-      )}
-      {isModalOpen && (
-        <EditModal
-          id={leadId as string}
-          onClose={closeModal}
-          tableData={tableData}
-          setRefresh={setRefresh}
-        />
-      )}
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <TablePagination table={table} />
+      </React.Suspense>
+      <React.Suspense fallback={<div>Loading...</div>}>
+        {isModalOpenOffer && (
+          <OfferSelectionModal
+            selectedRowsData={selectedRowsData}
+            isOpen={isModalOpenOffer}
+            onClose={() => setIsModalOpenOffer(false)}
+            onSelectOffer={(offer) => setSelectedOffer(offer)}
+          />
+        )}
+      </React.Suspense>
+      <React.Suspense fallback={<div>Loading...</div>}>
+        {isModalOpen && (
+          <EditModal
+            id={leadId as string}
+            onClose={closeModal}
+            tableData={tableData}
+            setRefresh={setRefresh}
+          />
+        )}
+      </React.Suspense>
     </div>
   );
 };

@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { toggleLogoImageStatus } from "@/app/(protected)/services/logos/api"; 
 
-const ActiveToggleCell = ({ row,refreshData }: { row: any }) => {
+const ActiveToggleCell = ({ row,refreshData }: { row: any,refreshData:()=>void }) => {
   const [isActive, setIsActive] = React.useState(row.original.active);
 
   const handleToggle = async (value: boolean) => {

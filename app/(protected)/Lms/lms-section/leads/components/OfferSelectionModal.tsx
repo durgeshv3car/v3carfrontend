@@ -37,7 +37,7 @@ const OfferSelectionModal: React.FC<OfferSelectionModalProps> = ({ isOpen, onClo
 
 
 
-  console.log("Type:", type);
+
 
   // Fetch offers when the modal opens
   useEffect(() => {
@@ -172,7 +172,7 @@ const OfferSelectionModal: React.FC<OfferSelectionModalProps> = ({ isOpen, onClo
           disabled={!selectedOffer || loading}
           onClick={handleSubmit}
         >
-          {loading ? "Submitting..." : "Submit Offer"}
+          {loading ? "Submitting..." : "Send Offer"}
         </Button>
       </DialogContent>
     </Dialog>

@@ -8,6 +8,14 @@ import { useRouter } from "next/navigation";
 
 import { columnsRefer } from "./components/columnsRefer";
 import { fetchReferImages } from "@/app/(protected)/services/refer-earns/api";
+interface LogoData {
+  id: string;
+  title: string;
+  thumbnail: string | { web?: string; mobile?: string };
+  companyUrl: string;
+  active: boolean;
+  
+}
 
 function Users() {
   const allowed = ["superadmin", "admin"];
@@ -17,7 +25,7 @@ function Users() {
   }
   const router = useRouter();
 
-  const [data, setData] = useState<DataProps[]>([]);
+  const [data, setData] = useState<LogoData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [selectedDate, setSelectedDate] = React.useState(null);
@@ -43,7 +51,7 @@ function Users() {
   return (
     <>
       <div className="space-y-6">
-        <ExampleTwo
+        <ExampleTwo<LogoData>
           tableHeading="Refer List"
           tableData={data}
           tableColumns={columnsRefer(

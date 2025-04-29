@@ -102,7 +102,7 @@ const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }
       .getSelectedRowModel()
       .rows.map((row) => row.original);
     setSelectedRowsData(selectedData);
-  }, [rowSelection]);
+  }, [table,rowSelection]);
 
 
   React.useEffect(() => {

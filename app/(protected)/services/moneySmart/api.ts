@@ -17,13 +17,16 @@ export const fetchMoney = async () => {
   }
 };
 
-export const updateMoney = async (id: string, type: string, editedData: any, mobileFile?: File, webFile?: File) => {
+export const updateMoney = async (id: string, type: string, editedData: any, mobileFile?: File, webFile?: File, mobileUrl?: string | null,
+  webUrl?: string | null) => {
   if (!id) return;
 
   try {
     const formDataSend = new FormData();
     formDataSend.append("id", id);
     formDataSend.append("type", type);
+    if (!mobileUrl) formDataSend.append("mobileUrl", "empty");
+    if (!webUrl) formDataSend.append("webUrl","empty");
 
     
 

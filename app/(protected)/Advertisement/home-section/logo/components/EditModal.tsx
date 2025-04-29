@@ -9,11 +9,9 @@ import { toast } from "sonner";
 import axios from "axios";
 import { Switch } from "@/components/ui/switch";
 import { updateLogoImage } from "@/app/(protected)/services/logos/api";
+import type { FileWithPreview } from "../../../components/ImageUpload";
 
-interface FileWithPreview extends File {
-  preview: string;
-  file?: File; // Added file property
-}
+
 
 interface TableRow {
   id: string;
@@ -47,6 +45,13 @@ const EditModal: React.FC<EditModalProps> = ({
       const foundRow = tableData.find((row) => row.id === id) || null;
       setSelectedRow(foundRow);
       setEditedData(foundRow || {});
+     
+    if (foundRow?.mobileUrl) {
+      setMobileFile({ preview: foundRow.mobileUrl } as FileWithPreview);
+    }
+    if (foundRow?.webUrl) {
+      setWebFile({ preview: foundRow.webUrl } as FileWithPreview);
+    }
     }
   }, [id, tableData]);
 
@@ -69,7 +74,9 @@ const EditModal: React.FC<EditModalProps> = ({
       type,
       editedData,
       mobileFile?.file,
-      webFile?.file
+      webFile?.file,
+      mobileFile?.preview,
+      webFile?.preview
     );
 
     if (result.success) {
@@ -111,6 +118,7 @@ const EditModal: React.FC<EditModalProps> = ({
               "updatedAt",
               "type",
               "thumbnail",
+              "deletionDate"
             ].includes(key) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">
@@ -122,12 +130,12 @@ const EditModal: React.FC<EditModalProps> = ({
                 </label>
                 {key.toLowerCase() === "mobileurl" ? (
                   <ImageUpload
-                    files={mobileFile ? [mobileFile] : []}
+                    files={mobileFile? [mobileFile]: []}
                     setFiles={(files) => setMobileFile(files[0] || null)}
                   />
                 ) : key.toLowerCase() === "weburl" ? (
                   <ImageUpload
-                    files={webFile ? [webFile] : []}
+                  files={webFile? [webFile]: []}
                     setFiles={(files) => setWebFile(files[0] || null)}
                   />
                 ) : key.toLowerCase() === "active" ? (

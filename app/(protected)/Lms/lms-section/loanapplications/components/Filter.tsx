@@ -11,7 +11,7 @@ export default function Filter({ selectedValues, setSelectedValues, data }) {
   const [openFilter, setOpenFilter] = useState(null);
   const [dropdownOptions, setDropdownOptions] = useState({});
 
-  const fieldPaths = {
+  const fieldPaths = React.useMemo(() => ({
     phoneNumber: (item) => item?.phoneNumber,
     desiredLoanAmount: (item) => item?.desiredLoanAmount,
     loanTenure: (item) => item?.loanTenure,
@@ -36,7 +36,7 @@ export default function Filter({ selectedValues, setSelectedValues, data }) {
     yearRegistration: (item) => item?.yearRegistration,
     studentIncome: (item) => item?.studentIncome,
     livesWithParents: (item) => item?.livesWithParents,
-  };
+  }), []);
   
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function Filter({ selectedValues, setSelectedValues, data }) {
       newDropdowns[field] = ["All", ...Array.from(new Set(values)).sort()];
     }
     setDropdownOptions(newDropdowns);
-  }, [data]);
+  }, [fieldPaths,selectedValues,data]);
 
   const handleChange = (field, value) => {
     setSelectedValues((prev) => ({ ...prev, [field]: value === "All" ? "" : value }));

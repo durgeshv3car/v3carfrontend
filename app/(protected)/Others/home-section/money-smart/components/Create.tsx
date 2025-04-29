@@ -16,9 +16,7 @@ import {
 } from "@/components/ui/select";
 import { addMoney } from "@/app/(protected)/services/moneySmart/api";
 
-interface FileWithPreview extends File {
-  preview: string;
-}
+import { FileWithPreview } from "../../../components/ImageUpload";
 
 interface CreateModalProps {
   onClose: () => void;
@@ -27,6 +25,10 @@ interface CreateModalProps {
   type: string;
 }
 
+type Category = {
+  id: string;
+  title: string;
+};
 const CreateModal: React.FC<CreateModalProps> = ({
   onClose,
   columnsField,
@@ -50,7 +52,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
       setFormData(initialData);
     }
   }, [columnsField]);
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const buttonsType = [
     { id: "apply_now", name: "Apply Now" },
     { id: "book_now", name: "Book Now" },
@@ -142,7 +144,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
                 {key.toLowerCase() === "category name" ? (
                   <Select
                     onValueChange={(value) =>
-                      onInputChange({ target: { name: key, value } })
+                      setFormData((prev) => ({ ...prev, [key]: value }))
                     }
                   >
                     <SelectTrigger className="w-full">

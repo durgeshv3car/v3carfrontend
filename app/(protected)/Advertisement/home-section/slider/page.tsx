@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { columnsSlider } from "./components/columnsSlider";
 import { fetchSliderImages } from "@/app/(protected)/services/sliders/api";
+import { SliderData } from "./components/columnsSlider";
 
 function Users() {
   const allowed = ["superadmin", "admin"];
@@ -15,12 +16,12 @@ function Users() {
   }
   const router = useRouter();
 
-  const [data, setData] = useState<DataProps[]>([]);
+  const [data, setData] = useState<SliderData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = React.useState(null);
+  const [selectedDate, setSelectedDate] = useState<Date>();
   const [open, setOpen] = React.useState(false);
- 
+
   const type = "slider";
 
   const fetchData = async () => {
@@ -42,17 +43,21 @@ function Users() {
   if (loading) return <p>Loading...</p>;
   return (
     <>
-    
       <div className="space-y-6">
-        
-            <ExampleTwo
-              tableHeading="Slider List"
-              tableData={data}
-              tableColumns={columnsSlider(fetchData, router,setSelectedDate,selectedDate,open,setOpen)}
-              setRefresh={setRefresh}
-              type={type}
-            />
-      
+        <ExampleTwo
+          tableHeading="Slider List"
+          tableData={data}
+          tableColumns={columnsSlider({
+            fetchData,
+            router,
+            setSelectedDate,
+            selectedDate,
+            open,
+            setOpen,
+          })}
+          setRefresh={setRefresh}
+          type={type}
+        />
       </div>
     </>
   );

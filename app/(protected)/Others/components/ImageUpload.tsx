@@ -7,7 +7,17 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useEffect } from "react";
 
-const ImageUpload = ({ files, setFiles }) => {
+export interface FileWithPreview {
+  file: File;
+  preview: string;
+}
+
+interface ImageUploadProps {
+  files: FileWithPreview[];
+  setFiles: (files: FileWithPreview[]) => void;
+}
+
+const ImageUpload = ({ files, setFiles }: ImageUploadProps) => {
   const { getRootProps, getInputProps } = useDropzone({
     multiple: false,
     accept: {
@@ -26,12 +36,12 @@ const ImageUpload = ({ files, setFiles }) => {
   // Cleanup Object URLs to prevent memory leaks
   useEffect(() => {
     return () => {
-      files.forEach((fileObj) => URL.revokeObjectURL(fileObj.preview));
+      files?.forEach((fileObj) => URL.revokeObjectURL(fileObj.preview));
     };
   }, [files]);
 
   const closeTheFile = () => {
-    files.forEach((fileObj) => URL.revokeObjectURL(fileObj.preview));
+    files?.forEach((fileObj) => URL.revokeObjectURL(fileObj.preview));
     setFiles([]);
   };
 
@@ -48,13 +58,15 @@ const ImageUpload = ({ files, setFiles }) => {
               <Icon icon="fa6-solid:xmark" />
             </span>
           </Button>
+       
           <Image
-            key={files[0].file.name}
-            alt={files[0].file.name}
+            key={files[0].file ? files[0].file.name : files[0].preview}
+            alt={files[0].file ? files[0].file.name : "Uploaded Image"}
             width={250}
-            height={150} // Set height equal to parent div
+            height={150}
             className="w-full h-full object-cover rounded-md"
             src={files[0].preview}
+            priority={false}
           />
         </div>
       ) : (

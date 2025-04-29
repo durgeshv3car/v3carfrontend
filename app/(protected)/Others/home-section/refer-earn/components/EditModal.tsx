@@ -9,12 +9,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import { Switch } from "@/components/ui/switch";
 import { updateReferImage } from "@/app/(protected)/services/refer-earns/api";
-
-interface FileWithPreview extends File {
-  preview: string;
-  file?: File; // Added file property
-}
-
+import type { FileWithPreview } from "../../../components/ImageUpload";
 interface TableRow {
   id: string;
   title?: string;
@@ -47,6 +42,12 @@ const EditModal: React.FC<EditModalProps> = ({
       const foundRow = tableData.find((row) => row.id === id) || null;
       setSelectedRow(foundRow);
       setEditedData(foundRow || {});
+      if (foundRow?.mobileUrl) {
+        setMobileFile({ preview: foundRow.mobileUrl } as FileWithPreview);
+      }
+      if (foundRow?.webUrl) {
+        setWebFile({ preview: foundRow.webUrl } as FileWithPreview);
+      }
     }
   }, [id, tableData]);
 
@@ -65,7 +66,8 @@ const EditModal: React.FC<EditModalProps> = ({
  const handleUpdate = async () => {
       if (!id) return;
     
-      const result = await updateReferImage(id, type, editedData, mobileFile?.file, webFile?.file);
+      const result = await updateReferImage(id, type, editedData, mobileFile?.file, webFile?.file, mobileFile?.preview,
+        webFile?.preview);
     
       if (result.success) {
         refreshData();
@@ -107,6 +109,7 @@ const EditModal: React.FC<EditModalProps> = ({
               "updatedAt",
               "type",
               "thumbnail",
+              "deletionDate"
             ].includes(key) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">

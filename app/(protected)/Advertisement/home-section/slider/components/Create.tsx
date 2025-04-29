@@ -7,10 +7,7 @@ import ImageUpload from "../../../components/ImageUpload";
 import { toast } from "sonner";
 import { uploadSliderImage } from "@/app/(protected)/services/sliders/api";
 
-interface FileWithPreview extends File {
-  preview: string;
-}
-
+import type { FileWithPreview } from "../../../components/ImageUpload";
 interface CreateModalProps {
   onClose: () => void;
   columnsField: string[];

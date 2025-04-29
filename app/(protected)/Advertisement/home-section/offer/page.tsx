@@ -5,6 +5,7 @@ import ExampleTwo from "../../HomeTable";
 
 import { notFound } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { RowData } from "./components/columnsRecommend";
 
 import { columnsRecommend } from "./components/columnsRecommend";
 import { fetchOffers } from "@/app/(protected)/services/offers/api";
@@ -17,7 +18,7 @@ function Users() {
   }
   const router = useRouter();
 
-  const [data, setData] = useState<DataProps[]>([]);
+  const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
   const type = "offer";

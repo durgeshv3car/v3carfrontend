@@ -1,12 +1,12 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "@/i18n/routing";
 import { Icon } from "@/components/ui/icon";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
@@ -15,17 +15,16 @@ import { loginUser } from "@/action/auth-action";
 import { toast } from "sonner";
 import { useRouter } from "@/components/navigation";
 
-
 const schema = z.object({
   email: z.string().email({ message: "Your email is invalid." }),
   password: z.string().min(4),
 });
-const LoginForm = ({token}) => {
-  
-  const [isPending, startTransition] = React.useTransition();
 
+const LoginForm = ({ token }) => {
+  const [isPending, startTransition] = React.useTransition();
   const router = useRouter();
   const [passwordType, setPasswordType] = React.useState("password");
+
 
   const togglePasswordType = () => {
     if (passwordType === "text") {
@@ -34,6 +33,7 @@ const LoginForm = ({token}) => {
       setPasswordType("text");
     }
   };
+
   const {
     register,
     handleSubmit,
@@ -47,16 +47,20 @@ const LoginForm = ({token}) => {
       password: '',
     },
   });
-  const [isVisible, setIsVisible] = React.useState(false);
 
-  const toggleVisibility = () => setIsVisible(!isVisible);
+  useEffect(() => {
+    if (token) {
+      router.push("/dashboard");
+    }
+  }, [token, router]);
 
-  const onSubmit = (data: z.infer<typeof schema>) => {
-    
+  if (token) return null;
+
+  const onSubmit = (data) => {
     startTransition(async () => {
       try {
         const response = await loginUser(data);
-        console.log(response,"loginData");
+        console.log(response, "loginData");
        
         if (!!response.error) {
           toast("Event has been created", {
@@ -66,23 +70,17 @@ const LoginForm = ({token}) => {
           router.push("/dashboard");
           toast.success("Successfully logged in");
         }
-      } catch (err: any) {
+      } catch (err) {
         toast.error(err.message);
       }
     });
   };
 
-  if (token){
-    router.push("/dashboard")
-    return
-  }
-
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="mt-5 2xl:mt-7 space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="email" className=" font-medium text-default-600">
-          email{" "}
+        <Label htmlFor="email" className="font-medium text-default-600">
+          Email{" "}
         </Label>
         <Input
           size="lg"
@@ -91,12 +89,12 @@ const LoginForm = ({token}) => {
           type="email"
           id="email"
           className={cn("", {
-            "border-destructive ": errors.email,
+            "border-destructive": errors.email,
           })}
         />
       </div>
       {errors.email && (
-        <div className=" text-destructive mt-2 text-sm">
+        <div className="text-destructive mt-2 text-sm">
           {errors.email.message}
         </div>
       )}
@@ -112,7 +110,7 @@ const LoginForm = ({token}) => {
             {...register("password")}
             type={passwordType}
             id="password"
-            className="peer  "
+            className="peer"
             placeholder=" "
           />
 
@@ -132,7 +130,7 @@ const LoginForm = ({token}) => {
         </div>
       </div>
       {errors.password && (
-        <div className=" text-destructive mt-2 text-sm">
+        <div className="text-destructive mt-2 text-sm">
           {errors.password.message}
         </div>
       )}
@@ -156,4 +154,5 @@ const LoginForm = ({token}) => {
     </form>
   );
 };
+
 export default LoginForm;

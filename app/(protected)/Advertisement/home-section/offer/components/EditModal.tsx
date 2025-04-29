@@ -18,10 +18,7 @@ import {
 } from "@/components/ui/select";
 import TextEditor from "../components/SunEditor";
 
-interface FileWithPreview extends File {
-  preview: string;
-  file?: File; // Added file property
-}
+import type { FileWithPreview } from "../../../components/ImageUpload";
 
 interface TableRow {
   id: string;
@@ -36,6 +33,10 @@ interface EditModalProps {
   tableData: TableRow[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
+type Category = {
+  id: string;
+  title: string;
+};
 
 const EditModal: React.FC<EditModalProps> = ({
   id,
@@ -53,7 +54,7 @@ const EditModal: React.FC<EditModalProps> = ({
     null
   );
  
-  const [categories, setCategories] = useState([]);
+ const [categories, setCategories] = useState<Category[]>([]);
 
   const buttonsType = [
     { id: "apply_now", name: "Apply Now" },
@@ -89,6 +90,20 @@ const EditModal: React.FC<EditModalProps> = ({
       const foundRow = tableData.find((row) => row.id === id) || null;
       setSelectedRow(foundRow);
       setEditedData(foundRow || {});
+      const mobileUrl = foundRow?.offerImage?.mobile 
+      console.log(mobileUrl, "mobileUrl")      
+      if (foundRow?.offerImage?.mobile) {
+        setMobileFile({ preview: foundRow.offerImage.mobile } as FileWithPreview);
+      }
+      if (foundRow?.offerImage?.web) {
+        setWebFile({ preview: foundRow.offerImage.web } as FileWithPreview);
+      }
+      if (foundRow?.brandLogo?.logo) {
+        setBrandLogoFile({ preview: foundRow.brandLogo.logo } as FileWithPreview);
+      }
+      if (foundRow?.offerBanner?.banner) {
+        setBannerFile({ preview: foundRow.offerBanner.banner } as FileWithPreview);
+      }
     }
   }, [id, tableData]);
 
@@ -113,7 +128,11 @@ const EditModal: React.FC<EditModalProps> = ({
       mobileFile?.file,
       webFile?.file,
       bannerFile?.file,
-      brandLogoFile?.file
+      brandLogoFile?.file,
+      mobileFile?.preview,
+      webFile?.preview,
+      bannerFile?.preview,
+      brandLogoFile?.preview
 
     );
 

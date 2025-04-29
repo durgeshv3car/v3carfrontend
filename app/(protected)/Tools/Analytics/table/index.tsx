@@ -102,7 +102,7 @@ const ExampleTwo = ({
       .getSelectedRowModel()
       .rows.map((row) => row.original);
     setSelectedRowsData(selectedData);
-  }, [rowSelection]);
+  }, [table,rowSelection]);
 
   const handleRemoveFilter = (key) => {
     setSelectedValues((prev) => ({ ...prev, [key]: "" }));

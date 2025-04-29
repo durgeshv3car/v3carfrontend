@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { toggleHomeStatus } from "@/app/(protected)/services/offers/api"; 
 
-const HomeToggleCell = ({ row,setRefresh }: { row: any }) => {
+const HomeToggleCell = ({ row,setRefresh }: { row: any,setRefresh: React.Dispatch<React.SetStateAction<boolean>>   }) => {
   const [isActive, setIsActive] = React.useState(row.original.isHome);
 
   const handleToggle = async (value: boolean) => {

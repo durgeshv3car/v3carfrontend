@@ -27,7 +27,7 @@ const DashCodeHeader = async() => {
     <HeaderContent>
       <div className="flex gap-3 items-center">
         <HeaderLogo />
-        {/* <SidebarToggle /> */}
+        <SidebarToggle />
         <HeaderGreet admin={name} />
        
       </div>

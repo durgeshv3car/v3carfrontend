@@ -1,32 +1,42 @@
 import dynamic from "next/dynamic";
-
 import { auth } from "@/lib/auth";
 import { redirect } from "@/components/navigation";
-import ThemeCustomize from "@/components/partials/customizer";
+import { Suspense } from "react";
 
-// Dynamically imported components
+// Pre-load critical components
+// const ThemeCustomize = dynamic(() => import("@/components/partials/customizer"), {
+//   ssr: true, // Enable SSR for critical UI components
+//   loading: () => null, // Minimize loading placeholders for critical UI
+// });
+
+// Optimize loading states with lightweight placeholders
+const LoadingPlaceholder = ({ text = "Loading..." }) => (
+  <div className="animate-pulse bg-gray-100 dark:bg-slate-800 rounded-md h-12 flex items-center justify-center">
+    <span className="text-gray-500 text-sm">{text}</span>
+  </div>
+);
+
 const DashCodeSidebar = dynamic(() => import("@/components/partials/sidebar"), {
-  ssr: false, // set to true if you want server-side rendering
-  loading: () => <div>Loading Sidebar...</div>,
+
+  loading: () => <LoadingPlaceholder text="Loading Sidebar" />,
 });
+
 const LayoutProvider = dynamic(() => import("@/providers/layout.provider"), {
-  ssr: false, // set to true if you want server-side rendering
-  loading: () => <div>Loading Sidebar...</div>,
+  ssr: true,
+  loading: () => null,
 });
+
 const LayoutContentProvider = dynamic(
   () => import("@/providers/content.provider"),
   {
-    ssr: false, // set to true if you want server-side rendering
-    loading: () => <div>Loading Sidebar...</div>,
+    ssr: true,
+    loading: () => null,
   }
 );
+
 const DashCodeHeader = dynamic(() => import("@/components/partials/header"), {
-  ssr: false,
-  loading: () => <div>Loading Header...</div>,
-});
-const DashCodeFooter = dynamic(() => import("@/components/partials/footer"), {
-  ssr: false,
-  loading: () => <div>Loading Footer...</div>,
+
+  loading: () => <LoadingPlaceholder text="Loading Header" />,
 });
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
@@ -38,11 +48,23 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <LayoutProvider>
-      <ThemeCustomize />
-      <DashCodeHeader />
-      <DashCodeSidebar />
-      <LayoutContentProvider>{children}</LayoutContentProvider>
-      <DashCodeFooter />
+      <Suspense fallback={<LoadingPlaceholder text="Loading Header" />}>
+        <DashCodeHeader />
+      </Suspense>
+      <Suspense fallback={<LoadingPlaceholder text="Loading Sidebar" />}>
+        <DashCodeSidebar />
+      </Suspense>
+      <LayoutContentProvider>
+        <Suspense
+          fallback={
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="animate-pulse">Loading content...</div>
+            </div>
+          }
+        >
+          {children}
+        </Suspense>
+      </LayoutContentProvider>
     </LayoutProvider>
   );
 };

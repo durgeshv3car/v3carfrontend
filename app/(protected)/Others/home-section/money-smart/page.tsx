@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 
 import { columnsMoney } from "./components/columnsMoney";
 import { fetchMoney } from "@/app/(protected)/services/moneySmart/api";
-
+import { SliderData } from "./components/columnsMoney";
 function Users() {
   const allowed = ["superadmin", "admin"];
   const role = "admin";
@@ -17,10 +17,10 @@ function Users() {
   }
   const router = useRouter();
 
-  const [data, setData] = useState<DataProps[]>([]);
+  const [data, setData] = useState<SliderData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = React.useState(null);
+  const [selectedDate, setSelectedDate] =useState<Date>();
   const [open, setOpen] = React.useState(false);
   const type = "money";
 
@@ -47,17 +47,17 @@ function Users() {
   return (
     <>
       <div className="space-y-6">
-        <ExampleTwo
+        <ExampleTwo<SliderData>
           tableHeading="Money List"
           tableData={data}
-          tableColumns={columnsMoney(
+          tableColumns={columnsMoney({
             fetchData,
             router,
             setSelectedDate,
             selectedDate,
             open,
             setOpen
-          )}
+          })}
           setRefresh={setRefresh}
           type={type}
         />

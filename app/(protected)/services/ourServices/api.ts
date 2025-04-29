@@ -24,6 +24,8 @@ export const updateService = async (
   editedData: any,
   mobileFile?: File,
   webFile?: File,
+  mobileUrl?: string | null,
+  webUrl?: string | null
 ) => {
   if (!id) return { success: false, message: "ID is required" };
 
@@ -31,6 +33,8 @@ export const updateService = async (
     const formDataSend = new FormData();
     formDataSend.append("id", id);
     formDataSend.append("type", type);
+    if (!mobileUrl) formDataSend.append("mobileUrl", "empty");
+    if (!webUrl) formDataSend.append("webUrl","empty");
 
     if (editedData.title) formDataSend.append("title", editedData.title);
     if (editedData.description)

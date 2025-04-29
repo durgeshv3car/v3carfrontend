@@ -4,15 +4,10 @@ import dynamic from "next/dynamic";
 import Copyright from "@/components/partials/auth/copyright";
 import Logo from "@/components/partials/auth/logo";
 import { auth } from "@/lib/auth";
+import LoginForm from "@/components/partials/auth/login-form";
 
-const LoginForm = dynamic(() => import("@/components/partials/auth/login-form"), {
-  ssr: false,
-});
-const Login = async ({
-  params: { locale },
-}: {
-  params: { locale: string };
-}) => {
+
+const Login = async () => {
   const session = await auth();
   let token = "";
 
