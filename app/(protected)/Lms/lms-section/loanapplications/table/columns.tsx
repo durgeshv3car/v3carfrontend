@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef,Row } from "@tanstack/react-table";
 import { Eye, SquarePen, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -89,7 +89,7 @@ export const columns: ColumnDef<DataProps>[] = [
   ...fields.map((key) => ({
     accessorKey: key,
     header: key.replace(/([A-Z])/g, " $1").trim(),
-    cell: ({ row }) => <span>{String(row.original[key] ?? "-")}</span>,
+    cell: ({ row }:{row: Row<DataProps>}) => <span>{String(row.original[key] ?? "-")}</span>,
   })),
   {
     id: "actions",

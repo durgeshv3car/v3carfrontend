@@ -18,16 +18,22 @@ import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { jwtDecode } from "jwt-decode";
 
+interface DecodedToken {
+  role: string;
+  email: string;
+  
+}
+
 const ProfileInfo = async () => {
   const session = await auth();
   let role = "";
   let email = "";
 
-  if (session?.user?.token) {
-    const decoded = jwtDecode(session.user.token);
-    role = decoded.role;
-    email= decoded.email;
-  }
+ if (session?.user && 'token' in session.user) {
+     const decoded = jwtDecode<DecodedToken>((session.user as { token: string }).token);
+     email=decoded.email;
+     role = decoded.role;
+   }
 
   return (
     <div className="md:block hidden">

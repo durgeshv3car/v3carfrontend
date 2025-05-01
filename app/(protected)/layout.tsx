@@ -2,6 +2,8 @@ import dynamic from "next/dynamic";
 import { auth } from "@/lib/auth";
 import { redirect } from "@/components/navigation";
 import { Suspense } from "react";
+import "primereact/resources/primereact.css";
+import "primereact/resources/themes/soho-light/theme.css";
 
 // Pre-load critical components
 // const ThemeCustomize = dynamic(() => import("@/components/partials/customizer"), {
@@ -41,8 +43,9 @@ const DashCodeHeader = dynamic(() => import("@/components/partials/header"), {
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
+  console.log("session", session);
 
-  if (!session) {
+  if (!session?.user?.id) { 
     redirect("/");
   }
 

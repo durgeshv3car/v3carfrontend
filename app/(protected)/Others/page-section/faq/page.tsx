@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 import { columnsCategory } from "./components/columnsCategory";
 import { fetchfaq } from "@/app/(protected)/services/faqs/api";
+import type { Category } from "./components/columnsCategory";
 
 function Category() {
   const allowed = ["superadmin", "admin"];
@@ -16,7 +17,7 @@ function Category() {
     notFound();
   }
   const router = useRouter();
-  const [data, setData] = useState<DataProps[]>([]);
+  const [data, setData] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
   const type = "faq";
@@ -45,7 +46,7 @@ function Category() {
   return (
     <>
       <div className="space-y-6">
-        <ExampleTwo
+        <ExampleTwo<Category>
           tableHeading="Faq List"
           tableData={data}
           tableColumns={columnsCategory(fetchData, router)}

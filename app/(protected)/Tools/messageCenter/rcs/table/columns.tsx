@@ -16,16 +16,22 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 
-export type DataProps = {
-  id: string | number;
+export interface DataProps {
+  id: string;
   title: string;
-  description: string;
-  redirectUrl: string;
-  image?: string;
-  mobile: string;
-  firstName: string;
-};
-
+  status?: string;
+  offer?: {
+    category?: string;
+    [key: string]: any;
+  };
+  user?: {
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
 export const columns: ColumnDef<DataProps>[] = [
   {
     id: "serialNumber",
@@ -33,43 +39,37 @@ export const columns: ColumnDef<DataProps>[] = [
     cell: ({ row }) => <span>{row.index + 1}</span>,
     enableSorting: false,
   },
-
-  {
-    accessorKey: "name",
-    header: "Name",
-    cell: ({ row }) => <span>{row.original.user.firstName}</span>,
-  },
-  {
-    accessorKey: "mobile",
-    header: "Mobile",
-    cell: ({ row }) => <span>{row.original.user.phoneNumber}</span>,
-  },
   {
     accessorKey: "title",
     header: "Title",
-    cell: ({ row }) => <span>{row.original.offer.title}</span>,
+    cell: ({ row }) => <span>{row.original.title}</span>,
   },
   {
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => (
-      <span className="line-clamp-2">{row.original.offer.description}</span>
+      <span className="line-clamp-2">{row.original.body || "No description"}</span>
     ),
   },
   {
-    accessorKey: "from",
-    header: "From",
-    cell: ({ row }) => (
-      <span className="line-clamp-2">{row.original.type}</span>
-    ),
+    accessorKey: "redirectUrl",
+    header: "Redirect URL",
+    cell: ({ row }) => {
+      const url = row.original.url;
+      return url ? (
+        <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+          {url}
+        </a>
+      ) : (
+        <span className="text-gray-500">No URL</span>
+      );
+    },
   },
-
   {
     accessorKey: "image",
     header: "Image",
     cell: ({ row }) => {
-      const imageUrl =
-        row.original.offer.offerImage.web || row.original.offer.offerImage.web;
+      const imageUrl = row.original.image;
       return imageUrl ? (
         <Avatar className="w-10 h-10">
           <AvatarImage src={imageUrl} alt="Image" />
@@ -77,16 +77,6 @@ export const columns: ColumnDef<DataProps>[] = [
       ) : (
         <span className="text-gray-500">No Image</span>
       );
-    },
-  },
-  {
-    accessorKey: "clickedAt",
-    header: "Clicked At",
-    cell: ({ row }) => {
-      const dateObj = new Date(row.original.clickedAt);
-      const date = dateObj.toISOString().split("T")[0];
-      const time = dateObj.toISOString().split("T")[1].split(".")[0];
-      return <span className="line-clamp-2">{date+" "+time}</span>;
     },
   },
 ];

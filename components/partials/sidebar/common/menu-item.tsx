@@ -66,7 +66,7 @@ const MenuItem = ({ href, label, icon, active, id, collapsed }: MenuItemProps) =
             >
 
 
-                <Link href={href} onClick={(e) => {
+                <Link href={href} onClick={(e:any) => {
                     e.stopPropagation();
                 }}>
                     {!collapsed && (

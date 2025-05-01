@@ -270,7 +270,7 @@ export function CollapseMenuButton({
                         <React.Fragment key={index}>
                             <MultiCollapseMenuButton
                                 label={label}
-                                active={active}
+                                active={active ?? false}
                                 submenus={subChildren as any}
 
 

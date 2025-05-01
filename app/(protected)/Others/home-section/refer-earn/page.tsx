@@ -28,7 +28,7 @@ function Users() {
   const [data, setData] = useState<LogoData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const [selectedDate, setSelectedDate] = React.useState(null);
+  const [selectedDate, setSelectedDate] = React.useState<Date>();
   const [open, setOpen] = React.useState(false);
   const type = "refer";
 
@@ -54,13 +54,14 @@ function Users() {
         <ExampleTwo<LogoData>
           tableHeading="Refer List"
           tableData={data}
-          tableColumns={columnsRefer(
+          tableColumns={columnsRefer({
             fetchData,
             router,
             setSelectedDate,
             selectedDate,
             open,
             setOpen
+          }
           )}
           setRefresh={setRefresh}
           type={type}

@@ -10,18 +10,22 @@ import HeaderLogo from "./header-logo";
 import { auth } from "@/lib/auth";
 import { jwtDecode } from "jwt-decode";
 import HeaderGreet from "./header-greet";
+interface DecodedToken {
+  username: string;
+  
+}
 
 
 const DashCodeHeader = async() => {
 
    const session = await auth();
-     let name = "";
-    
-      if (session?.user?.token) {
-        const decoded = jwtDecode(session.user.token);
-        name = decoded.username;
-      }
-     
+    let name = "";
+  
+    if (session?.user && 'token' in session.user) {
+      const decoded = jwtDecode<DecodedToken>((session.user as { token: string }).token);
+      
+      name = decoded.username;
+    }
 
   return (
     <HeaderContent>

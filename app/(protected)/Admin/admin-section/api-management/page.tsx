@@ -5,13 +5,12 @@ import { notFound } from "next/navigation";
 import { useRouter } from "@/i18n/routing";
 import dynamic from "next/dynamic";
 import { fetchApis } from "@/app/(protected)/services/apiManagement/api";
+import { Loader2 } from "lucide-react";
 
 // Dynamic imports
 const ExampleTwo = dynamic(() => import("../../adminTable"), {
   ssr: false,
 });
-
-
 
 interface DataProps {
   id: string;
@@ -24,21 +23,21 @@ function Category() {
   if (!allowed.includes(role)) {
     notFound();
   }
-  
+
   const router = useRouter();
   const [data, setData] = useState<DataProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [columns, setColumns] = useState<any>(null);
   const type = "api";
-  
+
   // Fetch columns dynamically
   useEffect(() => {
     const loadColumns = async () => {
       const columnsModule = await import("./components/columnsCategory");
       setColumns(() => columnsModule.columnsCategory(fetchData, router));
     };
-    
+
     loadColumns();
   }, [router]);
 
@@ -58,8 +57,9 @@ function Category() {
     fetchData();
   }, [refresh]);
 
-  if (loading || !columns) return <div>Loading...</div>;
-  
+  if (loading || !columns)
+    return <Loader2 className="me-2 h-4 w-4 animate-spin" />;
+
   return (
     <>
       <div className="space-y-6">
@@ -75,5 +75,4 @@ function Category() {
   );
 }
 
-export default Category
-
+export default Category;

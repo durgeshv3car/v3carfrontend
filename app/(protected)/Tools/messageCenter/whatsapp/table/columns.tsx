@@ -16,14 +16,22 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 
-export type DataProps = {
-  id: string | number;
+export interface DataProps {
+  id: string;
   title: string;
-  description: string;
-  redirectUrl: string;
-  image?: string;
-};
-
+  status?: string;
+  offer?: {
+    category?: string;
+    [key: string]: any;
+  };
+  user?: {
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
 export const columns: ColumnDef<DataProps>[] = [
   {
     id: "serialNumber",
@@ -40,7 +48,7 @@ export const columns: ColumnDef<DataProps>[] = [
     accessorKey: "description",
     header: "Description",
     cell: ({ row }) => (
-      <span className="line-clamp-2">{row.original.body}</span>
+      <span className="line-clamp-2">{row.original.body || "No description"}</span>
     ),
   },
   {
@@ -65,12 +73,10 @@ export const columns: ColumnDef<DataProps>[] = [
       return imageUrl ? (
         <Avatar className="w-10 h-10">
           <AvatarImage src={imageUrl} alt="Image" />
-        
         </Avatar>
       ) : (
         <span className="text-gray-500">No Image</span>
       );
     },
   },
- 
 ];

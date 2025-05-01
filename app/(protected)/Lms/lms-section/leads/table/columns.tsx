@@ -8,11 +8,13 @@ import {
 import { toast } from "sonner";
 import { deleteUser } from "@/app/(protected)/services/users/api";
 
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import { Eye, SquarePen, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Router } from "next/router"; // Import Router type
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 // Define all fields explicitly
 const fields = [
@@ -56,10 +58,17 @@ const fields = [
 
 export type DataProps = {
   [key in (typeof fields)[number]]?: string | number | boolean;
+} & {
+  LoanApplication?: {
+    profession?: string;
+    loanType?: string;
+  };
 };
-
 // Define columns dynamically
-export const columns =(fetchData,router)=> [
+export const columns = (
+  fetchData: () => Promise<void>, 
+  router: AppRouterInstance
+): ColumnDef<DataProps>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -72,7 +81,7 @@ export const columns =(fetchData,router)=> [
         aria-label="Select all"
       />
     ),
-    cell: ({ row }) => (
+    cell: ({ row }: { row: Row<DataProps> }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -90,20 +99,23 @@ export const columns =(fetchData,router)=> [
   ...fields.map((key) => ({
     accessorKey: key,
     header: key.replace(/([A-Z])/g, " $1").trim(),
-    cell: ({ row }) => <span>{String(row.original[key] ?? "-")}</span>,
+    cell: ({ row }: { row: Row<DataProps> }) => <span>{String(row.original[key] ?? "-")}</span>,
   })),
   {
     id: "actions",
     header: "Action",
     enableHiding: false,
     cell: ({ row }) => {
-      const handleDelete = async (id: string) => {
+      const handleDelete = async (id: string | undefined) => {
+        if (!id) {
+          toast.error("Invalid user ID");
+          return;
+        }
         try {
           const result = await deleteUser(id);
           if (result.success) {
             toast.success("User data deleted");
-            fetchData()
-            
+            fetchData();
           } else {
             toast.error("User data not deleted");
           }
@@ -114,8 +126,6 @@ export const columns =(fetchData,router)=> [
 
       return (
         <div className="flex items-center gap-2">
-         
-
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -123,7 +133,9 @@ export const columns =(fetchData,router)=> [
                   variant="outline"
                   size="icon"
                   className="w-7 h-7 text-default-400"
-                  onClick={() => router.push(`/Lms/lms-section/leads/?id=${row.original.id}`)}
+                  onClick={() =>
+                    router.push(`/Lms/lms-section/leads/?id=${row.original.id}`)
+                  }
                 >
                   <SquarePen className="w-3 h-3" />
                 </Button>
@@ -141,7 +153,9 @@ export const columns =(fetchData,router)=> [
                   variant="outline"
                   size="icon"
                   className="w-7 h-7 text-default-400"
-                  onClick={() => handleDelete(row.original.id)}
+                  onClick={() =>
+                    handleDelete(row.original.id as string | undefined)
+                  }
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>

@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 
-function HeaderGreet({ admin }) {
+function HeaderGreet({ admin }: { admin: string }) {
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour >= 5 && hour < 12) {

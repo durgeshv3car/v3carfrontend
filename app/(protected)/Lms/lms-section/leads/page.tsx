@@ -2,30 +2,23 @@
 import React, { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { fetchUsers } from "../../../services/users/api";
-import { ColumnDef } from "@tanstack/react-table"; 
-import { DataProps } from "./table/columns"; 
+import { ColumnDef } from "@tanstack/react-table";
+import { DataProps } from "./table/columns";
 import { useRouter } from "next/navigation";
 
 
 
-interface SelectedValues {
-  city: string[] | null;
-  state: string[] | null;
+export interface SelectedValues {
+  city: (string | { name: string })[] | null;
+  state: (string | { name: string })[] | null;
   pincode: string[] | null;
   dob: string[] | null;
   netMonthlyIncome: string[] | null;
-  loanType: string[] | null;
-  profession: string[] | null;
+  loanType: (string | { name: string })[] | null;
+  profession: (string | { name: string })[] | null;
 }
 
-const ExampleTwo = dynamic<{
-  selectedValues: SelectedValues;
-  setSelectedValues: React.Dispatch<React.SetStateAction<SelectedValues>>;
-  tableData: DataProps[];
-  tableColumns: ColumnDef<DataProps>[];
-  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  allFilterOptions: Record<string, Set<string>>; // Add this prop
-}>(() => import("./table"), {
+const ExampleTwo = dynamic(() => import("./table"), {
   loading: () => <p>Loading table...</p>,
   ssr: false,
 });
@@ -53,10 +46,8 @@ const LeadPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
   const [tableColumns, setTableColumns] = useState<ColumnDef<DataProps>[]>([]);
- 
 
   const router = useRouter();
- 
 
   const fetchData = useCallback(async (): Promise<void> => {
     try {
@@ -73,23 +64,26 @@ const LeadPage: React.FC = () => {
       setLoading(false);
     }
   }, []);
+
   useEffect(() => {
     const loadColumns = async () => {
       try {
-        const columnsModule = await import('./table/columns');
+        const columnsModule = await import("./table/columns");
         setTableColumns(columnsModule.columns(fetchData, router));
       } catch (error) {
         console.error("Error loading columns:", error);
         setTableColumns([]);
       }
     };
-    
+
     loadColumns();
   }, [fetchData, router]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData, refresh]);
+  console.log("data", data)
+
   const [allFilterOptions, setAllFilterOptions] = useState<
     Record<string, Set<string>>
   >({
@@ -100,10 +94,9 @@ const LeadPage: React.FC = () => {
     profession: new Set(),
   });
 
-  // Initialize the filter options when data is first loaded
-
   const calculateAge = (dobStr: string): number => {
     const dob = new Date(dobStr);
+    if (isNaN(dob.getTime())) return 0; // Return 0 for invalid dates
     const today = new Date();
     let age = today.getFullYear() - dob.getFullYear();
     const m = today.getMonth() - dob.getMonth();
@@ -111,6 +104,14 @@ const LeadPage: React.FC = () => {
       age--;
     }
     return age;
+  };
+
+  const getFilterValue = (
+    value: string | { name: string } | null | undefined
+  ): string => {
+    return typeof value === "object" && value?.name
+      ? value.name
+      : String(value || "");
   };
 
   const {
@@ -122,26 +123,37 @@ const LeadPage: React.FC = () => {
     loanTypeData,
     professionData,
     filteredData,
-  } = React.useMemo(() => {
+  } = React.useMemo<{
+    stateData: DataProps[];
+    cityData: DataProps[];
+    pincodeData: DataProps[];
+    dobData: DataProps[];
+    incomeData: DataProps[];
+    loanTypeData: DataProps[];
+    professionData: DataProps[];
+    filteredData: DataProps[];
+  }>(() => {
     const stateData = selectedValues.state?.length
       ? data.filter((user) =>
-          selectedValues.state!.some((state) =>
-            typeof state === "object" && state.name
-              ? user.state?.toLowerCase().includes(state.name.toLowerCase())
-              : typeof state === "string" &&
-                user.state?.toLowerCase().includes(state.toLowerCase())
-          )
+          selectedValues.state!.some((state) => {
+            const stateValue = getFilterValue(state);
+            return (
+              typeof user.state === "string" &&
+              user.state.toLowerCase().includes(stateValue.toLowerCase())
+            );
+          })
         )
       : data;
 
     const cityData = selectedValues.city?.length
       ? data.filter((user) =>
-          selectedValues.city!.some((city) =>
-            typeof city === "object" && city.name
-              ? user.city?.toLowerCase().includes(city.name.toLowerCase())
-              : typeof city === "string" &&
-                user.city?.toLowerCase().includes(city.toLowerCase())
-          )
+          selectedValues.city!.some((city) => {
+            const cityValue = getFilterValue(city);
+            return (
+              typeof user.city === "string" &&
+              user.city.toLowerCase().includes(cityValue.toLowerCase())
+            );
+          })
         )
       : data;
 
@@ -157,7 +169,7 @@ const LeadPage: React.FC = () => {
       ? data.filter((user) =>
           selectedValues.dob!.some((dobFilter) => {
             if (!user.dob) return false;
-            const age = calculateAge(user.dob);
+            const age = calculateAge(String(user.dob));
 
             switch (dobFilter) {
               case "Under 15":
@@ -199,7 +211,7 @@ const LeadPage: React.FC = () => {
     const incomeData = selectedValues.netMonthlyIncome?.length
       ? data.filter((user) =>
           selectedValues.netMonthlyIncome!.some((incomeFilter) => {
-            const income = parseFloat(user.netMonthlyIncome || "");
+            const income = parseFloat((user.netMonthlyIncome as string) || "");
             if (isNaN(income)) return false;
 
             switch (incomeFilter) {
@@ -240,7 +252,7 @@ const LeadPage: React.FC = () => {
     const loanTypeData = selectedValues.loanType?.length
       ? data.filter((user) =>
           selectedValues.loanType!.some((loan) => {
-            const loanValue = typeof loan === "object" ? loan.name : loan;
+            const loanValue = getFilterValue(loan);
             return (
               user?.LoanApplication?.loanType &&
               loanValue &&
@@ -255,14 +267,13 @@ const LeadPage: React.FC = () => {
     const professionData = selectedValues.profession?.length
       ? data.filter((user) =>
           selectedValues.profession!.some((profession) => {
-            const loanValue =
-              typeof profession === "object" ? profession.name : profession;
+            const professionValue = getFilterValue(profession);
             return (
-              user?.LoanApplication?.profession &&
-              loanValue &&
+              typeof user?.LoanApplication?.profession === "string" &&
+              professionValue &&
               user.LoanApplication.profession
                 .toLowerCase()
-                .includes(loanValue.toLowerCase())
+                .includes(professionValue.toLowerCase())
             );
           })
         )
@@ -305,103 +316,148 @@ const LeadPage: React.FC = () => {
       state: new Set<string>(),
       city: new Set<string>(),
       pincode: new Set<string>(),
-      dob: new Set<string>(),         
-      netMonthlyIncome: new Set<string>(), 
+      dob: new Set<string>(),
+      netMonthlyIncome: new Set<string>(),
       loanType: new Set<string>(),
       profession: new Set<string>(),
     };
-    
 
-    const dataForStateFilter = data.filter(user => 
-      (!selectedValues.city?.length || cityData.some(u => u.id === user.id)) &&
-      (!selectedValues.pincode?.length || pincodeData.some(u => u.id === user.id)) &&
-      (!selectedValues.dob?.length || dobData.some(u => u.id === user.id)) &&
-      (!selectedValues.netMonthlyIncome?.length || incomeData.some(u => u.id === user.id)) &&
-      (!selectedValues.loanType?.length || loanTypeData.some(u => u.id === user.id)) &&
-      (!selectedValues.profession?.length || professionData.some(u => u.id === user.id))
+    const dataForStateFilter = data.filter(
+      (user) =>
+        (!selectedValues.city?.length ||
+          cityData.some((u) => u.id === user.id)) &&
+        (!selectedValues.pincode?.length ||
+          pincodeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.dob?.length ||
+          dobData.some((u) => u.id === user.id)) &&
+        (!selectedValues.netMonthlyIncome?.length ||
+          incomeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.loanType?.length ||
+          loanTypeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.profession?.length ||
+          professionData.some((u) => u.id === user.id))
     );
-    
+
     // For cities, use data filtered by all except city filter
-    const dataForCityFilter = data.filter(user => 
-      (!selectedValues.state?.length || stateData.some(u => u.id === user.id)) &&
-      (!selectedValues.pincode?.length || pincodeData.some(u => u.id === user.id)) &&
-      (!selectedValues.dob?.length || dobData.some(u => u.id === user.id)) &&
-      (!selectedValues.netMonthlyIncome?.length || incomeData.some(u => u.id === user.id)) &&
-      (!selectedValues.loanType?.length || loanTypeData.some(u => u.id === user.id)) &&
-      (!selectedValues.profession?.length || professionData.some(u => u.id === user.id))
+    const dataForCityFilter = data.filter(
+      (user) =>
+        (!selectedValues.state?.length ||
+          stateData.some((u) => u.id === user.id)) &&
+        (!selectedValues.pincode?.length ||
+          pincodeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.dob?.length ||
+          dobData.some((u) => u.id === user.id)) &&
+        (!selectedValues.netMonthlyIncome?.length ||
+          incomeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.loanType?.length ||
+          loanTypeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.profession?.length ||
+          professionData.some((u) => u.id === user.id))
     );
-    
+
     // For pincodes, use data filtered by all except pincode filter
-    const dataForPincodeFilter = data.filter(user => 
-      (!selectedValues.state?.length || stateData.some(u => u.id === user.id)) &&
-      (!selectedValues.city?.length || cityData.some(u => u.id === user.id)) &&
-      (!selectedValues.dob?.length || dobData.some(u => u.id === user.id)) &&
-      (!selectedValues.netMonthlyIncome?.length || incomeData.some(u => u.id === user.id)) &&
-      (!selectedValues.loanType?.length || loanTypeData.some(u => u.id === user.id)) &&
-      (!selectedValues.profession?.length || professionData.some(u => u.id === user.id))
+    const dataForPincodeFilter = data.filter(
+      (user) =>
+        (!selectedValues.state?.length ||
+          stateData.some((u) => u.id === user.id)) &&
+        (!selectedValues.city?.length ||
+          cityData.some((u) => u.id === user.id)) &&
+        (!selectedValues.dob?.length ||
+          dobData.some((u) => u.id === user.id)) &&
+        (!selectedValues.netMonthlyIncome?.length ||
+          incomeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.loanType?.length ||
+          loanTypeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.profession?.length ||
+          professionData.some((u) => u.id === user.id))
     );
-    
+
     // For DOB ranges, use data filtered by all except dob filter
-    const dataForDobFilter = data.filter(user => 
-      (!selectedValues.state?.length || stateData.some(u => u.id === user.id)) &&
-      (!selectedValues.city?.length || cityData.some(u => u.id === user.id)) &&
-      (!selectedValues.pincode?.length || pincodeData.some(u => u.id === user.id)) &&
-      (!selectedValues.netMonthlyIncome?.length || incomeData.some(u => u.id === user.id)) &&
-      (!selectedValues.loanType?.length || loanTypeData.some(u => u.id === user.id)) &&
-      (!selectedValues.profession?.length || professionData.some(u => u.id === user.id))
+    const dataForDobFilter = data.filter(
+      (user) =>
+        (!selectedValues.state?.length ||
+          stateData.some((u) => u.id === user.id)) &&
+        (!selectedValues.city?.length ||
+          cityData.some((u) => u.id === user.id)) &&
+        (!selectedValues.pincode?.length ||
+          pincodeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.netMonthlyIncome?.length ||
+          incomeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.loanType?.length ||
+          loanTypeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.profession?.length ||
+          professionData.some((u) => u.id === user.id))
     );
-    
+
     // For income ranges, use data filtered by all except income filter
-    const dataForIncomeFilter = data.filter(user => 
-      (!selectedValues.state?.length || stateData.some(u => u.id === user.id)) &&
-      (!selectedValues.city?.length || cityData.some(u => u.id === user.id)) &&
-      (!selectedValues.pincode?.length || pincodeData.some(u => u.id === user.id)) &&
-      (!selectedValues.dob?.length || dobData.some(u => u.id === user.id)) &&
-      (!selectedValues.loanType?.length || loanTypeData.some(u => u.id === user.id)) &&
-      (!selectedValues.profession?.length || professionData.some(u => u.id === user.id))
+    const dataForIncomeFilter = data.filter(
+      (user) =>
+        (!selectedValues.state?.length ||
+          stateData.some((u) => u.id === user.id)) &&
+        (!selectedValues.city?.length ||
+          cityData.some((u) => u.id === user.id)) &&
+        (!selectedValues.pincode?.length ||
+          pincodeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.dob?.length ||
+          dobData.some((u) => u.id === user.id)) &&
+        (!selectedValues.loanType?.length ||
+          loanTypeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.profession?.length ||
+          professionData.some((u) => u.id === user.id))
     );
-    
+
     // For loan types, use data filtered by all except loan type filter
-    const dataForLoanTypeFilter = data.filter(user => 
-      (!selectedValues.state?.length || stateData.some(u => u.id === user.id)) &&
-      (!selectedValues.city?.length || cityData.some(u => u.id === user.id)) &&
-      (!selectedValues.pincode?.length || pincodeData.some(u => u.id === user.id)) &&
-      (!selectedValues.dob?.length || dobData.some(u => u.id === user.id)) &&
-      (!selectedValues.netMonthlyIncome?.length || incomeData.some(u => u.id === user.id)) &&
-      (!selectedValues.profession?.length || professionData.some(u => u.id === user.id))
+    const dataForLoanTypeFilter = data.filter(
+      (user) =>
+        (!selectedValues.state?.length ||
+          stateData.some((u) => u.id === user.id)) &&
+        (!selectedValues.city?.length ||
+          cityData.some((u) => u.id === user.id)) &&
+        (!selectedValues.pincode?.length ||
+          pincodeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.dob?.length ||
+          dobData.some((u) => u.id === user.id)) &&
+        (!selectedValues.netMonthlyIncome?.length ||
+          incomeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.profession?.length ||
+          professionData.some((u) => u.id === user.id))
     );
-    
+
     // For professions, use data filtered by all except profession filter
-    const dataForProfessionFilter = data.filter(user => 
-      (!selectedValues.state?.length || stateData.some(u => u.id === user.id)) &&
-      (!selectedValues.city?.length || cityData.some(u => u.id === user.id)) &&
-      (!selectedValues.pincode?.length || pincodeData.some(u => u.id === user.id)) &&
-      (!selectedValues.dob?.length || dobData.some(u => u.id === user.id)) &&
-      (!selectedValues.netMonthlyIncome?.length || incomeData.some(u => u.id === user.id)) &&
-      (!selectedValues.loanType?.length || loanTypeData.some(u => u.id === user.id))
+    const dataForProfessionFilter = data.filter(
+      (user) =>
+        (!selectedValues.state?.length ||
+          stateData.some((u) => u.id === user.id)) &&
+        (!selectedValues.city?.length ||
+          cityData.some((u) => u.id === user.id)) &&
+        (!selectedValues.pincode?.length ||
+          pincodeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.dob?.length ||
+          dobData.some((u) => u.id === user.id)) &&
+        (!selectedValues.netMonthlyIncome?.length ||
+          incomeData.some((u) => u.id === user.id)) &&
+        (!selectedValues.loanType?.length ||
+          loanTypeData.some((u) => u.id === user.id))
     );
-    
- 
-    dataForStateFilter.forEach(user => {
-      if (user.state) options.state.add(user.state);
+
+    dataForStateFilter.forEach((user) => {
+      if (user.state) options.state.add(String(user.state));
     });
-    
-    dataForCityFilter.forEach(user => {
-      if (user.city) options.city.add(user.city);
+
+    dataForCityFilter.forEach((user) => {
+      if (user.city) options.city.add(String(user.city));
     });
-    
-    dataForPincodeFilter.forEach(user => {
-      if (user.pinCode) options.pincode.add(user.pinCode);
+
+    dataForPincodeFilter.forEach((user) => {
+      if (user.pinCode) options.pincode.add(String(user.pinCode));
     });
-    
-    
+
     if (dataForDobFilter.length > 0) {
-    
-      dataForDobFilter.forEach(user => {
+      dataForDobFilter.forEach((user) => {
         if (!user.dob) return;
-        
-        const age = calculateAge(user.dob);
-        
+
+        const age = calculateAge(String(user.dob));
+
         if (age < 15) options.dob.add("Under 15");
         else if (age >= 15 && age <= 18) options.dob.add("15-18");
         else if (age >= 18 && age <= 21) options.dob.add("18-21");
@@ -414,68 +470,73 @@ const LeadPage: React.FC = () => {
         else if (age >= 51 && age <= 60) options.dob.add("51-60");
         else if (age > 60) options.dob.add("60+");
       });
-      
-    
+
       options.dob.add("Custom");
-      
     }
-    
 
     if (dataForIncomeFilter.length > 0) {
-    
-      
-      dataForIncomeFilter.forEach(user => {
-        const income = parseFloat(user.netMonthlyIncome || "");
+      dataForIncomeFilter.forEach((user) => {
+        const income = parseFloat((user.netMonthlyIncome as string) || "");
         if (isNaN(income)) return;
-        
+
         if (income < 15000) options.netMonthlyIncome.add("Under 15000");
-        else if (income >= 15001 && income <= 20000) options.netMonthlyIncome.add("15001-20000");
-        else if (income >= 20001 && income <= 25000) options.netMonthlyIncome.add("20001-25000");
-        else if (income >= 25001 && income <= 35000) options.netMonthlyIncome.add("25001-35000");
-        else if (income >= 35001 && income <= 50000) options.netMonthlyIncome.add("35001-50000");
-        else if (income >= 50001 && income <= 75000) options.netMonthlyIncome.add("50001-75000");
-        else if (income >= 75001 && income <= 100000) options.netMonthlyIncome.add("75001-100000");
-        else if (income >= 100001 && income <= 150000) options.netMonthlyIncome.add("100001-150000");
-        else if (income >= 150001 && income <= 200000) options.netMonthlyIncome.add("150001-200000");
+        else if (income >= 15001 && income <= 20000)
+          options.netMonthlyIncome.add("15001-20000");
+        else if (income >= 20001 && income <= 25000)
+          options.netMonthlyIncome.add("20001-25000");
+        else if (income >= 25001 && income <= 35000)
+          options.netMonthlyIncome.add("25001-35000");
+        else if (income >= 35001 && income <= 50000)
+          options.netMonthlyIncome.add("35001-50000");
+        else if (income >= 50001 && income <= 75000)
+          options.netMonthlyIncome.add("50001-75000");
+        else if (income >= 75001 && income <= 100000)
+          options.netMonthlyIncome.add("75001-100000");
+        else if (income >= 100001 && income <= 150000)
+          options.netMonthlyIncome.add("100001-150000");
+        else if (income >= 150001 && income <= 200000)
+          options.netMonthlyIncome.add("150001-200000");
         else if (income > 200000) options.netMonthlyIncome.add("2lac+");
       });
-      
 
       options.netMonthlyIncome.add("Custom");
-      
     }
-    
-    dataForLoanTypeFilter.forEach(user => {
-      if (user?.LoanApplication?.loanType && user.LoanApplication.loanType !== "null") {
+
+    dataForLoanTypeFilter.forEach((user) => {
+      if (
+        user?.LoanApplication?.loanType &&
+        user.LoanApplication.loanType !== "null"
+      ) {
         options.loanType.add(user.LoanApplication.loanType);
       }
     });
-    
-    dataForProfessionFilter.forEach(user => {
-      if (user?.LoanApplication?.profession && user.LoanApplication.profession !== "null") {
+
+    dataForProfessionFilter.forEach((user) => {
+      if (
+        user?.LoanApplication?.profession &&
+        user.LoanApplication.profession !== "null"
+      ) {
         options.profession.add(user.LoanApplication.profession);
       }
     });
-    
+
     setAllFilterOptions(options);
   }, [
-    data, 
-    selectedValues, 
-    stateData, 
-    cityData, 
-    pincodeData, 
-    dobData, 
-    incomeData, 
-    loanTypeData, 
+    data,
+    selectedValues,
+    stateData,
+    cityData,
+    pincodeData,
+    dobData,
+    incomeData,
+    loanTypeData,
     professionData,
-    
   ]);
 
   if (loading) return <p className="p-4 text-gray-600">Loading users...</p>;
 
   return (
     <div>
-      
       <ExampleTwo
         selectedValues={selectedValues}
         setSelectedValues={setSelectedValues}

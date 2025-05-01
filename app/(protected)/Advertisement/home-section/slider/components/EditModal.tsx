@@ -138,7 +138,7 @@ const EditModal: React.FC<EditModalProps> = ({
                     files={webFile ? [webFile] : []}
                     setFiles={(files) => setWebFile(files[0] || null)}
                   />
-                ) : key.toLowerCase() === "isActive" ? (
+                ) : key.toLowerCase() === "active" ? (
                   <Switch
                     checked={Boolean(editedData[key])}
                     onCheckedChange={(value) =>

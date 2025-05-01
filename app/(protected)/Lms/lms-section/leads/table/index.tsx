@@ -71,15 +71,28 @@ const TablePagination = dynamic(() => import("./table-pagination"), {
 });
 
 import { useSearchParams } from "next/navigation";
+import { ColumnDef } from "@tanstack/react-table";
 
-const ExampleTwo = ({
+import { SelectedValues } from "../page";
+import { DataProps } from "./columns";
+
+interface ExampleTwoProps {
+  selectedValues: SelectedValues;
+  setSelectedValues: React.Dispatch<React.SetStateAction<SelectedValues>>;
+  tableData: DataProps[];
+  tableColumns: ColumnDef<DataProps, any>[];
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  allFilterOptions: Record<string, any>;
+}
+
+const ExampleTwo = <TData extends Record<string, any>>({
   selectedValues,
   setSelectedValues,
   tableData,
   tableColumns,
   setRefresh,
   allFilterOptions,
-}) => {
+}: ExampleTwoProps) => {
   const searchParams = useSearchParams();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -90,18 +103,21 @@ const ExampleTwo = ({
   const [selectedColumn, setSelectedColumn] = React.useState<
     string | undefined
   >();
-  const [rowSelection, setRowSelection] = React.useState({});
+  
   const [isModalOpenOffer, setIsModalOpenOffer] = React.useState(false);
   const [pageSize, setPageSize] = React.useState(20); // Default to 20 rows per page
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [selectedOffer, setSelectedOffer] = React.useState(null);
+  const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({});
+  const [selectedRowsData, setSelectedRowsData] = React.useState<DataProps[]>([]);
+  const [type, setType] = React.useState<string | null>(null);
+  const [selectedOffer, setSelectedOffer] = React.useState<any>(null);
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: 0,
     pageSize,
   });
 
   const leadId = searchParams?.get("id") || "";
-  const [selectedRowsData, setSelectedRowsData] = React.useState([]);
+
   const [isCreatingNotification, setIsCreatingNotification] =
     React.useState(false);
   React.useEffect(() => {
@@ -110,7 +126,6 @@ const ExampleTwo = ({
 
   const closeModal = () => setIsModalOpen(false);
 
-  const [type, setType] = React.useState(null);
   const table = useReactTable({
     data: tableData,
     columns: tableColumns,
@@ -131,30 +146,32 @@ const ExampleTwo = ({
       pagination,
     },
   });
+  
   React.useEffect(() => {
     const selectedData = table
       .getSelectedRowModel()
       .rows.map((row) => row.original);
     setSelectedRowsData(selectedData);
-  }, [table,rowSelection]);
+  }, [table, rowSelection]);
 
   React.useEffect(() => {
     const creatingNotification = searchParams?.get("createnotification");
-    setType(searchParams?.get("type"));
+    setType(searchParams?.get("type") as string);
 
     if (creatingNotification === "true") {
       console.log("creatingNotification detected");
       setIsCreatingNotification(true);
     }
   }, [searchParams]);
-  const handleRemoveFilter = (key) => {
+  
+  const handleRemoveFilter = (key: string) => {
     setSelectedValues((prev) => ({ ...prev, [key]: "" }));
   };
 
   return (
     <div className="w-full">
       {/* Header & Filter Section */}
-      <div className="py-4 px-5 mb-6 bg-white rounded-md">
+      <div className="py-4 px-5 mb-6 bg-card text-card-foreground rounded-md">
         <React.Suspense fallback={<div>Loading...</div>}>
           <Filter
             selectedValues={selectedValues}
@@ -226,17 +243,6 @@ const ExampleTwo = ({
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Input for Filtering */}
-            {/* <Input
-            placeholder="Filter Status..."
-            value={
-              (table.getColumn("status")?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) =>
-              table.getColumn("status")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          /> */}
             <React.Suspense fallback={<div>Loading...</div>}>
               {isCreatingNotification && (
                 <button
@@ -349,7 +355,7 @@ const ExampleTwo = ({
       <React.Suspense fallback={<div>Loading...</div>}>
         {isModalOpen && (
           <EditModal
-            id={leadId as string}
+            id={leadId}
             onClose={closeModal}
             tableData={tableData}
             setRefresh={setRefresh}

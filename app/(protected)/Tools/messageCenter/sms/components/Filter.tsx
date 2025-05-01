@@ -5,20 +5,28 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Command, CommandList, CommandInput, CommandItem } from "@/components/ui/command";
 import { Check, ChevronsUpDown } from "lucide-react";
+import { SelectedValues } from "../page";
+import { DataProps } from "../table/columns";
 
-export default function Filter({ selectedValues, setSelectedValues, data }) {
-  const [categories, setCategories] = React.useState([]);
-  const [titles, setTitles] = React.useState([]);
-  const [users, setUsers] = React.useState([]);
-  const [numbers, setNumbers] = React.useState([]);
-  const [openFilter, setOpenFilter] = React.useState(null);
+interface FilterProps {
+  selectedValues: SelectedValues
+  setSelectedValues: React.Dispatch<React.SetStateAction<SelectedValues>>;
+  data: DataProps[];
+}
+
+export default function Filter({ selectedValues, setSelectedValues, data }: FilterProps) {
+  const [categories, setCategories] = React.useState<string[]>([]);
+  const [titles, setTitles] = React.useState<string[]>([]);
+  const [users, setUsers] = React.useState<string[]>([]);
+  const [numbers, setNumbers] = React.useState<string[]>([]);
+  const [openFilter, setOpenFilter] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (data.length > 0) {
-      const uniqueCategories = Array.from(new Set(data.map(item => item.offer.category))).sort();
+      const uniqueCategories = Array.from(new Set(data.map(item => item.offer?.category || ""))).sort();
       const uniqueTitles = Array.from(new Set(data.map(item => item.title))).sort();
-      const uniqueNumbers = Array.from(new Set(data.map(item => item.user.phoneNumber))).sort();
-      const uniqueNames = Array.from(new Set(data.map(item => item.user.firstName))).sort();
+      const uniqueNumbers = Array.from(new Set(data.map(item => item.user?.phoneNumber || ""))).sort();
+      const uniqueNames = Array.from(new Set(data.map(item => item.user?.firstName || ""))).sort();
 
       setCategories(["All", ...uniqueCategories]);
       setTitles(["All", ...uniqueTitles]);
@@ -27,17 +35,17 @@ export default function Filter({ selectedValues, setSelectedValues, data }) {
     }
   }, [data]);
 
-  const handleChange = (field, value) => {
+  const handleChange = (field: string, value: string) => {
     setSelectedValues((prev) => ({ ...prev, [field]: value === "All" ? "" : value }));
     setOpenFilter(null); // Close popover after selecting a value
   };
 
-  const handleOpenChange = (field, isOpen) => {
+  const handleOpenChange = (field: string, isOpen: boolean) => {
     setOpenFilter(isOpen ? field : null);
   };
 
-  const fields = ["categories", "titles", "users", "numbers"];
-  const options = { categories, titles, users, numbers };
+  const fields: (keyof SelectedValues)[] = ["category", "title", "user", "phone"];
+  const options: { [key: string]: string[] } = { categories, titles, users, numbers };
 
   return (
     <div className="flex flex-wrap gap-4">
@@ -45,13 +53,13 @@ export default function Filter({ selectedValues, setSelectedValues, data }) {
         <Popover key={field} open={openFilter === field} onOpenChange={(isOpen) => handleOpenChange(field, isOpen)}>
           <PopoverTrigger asChild>
             <Button variant="outline" className="w-[200px] justify-between">
-              {selectedValues[field] || `Select ${field}`}
+              {selectedValues[field as keyof SelectedValues] || `Select ${field}`}
               <ChevronsUpDown className="opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[200px] p-0">
             <Command>
-              {options[field] ? (
+              {options[field]?.length ? (
                 <CommandList>
                   {options[field].map((option) => (
                     <CommandItem key={option} onSelect={() => handleChange(field, option)}>
@@ -63,7 +71,7 @@ export default function Filter({ selectedValues, setSelectedValues, data }) {
               ) : (
                 <CommandInput
                   placeholder={`Enter ${field}...`}
-                  onChange={(e) => handleChange(field, e.target.value)}
+                  onValueChange={(value) => handleChange(field, value)}
                 />
               )}
             </Command>

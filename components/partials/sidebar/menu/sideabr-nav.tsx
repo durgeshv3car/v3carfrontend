@@ -74,7 +74,7 @@ const SidebarNav = ({ menuList }: { menuList: Group[] }) => {
                       <CollapseMenuButton2
                         icon={icon}
                         label={label}
-                        active={active}
+                        active={active ?? false}
                         submenus={subChildren}
                       />
                     )}

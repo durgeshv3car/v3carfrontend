@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { MultiSelect } from "primereact/multiselect";
 import { InputNumber } from "primereact/inputnumber";
-import "primereact/resources/primereact.css";
-import "primereact/resources/themes/soho-light/theme.css";
+import { SelectedValues } from "../page"; 
+import { DataProps } from "../table/columns"; 
 
 interface FilterProps {
-  selectedValues: Record<string, string[]>;
-  setSelectedValues: React.Dispatch<
-    React.SetStateAction<Record<string, string[]>>
-  >;
-  data: Array<Record<string, any>>;
+  selectedValues: SelectedValues;
+  setSelectedValues: React.Dispatch<React.SetStateAction<SelectedValues>>;
+  data: DataProps[];
   allFilterOptions: Record<string, Set<string>>; // Add this prop
 }
 
@@ -57,11 +55,12 @@ export default function Filter({
   };
 
   return (
-    <div className="card flex flex-wrap gap-4">
+    <div className="card flex flex-wrap  gap-4">
       {Object.keys(selectedValues).map((field) => (
-        <div key={field} className="w-[250px]">
+        <div key={field} className="w-[250px] ">
           <MultiSelect
-            value={(selectedValues[field] || []).map((val) => ({ name: val }))}
+            value={(selectedValues[field as keyof SelectedValues] ?? []).map((val) => ({ name: val }))}
+            
             onChange={(e) =>
               handleSelectChange(
                 field,
@@ -81,20 +80,20 @@ export default function Filter({
           {field === "dob" && selectedValues.dob?.includes("Custom") && (
             <div className="mt-2 flex gap-2 items-center">
               <InputNumber
-                value={customAgeRange.min}
-                onValueChange={(e) =>
-                  setCustomAgeRange((prev) => ({ ...prev, min: e.value }))
-                }
-                placeholder="Min age"
-                className="w-full"
+              value={customAgeRange.min || undefined}
+              onValueChange={(e) =>
+                setCustomAgeRange((prev) => ({ ...prev, min: e.value || undefined }))
+              }
+              placeholder="Min age"
+              className="w-full"
               />
               <InputNumber
-                value={customAgeRange.max}
-                onValueChange={(e) =>
-                  setCustomAgeRange((prev) => ({ ...prev, max: e.value }))
-                }
-                placeholder="Max age"
-                className="w-full"
+              value={customAgeRange.max || undefined}
+              onValueChange={(e) =>
+                setCustomAgeRange((prev) => ({ ...prev, max: e.value || undefined }))
+              }
+              placeholder="Max age"
+              className="w-full"
               />
             </div>
           )}
@@ -106,7 +105,7 @@ export default function Filter({
                 <InputNumber
                   value={customIncomeRange.min}
                   onValueChange={(e) =>
-                    setCustomIncomeRange((prev) => ({ ...prev, min: e.value }))
+                    setCustomIncomeRange((prev) => ({ ...prev, min: e.value || undefined }))
                   }
                   placeholder="Min income"
                   className="w-full"
@@ -114,7 +113,7 @@ export default function Filter({
                 <InputNumber
                   value={customIncomeRange.max}
                   onValueChange={(e) =>
-                    setCustomIncomeRange((prev) => ({ ...prev, max: e.value }))
+                    setCustomIncomeRange((prev) => ({ ...prev, max: e.value || undefined  }))
                   }
                   placeholder="Max income"
                   className="w-full"

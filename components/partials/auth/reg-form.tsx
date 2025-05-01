@@ -18,7 +18,7 @@ type Inputs = {
   role: string;
 };
 
-const RegForm = ({roleType}) => {
+const RegForm = ({roleType}:{roleType:string}) => {
   const {
     register,
     handleSubmit,

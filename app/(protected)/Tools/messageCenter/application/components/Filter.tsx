@@ -6,15 +6,12 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover
 import { Command, CommandList, CommandInput, CommandItem } from "@/components/ui/command";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { SelectedValues } from "../page";
+import { DataProps } from "../table/columns";
 
 interface FilterProps {
   selectedValues: SelectedValues
   setSelectedValues: React.Dispatch<React.SetStateAction<SelectedValues>>;
-  data: Array<{
-    offer?: { category: string };
-    title: string;
-    user?: { phoneNumber: string; firstName: string };
-  }>;
+  data: DataProps[];
 }
 
 export default function Filter({ selectedValues, setSelectedValues, data }: FilterProps) {

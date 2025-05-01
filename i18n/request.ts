@@ -11,8 +11,8 @@
 //   };
 // });
 
-export default async function getRequestConfig() {
-  return {
-    messages: (await import(`../messages/en.json`)).default // Use a default language (e.g., English)
-  };
-}
+// export default async function getRequestConfig() {
+//   return {
+//     messages: (await import(`../messages/en.json`)).default 
+//   };
+// }

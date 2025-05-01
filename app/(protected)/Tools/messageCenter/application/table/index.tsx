@@ -47,11 +47,8 @@ import { SelectedValues } from "../page";
 interface FilterProps {
   selectedValues: SelectedValues;
   setSelectedValues: React.Dispatch<React.SetStateAction<SelectedValues>>;
-  data: Array<{
-    offer?: { category: string };
-    title: string;
-    user?: { phoneNumber: string; firstName: string };
-  }>;
+  data: DataProps[];
+ 
 }
 
 interface ExampleTwoProps {

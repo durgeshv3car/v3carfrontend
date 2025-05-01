@@ -2,14 +2,18 @@
 
 import * as React from "react";
 import {
+  ColumnDef,
   flexRender,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
   getCoreRowModel,
-  getFilteredRowModel,
   PaginationState,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table'
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -44,14 +48,40 @@ import TablePagination from "./table-pagination";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 
+type ModalType = 'faq' | 'policy' ;
+
+// Define the props interface for the edit modal components
+interface EditModalProps<T> {
+  id: string;
+  onClose: () => void;
+  tableData: T[];
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+// Define the props interface for the create modal components
+interface CreateModalProps {
+  onClose: () => void;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  columnsField: string[];
+  type: ModalType;
+}
+
+// Type for modal components
+type ModalComponent<T> = React.ComponentType<EditModalProps<T>>;
+type CreateComponent = React.ComponentType<CreateModalProps>;
+
+
 // Dynamically import different modals based on type
-const modalMap = {
-  
+
+const modalMap: Record<ModalType, {
+  create: CreateComponent;
+  edit: any; 
+}> = {
   faq: {
     create: dynamic(
       () => import("../page-section/faq/components/Create"),
       { ssr: false }
-    ),
+    ) as CreateComponent,
     edit: dynamic(() => import("../page-section/faq/components/EditModal"), {
       ssr: false,
     }),
@@ -60,26 +90,32 @@ const modalMap = {
     create: dynamic(
       () => import("../page-section/policy/components/Create"),
       { ssr: false }
-    ),
+    ) as CreateComponent,
     edit: dynamic(() => import("../page-section/policy/components/EditModal"), {
       ssr: false,
     }),
   },
 };
+interface TableProps<T> {
+  tableColumns: ColumnDef<T>[];
+  tableHeading: string;
+  tableData: T[];
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  type: ModalType;
+}
 
-const ExampleTwo = ({
+
+const ExampleTwo = <T,>({
   tableHeading,
   tableData,
   tableColumns,
   setRefresh,
   type,
-}) => {
-  console.log(tableData, `${type} Data`);
-
+}: TableProps<T>) => {
   const searchParams = useSearchParams();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isCreateOpen, setIsCreateOpen] = React.useState(false);
-  const leadId = searchParams?.get("id");
+  const leadId = searchParams?.get("id") || "";
 
   React.useEffect(() => {
     setIsModalOpen(!!leadId);
@@ -89,11 +125,12 @@ const ExampleTwo = ({
   const createPage = () => setIsCreateOpen(true);
   const closeCreateModal = () => setIsCreateOpen(false);
 
-  const [sorting, setSorting] = React.useState([]);
-  const [columnFilters, setColumnFilters] = React.useState([]);
-  const [columnVisibility, setColumnVisibility] = React.useState({});
+
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnsField, setColumnsField] = React.useState([]);
+  const [columnsField, setColumnsField] = React.useState<string[]>([]);
   const [pageSize, setPageSize] = React.useState(20);
     const [pagination, setPagination] = React.useState<PaginationState>({
           pageIndex: 0,
@@ -127,7 +164,7 @@ const ExampleTwo = ({
     const headers = table
       .getHeaderGroups()
       .flatMap((headerGroup) =>
-        headerGroup.headers.map((header) => header.column.columnDef.header)
+        headerGroup.headers.map((header) => String(header.column.columnDef.header))
       );
 
     setColumnsField(headers);
@@ -203,7 +240,7 @@ const ExampleTwo = ({
           {/* Input for Filtering */}
           <Input
             placeholder="Filter Name..."
-            value={table.getColumn("title")?.getFilterValue() ?? ""}
+            value={table.getColumn("title")?.getFilterValue() as string ?? ""}
             onChange={(event) =>
               table.getColumn("title")?.setFilterValue(event.target.value)
             }

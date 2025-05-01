@@ -28,7 +28,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 
 
 
-export function MenuClassic({role}) {
+export function MenuClassic({role }: { role: string }) {
   const pathname = usePathname();
   const params = useParams<{ locale: string }>();
   const direction = getLangDir(params?.locale ?? "");
@@ -116,7 +116,7 @@ export function MenuClassic({role}) {
                                   label={label}
                                   icon={icon}
                                   href={href}
-                                  active={active}
+                                  active={active ?? false}
                                   id={id}
                                   collapsed={collapsed}
                                 />
@@ -135,7 +135,7 @@ export function MenuClassic({role}) {
                         <CollapseMenuButton
                           icon={icon}
                           label={label}
-                          active={active}
+                          active={active ?? false}
                           submenus={submenus}
                           collapsed={collapsed}
                           id={id}

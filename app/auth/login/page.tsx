@@ -3,8 +3,15 @@ import LoginForm from "@/components/partials/auth/login-form";
 import Image from "next/image";
 import Social from "@/components/partials/auth/social";
 import Copyright from "@/components/partials/auth/copyright";
+import { auth } from "@/lib/auth";
 import Logo from "@/components/partials/auth/logo";
-const Login = () => {
+const Login = async() => {
+    const session = await auth();
+    let token = "";
+  
+    if ((session?.user as { token?: string })?.token) {
+      token = (session?.user as { token?: string })?.token || "";
+    }
   return (
     <>
       <div className="flex w-full items-center overflow-hidden min-h-dvh h-dvh basis-full">
@@ -48,7 +55,7 @@ const Login = () => {
                     Sign in to your account to start using Dashcode
                   </div>
                 </div>
-                <LoginForm />
+                <LoginForm token={token} />
                 {/* <div className="relative border-b-[#9AA2AF] border-opacity-[16%] border-b pt-6">
                   <div className="absolute inline-block bg-default-50 dark:bg-default-100 left-1/2 top-1/2 transform -translate-x-1/2 px-4 min-w-max text-sm text-default-500 font-normal">
                     Or continue with

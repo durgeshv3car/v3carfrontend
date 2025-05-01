@@ -1,5 +1,3 @@
-"use client";
-
 import * as React from "react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -20,10 +18,29 @@ import { addcsv } from "@/app/(protected)/services/csv/api";
 import { toast } from "@/components/ui/use-toast";
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
+import { ColumnDef } from "@tanstack/react-table";
 
- const ImportExportButtons = ({ setRefresh, filteredData, columns }) => {
+// Define proper types for the component props
+interface Column {
+  accessorKey?: string;
+  header?: string;
+}
+
+export interface ImportExportButtonsProps<TData> {
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  filteredData: TData[];
+  columns: ColumnDef<TData, any>[];
+}
+
+const ImportExportButtons = <TData extends Record<string, any>>({
+  setRefresh,
+  filteredData,
+  columns,
+}: ImportExportButtonsProps<TData>) => {
   const [isLoading, setIsLoading] = useState(false);
-  const refreshData = () => setRefresh((prev) => !prev);
+  const refreshData = () => {
+    setRefresh((prev) => !prev);
+  };
 
   // Function to handle CSV import
   const handleImportCSV = () => {
@@ -31,7 +48,8 @@ import * as XLSX from 'xlsx';
     input.type = "file";
     input.accept = ".csv";
     input.onchange = async (e) => {
-      const file = e.target.files?.[0];
+      const target = e.target as HTMLInputElement;
+      const file = target?.files?.[0];
       if (file) {
         try {
           setIsLoading(true);
@@ -50,7 +68,7 @@ import * as XLSX from 'xlsx';
           console.error("Error importing CSV:", error);
           toast({
             title: "Error",
-            description: error.message || "Failed to import CSV file",
+            description: error instanceof Error ? error.message : "Failed to import CSV file",
             variant: "destructive",
           });
         } finally {
@@ -67,7 +85,8 @@ import * as XLSX from 'xlsx';
     input.type = "file";
     input.accept = ".xlsx";
     input.onchange = async (e) => {
-      const file = e.target.files?.[0];
+      const target = e.target as HTMLInputElement | null;
+      const file = target?.files?.[0];
       if (file) {
         try {
           setIsLoading(true);
@@ -86,7 +105,7 @@ import * as XLSX from 'xlsx';
           console.error("Error importing XLSX:", error);
           toast({
             title: "Error",
-            description: error.message || "Failed to import XLSX file",
+            description: error instanceof Error ? error.message : "Failed to import XLSX file",
             variant: "destructive",
           });
         } finally {
@@ -108,8 +127,14 @@ import * as XLSX from 'xlsx';
       return;
     }
 
-    // Filter columns to exclude unwanted data
-    const exportableColumns = columns.filter(col => col.accessorKey && col.header);
+    // Convert ColumnDef to simpler Column structure for export
+    const exportableColumns = columns
+      .filter(col => typeof col.id === 'string' && col.header)
+      .map(col => ({
+        accessorKey: col.id as string,
+        header: col.header as string
+      }));
+
     const headers = exportableColumns.map(col => col.header);
     let csvContent = headers.join(',') + '\n';
 
@@ -138,8 +163,14 @@ import * as XLSX from 'xlsx';
       return;
     }
 
-    // Filter columns to exclude unwanted data
-    const exportableColumns = columns.filter(col => col.accessorKey && col.header);
+    // Convert ColumnDef to simpler Column structure for export
+    const exportableColumns = columns
+      .filter(col => typeof col.id === 'string' && col.header)
+      .map(col => ({
+        accessorKey: col.id as string,
+        header: col.header as string
+      }));
+
     const headers = exportableColumns.map(col => col.header);
     const excelData = [headers];
 
