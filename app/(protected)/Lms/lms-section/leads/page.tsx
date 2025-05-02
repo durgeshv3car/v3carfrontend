@@ -6,16 +6,14 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataProps } from "./table/columns";
 import { useRouter } from "next/navigation";
 
-
-
 export interface SelectedValues {
-  city: (string | { name: string })[] | null;
-  state: (string | { name: string })[] | null;
-  pincode: string[] | null;
-  dob: string[] | null;
-  netMonthlyIncome: string[] | null;
-  loanType: (string | { name: string })[] | null;
-  profession: (string | { name: string })[] | null;
+  city: string[];
+  state: string[];
+  pincode: string[];
+  dob: string[];
+  netMonthlyIncome: string[];
+  loanType: string[];
+  profession: string[];
 }
 
 const ExampleTwo = dynamic(() => import("./table"), {
@@ -24,23 +22,15 @@ const ExampleTwo = dynamic(() => import("./table"), {
 });
 
 const LeadPage: React.FC = () => {
-  const [selectedValues, setSelectedValues] = useState<SelectedValues>({
-    state: null,
-    city: null,
-    pincode: null,
-    dob: null,
-    netMonthlyIncome: null,
-    loanType: null,
-    profession: null,
-  });
-  const [customAgeRange, setCustomAgeRange] = useState<{
-    min?: number;
-    max?: number;
-  }>({});
-  const [customIncomeRange, setCustomIncomeRange] = useState<{
-    min?: number;
-    max?: number;
-  }>({});
+  const [selectedValues, setSelectedValues] = useState<SelectedValues>(() => ({
+    state: [],
+    city: [],
+    pincode: [],
+    dob: [],
+    netMonthlyIncome: [],
+    loanType: [],
+    profession: [],
+  }));
 
   const [data, setData] = useState<DataProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -82,7 +72,7 @@ const LeadPage: React.FC = () => {
   useEffect(() => {
     fetchData();
   }, [fetchData, refresh]);
-  console.log("data", data)
+  console.log("data", data);
 
   const [allFilterOptions, setAllFilterOptions] = useState<
     Record<string, Set<string>>
@@ -194,13 +184,7 @@ const LeadPage: React.FC = () => {
                 return age >= 51 && age <= 60;
               case "60+":
                 return age > 60;
-              case "Custom":
-                return (
-                  customAgeRange.min !== undefined &&
-                  customAgeRange.max !== undefined &&
-                  age >= customAgeRange.min &&
-                  age <= customAgeRange.max
-                );
+
               default:
                 return false;
             }
@@ -235,13 +219,7 @@ const LeadPage: React.FC = () => {
                 return income >= 150001 && income <= 200000;
               case "2lac+":
                 return income > 200000;
-              case "Custom":
-                return (
-                  customIncomeRange.min !== undefined &&
-                  customIncomeRange.max !== undefined &&
-                  income >= customIncomeRange.min &&
-                  income <= customIncomeRange.max
-                );
+
               default:
                 return false;
             }
@@ -249,31 +227,38 @@ const LeadPage: React.FC = () => {
         )
       : data;
 
+    // Updated to properly handle array of loan applications
     const loanTypeData = selectedValues.loanType?.length
       ? data.filter((user) =>
           selectedValues.loanType!.some((loan) => {
             const loanValue = getFilterValue(loan);
             return (
-              user?.LoanApplication?.loanType &&
-              loanValue &&
-              user.LoanApplication.loanType
-                .toLowerCase()
-                .includes(loanValue.toLowerCase())
+              Array.isArray(user.LoanApplications) &&
+              user.LoanApplications.some(
+                (app) =>
+                  typeof app.loanType === "string" &&
+                  loanValue &&
+                  app.loanType.toLowerCase().includes(loanValue.toLowerCase())
+              )
             );
           })
         )
       : data;
 
+    // Updated to properly handle array of loan applications
     const professionData = selectedValues.profession?.length
       ? data.filter((user) =>
           selectedValues.profession!.some((profession) => {
             const professionValue = getFilterValue(profession);
             return (
-              typeof user?.LoanApplication?.profession === "string" &&
-              professionValue &&
-              user.LoanApplication.profession
-                .toLowerCase()
-                .includes(professionValue.toLowerCase())
+              Array.isArray(user.LoanApplications) &&
+              user.LoanApplications.some(
+                (app) =>
+                  typeof app.profession === "string" &&
+                  app.profession &&
+                  professionValue &&
+                  app.profession.toLowerCase().includes(professionValue.toLowerCase())
+              )
             );
           })
         )
@@ -309,7 +294,7 @@ const LeadPage: React.FC = () => {
       professionData,
       filteredData,
     };
-  }, [data, selectedValues, customAgeRange, customIncomeRange]);
+  }, [data, selectedValues]);
 
   useEffect(() => {
     const options: Record<string, Set<string>> = {
@@ -471,7 +456,7 @@ const LeadPage: React.FC = () => {
         else if (age > 60) options.dob.add("60+");
       });
 
-      options.dob.add("Custom");
+      // options.dob.add("Custom");
     }
 
     if (dataForIncomeFilter.length > 0) {
@@ -499,11 +484,18 @@ const LeadPage: React.FC = () => {
         else if (income > 200000) options.netMonthlyIncome.add("2lac+");
       });
 
-      options.netMonthlyIncome.add("Custom");
+      // options.netMonthlyIncome.add("Custom");
     }
 
+    // Updated to properly collect loan types from LoanApplications array
     dataForLoanTypeFilter.forEach((user) => {
-      if (
+      if (Array.isArray(user.LoanApplications)) {
+        user.LoanApplications.forEach((app) => {
+          if (app.loanType && app.loanType !== "null") {
+            options.loanType.add(app.loanType);
+          }
+        });
+      } else if (
         user?.LoanApplication?.loanType &&
         user.LoanApplication.loanType !== "null"
       ) {
@@ -511,8 +503,15 @@ const LeadPage: React.FC = () => {
       }
     });
 
+    // Updated to properly collect professions from LoanApplications array
     dataForProfessionFilter.forEach((user) => {
-      if (
+      if (Array.isArray(user.LoanApplications)) {
+        user.LoanApplications.forEach((app) => {
+          if (app.profession && app.profession !== "null") {
+            options.profession.add(app.profession);
+          }
+        });
+      } else if (
         user?.LoanApplication?.profession &&
         user.LoanApplication.profession !== "null"
       ) {

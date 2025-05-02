@@ -6,16 +6,14 @@ import { useRouter } from "@/i18n/routing";
 import dynamic from "next/dynamic";
 import { fetchApis } from "@/app/(protected)/services/apiManagement/api";
 import { Loader2 } from "lucide-react";
+import { columnsCategory } from "./components/columnsCategory";
+import type { Categorys } from "./components/columnsCategory";
+import type { ColumnDef } from "@tanstack/react-table";
 
 // Dynamic imports
 const ExampleTwo = dynamic(() => import("../../adminTable"), {
   ssr: false,
 });
-
-interface DataProps {
-  id: string;
-  title: string;
-}
 
 function Category() {
   const allowed = ["Super Admin", "Admin"];
@@ -25,27 +23,17 @@ function Category() {
   }
 
   const router = useRouter();
-  const [data, setData] = useState<DataProps[]>([]);
+  const [data, setData] = useState<Categorys[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
-  const [columns, setColumns] = useState<any>(null);
+
   const type = "api";
-
-  // Fetch columns dynamically
-  useEffect(() => {
-    const loadColumns = async () => {
-      const columnsModule = await import("./components/columnsCategory");
-      setColumns(() => columnsModule.columnsCategory(fetchData, router));
-    };
-
-    loadColumns();
-  }, [router]);
 
   const fetchData = async () => {
     try {
       const result = await fetchApis();
-      console.log("result", result.status);
       setData(result);
+      console.log(result, "result");
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -53,11 +41,12 @@ function Category() {
     }
   };
 
+  console.log(refresh, "refresh");
   useEffect(() => {
     fetchData();
   }, [refresh]);
 
-  if (loading || !columns)
+  if (loading)
     return <Loader2 className="me-2 h-4 w-4 animate-spin" />;
 
   return (
@@ -66,7 +55,10 @@ function Category() {
         <ExampleTwo
           tableHeading="Api List"
           tableData={data}
-          tableColumns={columns}
+          tableColumns={columnsCategory({
+            fetchData,
+            router,
+          }) as ColumnDef<Categorys>[]} 
           setRefresh={setRefresh}
           type={type}
         />

@@ -80,11 +80,11 @@ const ProfileInfo = async () => {
           </DropdownMenuLabel>
           <DropdownMenuGroup>
             {[
-              {
-                name: "profile",
-                icon: "heroicons:user",
-                href: "/user-profile",
-              },
+              // {
+              //   name: "profile",
+              //   icon: "heroicons:user",
+              //   href: "/user-profile",
+              // },
               {
                 name: "Settings",
                 icon: "heroicons:paper-airplane",
