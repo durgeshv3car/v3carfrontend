@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { MultiSelect } from "primereact/multiselect";
-import { InputNumber } from "primereact/inputnumber";
 import { SelectedValues } from "../page";
+
 import { DataProps } from "../table/columns";
+import CategoryMultiSelect from "./CreateMultiSelect";
 
 interface FilterProps {
   selectedValues: SelectedValues;
@@ -18,40 +18,23 @@ export default function Filter({
   allFilterOptions,
 }: FilterProps) {
   const [dropdownOptions, setDropdownOptions] = useState<
-    Record<string, { name: string }[]>
-  >({});
-  const [multiSelectValues, setMultiSelectValues] = useState<
-    Record<string, { name: string }[]>
+    Record<string, { id: string; title: string }[]>
   >({});
 
   useEffect(() => {
-    const newDropdowns: Record<string, { name: string }[]> = {};
+    const newDropdowns: Record<string, { id: string; title: string }[]> = {};
     for (const field in allFilterOptions) {
       newDropdowns[field] = Array.from(allFilterOptions[field])
         .sort()
-        .map((value) => ({ name: value }));
+        .map((value) => ({ id: value, title: value }));
     }
     setDropdownOptions(newDropdowns);
+  }, [allFilterOptions]);
 
-    // Initialize multiSelectValues with selectedValues
-    const initialMultiSelectValues: Record<string, { name: string }[]> = {};
-    Object.keys(selectedValues).forEach((field) => {
-      initialMultiSelectValues[field] =
-        (selectedValues[field as keyof SelectedValues] ?? []).map((val) => ({
-          name: val,
-        }));
-    });
-    setMultiSelectValues(initialMultiSelectValues);
-  }, [allFilterOptions, selectedValues]);
-
-  const handleSelectChange = (field: string, selectedOptions: { name: string }[]) => {
-    setMultiSelectValues((prev) => ({
-      ...prev,
-      [field]: selectedOptions,
-    }));
+  const handleSelectChange = (field: string, newValues: string[]) => {
     setSelectedValues((prev) => ({
       ...prev,
-      [field]: selectedOptions.map((opt) => opt.name),
+      [field]: newValues,
     }));
   };
 
@@ -59,14 +42,11 @@ export default function Filter({
     <div className="card flex flex-wrap gap-4">
       {Object.keys(selectedValues).map((field) => (
         <div key={field} className="w-[250px] dark:bg-slate-800 bg-white">
-          <MultiSelect
-            value={multiSelectValues[field] || []} // Ensure value is always an array
-            onChange={(e) => handleSelectChange(field, e.value || [])} // Default to empty array
+          <CategoryMultiSelect
+            label={field}
+            selectedIds={selectedValues[field] || []}
+            onChange={(newValues) => handleSelectChange(field, newValues)}
             options={dropdownOptions[field] || []}
-            optionLabel="name"
-            filter
-            placeholder={`Select ${field}`}
-            className="w-full"
           />
         </div>
       ))}

@@ -73,8 +73,10 @@ const TablePagination = dynamic(() => import("./table-pagination"), {
 import { useSearchParams } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { SelectedValues } from "../page";
+// import { SelectedValues } from "../page";
 import { DataProps } from "./columns";
+import { SelectedValues } from "../page";
+
 
 interface ExampleTwoProps {
   selectedValues: SelectedValues;
@@ -164,9 +166,7 @@ const ExampleTwo = <TData extends Record<string, any>>({
     }
   }, [searchParams]);
   
-  const handleRemoveFilter = (key: string) => {
-    setSelectedValues((prev) => ({ ...prev, [key]: "" }));
-  };
+ 
 
   return (
     <div className="w-full">

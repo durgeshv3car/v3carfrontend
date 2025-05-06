@@ -6,15 +6,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataProps } from "./table/columns";
 import { useRouter } from "next/navigation";
 
-export interface SelectedValues {
-  city: string[];
-  state: string[];
-  pincode: string[];
-  dob: string[];
-  netMonthlyIncome: string[];
-  loanType: string[];
-  profession: string[];
-}
+
+export type SelectedValues = {
+  [key: string]: string[]; // ✅ This enables dynamic keys
+};
+
 
 const ExampleTwo = dynamic(() => import("./table"), {
   loading: () => <p>Loading table...</p>,
