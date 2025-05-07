@@ -105,7 +105,7 @@ const ExampleTwo: React.FC<ExampleTwoProps> = ({ selectedValues, setSelectedValu
       {/* Filter Section */}
       <div className="mt-5 flex items-center justify-between">
         <Filter selectedValues={selectedValues} setSelectedValues={setSelectedValues} data={tableData} />
-        <Button onClick={() => router.push("/Lms/lms-section/leads?createnotification=true&&type=Sms")}>
+        <Button onClick={() => router.push("/Lms/lms-section/leads?createnotification=true&&type=Rcs")}>
           Create Notification
         </Button>
       </div>

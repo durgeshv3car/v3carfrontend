@@ -46,14 +46,15 @@ import {
 } from "@/components/ui/table";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { Categorys } from "../admin-section/api-management/components/columnsCategory";
 
 type ModalType = 'api' ;
 
 // Define the props interface for the edit modal components
-interface EditModalProps<T> {
+interface EditModalProps<Categorys> {
   id: string;
   onClose: () => void;
-  tableData: T[];
+  tableData: Categorys[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -66,7 +67,7 @@ interface CreateModalProps {
 }
 
 // Type for modal components
-type ModalComponent<T> = React.ComponentType<EditModalProps<T>>;
+type ModalComponent<Categorys> = React.ComponentType<EditModalProps<Categorys>>;
 type CreateComponent = React.ComponentType<CreateModalProps>;
 
 // Define modal map with proper typing
@@ -85,21 +86,21 @@ const modalMap: Record<ModalType, {
   },
 };
 
-interface TableProps<T> {
-  tableColumns: ColumnDef<T>[];
+interface TableProps {
+  tableColumns: ColumnDef<Categorys>[]; // Ensure this matches the type of tableColumns
   tableHeading: string;
-  tableData: T[];
+  tableData: Categorys[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   type: ModalType;
 }
 
-const ExampleTwo = <T,>({
+const ExampleTwo = ({
   tableHeading,
   tableData,
   tableColumns,
   setRefresh,
   type,
-}: TableProps<T>) => {
+}: TableProps) => {
   const searchParams = useSearchParams();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [isCreateOpen, setIsCreateOpen] = React.useState(false);
@@ -127,7 +128,7 @@ const ExampleTwo = <T,>({
 
   const table = useReactTable({
     data: tableData,
-    columns: tableColumns,
+    columns: tableColumns as ColumnDef<Categorys>[], 
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -157,6 +158,13 @@ const ExampleTwo = <T,>({
 
     setColumnsField(headers);
   }, [table]);
+    React.useEffect(() => {
+      setPagination((prev) => ({
+        ...prev,
+        pageIndex: 0,
+        pageSize: Number(pageSize),
+      }));
+    }, [pageSize]);
 
   // Select modals based on the type
   const CreateModalComponent = modalMap[type]?.create;
@@ -321,8 +329,8 @@ const ExampleTwo = <T,>({
       {isCreateOpen && CreateModalComponent && (
         <CreateModalComponent
           onClose={closeCreateModal}
-          setRefresh={setRefresh}
           columnsField={columnsField}
+          setRefresh={setRefresh}
           type={type}
         />
       )}

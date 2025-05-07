@@ -12,7 +12,16 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,
+    
   },
+  turbopack: {
+    resolveAlias: {
+      underscore: 'lodash',
+    },
+    resolveExtensions: ['.mdx', '.tsx', '.ts', '.jsx', '.js', '.json'],
+  },
+
+  
 
   compress: true,
 
@@ -22,22 +31,22 @@ const nextConfig = {
         protocol: "https",
         hostname: "api.lorem.space",
       },
-      {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
-      },
-      {
-        protocol: "https",
-        hostname: "a0.muscache.com",
-      },
-      {
-        protocol: "https",
-        hostname: "avatars.githubusercontent.com",
-      },
-      {
-        protocol: "https",
-        hostname: "i.pravatar.cc",
-      },
+      // {
+      //   protocol: "https",
+      //   hostname: "lh3.googleusercontent.com",
+      // },
+      // {
+      //   protocol: "https",
+      //   hostname: "a0.muscache.com",
+      // },
+      // {
+      //   protocol: "https",
+      //   hostname: "avatars.githubusercontent.com",
+      // },
+      // {
+      //   protocol: "https",
+      //   hostname: "i.pravatar.cc",
+      // },
       {
         protocol: "http",
         hostname: "192.168.0.17",

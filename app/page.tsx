@@ -11,8 +11,8 @@ const Login = async () => {
   const session = await auth();
   let token = "";
 
-  if (session?.user?.token) {
-    token = session?.user?.token;
+  if ((session?.user as { token?: string })?.token) {
+    token = (session?.user as { token?: string })?.token || "";
   }
 
   return (

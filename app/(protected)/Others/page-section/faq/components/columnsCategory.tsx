@@ -15,10 +15,27 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 
 import { deletefaq } from "@/app/(protected)/services/faqs/api";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { ColumnDef } from "@tanstack/react-table";
+export interface Category {
+  id: string;
+  title: string;
+  description: string;
+
+}
+
+interface ColumnsCategoryProps {
+  fetchData: () => void;
+  router: AppRouterInstance;
+}
 
 
 
-export const columnsCategory = (refreshData,router) => [
+export const columnsCategory = (
+  fetchData: ColumnsCategoryProps["fetchData"],
+  router: ColumnsCategoryProps["router"]
+
+): ColumnDef<Category>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -85,7 +102,7 @@ export const columnsCategory = (refreshData,router) => [
           const result = await deletefaq(id);
           if (result.success) {
             toast.success("Faq data deleted");
-            refreshData();
+            fetchData();
           } else {
             toast.error("Faq data not deleted");
           }

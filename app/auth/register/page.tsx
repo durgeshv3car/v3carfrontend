@@ -7,13 +7,19 @@ import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { jwtDecode } from "jwt-decode";
 
+interface DecodedToken {
+  role: string;
+  
+}
+
 const Register = async () => {
   const session = await auth();
   let role = "";
   let token = "";
-  if (session?.user?.token) {
-    const decoded = jwtDecode(session.user.token);
-    token = jwtDecode(session.user.token);
+
+  if (session?.user && 'token' in session.user) {
+    const decoded = jwtDecode<DecodedToken>((session.user as { token: string }).token);
+    token = (session.user as { token: string }).token;
     role = decoded.role;
   }
 
@@ -21,13 +27,7 @@ const Register = async () => {
   if (!allowed.includes(role)) {
     notFound();
   }
-  const dashboardRoute = () => {
-    if (token) {
-      router.push("/dashboard");
-    } else {
-      router.push("/auth/login");
-    }
-  };
+
   return (
     <>
       <div className="flex w-full items-center overflow-hidden min-h-dvh h-dvh basis-full">

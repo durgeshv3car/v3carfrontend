@@ -41,49 +41,71 @@ import {
 import TablePagination from "./table-pagination";
 import Filter from "../components/Filter";
 import { useRouter } from "next/navigation";
+import { DataProps } from "./columns";
+import { SelectedValues } from "../page";
 
-const ExampleTwo = ({ selectedValues, setSelectedValues, tableData, tableColumns }) => {
+interface FilterProps {
+  selectedValues: SelectedValues;
+  setSelectedValues: React.Dispatch<React.SetStateAction<SelectedValues>>;
+  data: DataProps[];
+ 
+}
+
+interface ExampleTwoProps {
+  selectedValues: SelectedValues;
+  setSelectedValues: React.Dispatch<React.SetStateAction<SelectedValues>>;
+  tableData: DataProps[];
+  tableColumns: any;
+  setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const ExampleTwo: React.FC<ExampleTwoProps> = ({ selectedValues, setSelectedValues, tableData, tableColumns, setRefresh }) => {
   const router = useRouter();
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-
   const [pageSize, setPageSize] = React.useState(20);
   const [pagination, setPagination] = React.useState<PaginationState>({
-      pageIndex: 0,
-      pageSize
-    })
-  
+    pageIndex: 0,
+    pageSize,
+  });
 
   const table = useReactTable({
     data: tableData,
     columns: tableColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-    onColumnVisibilityChange: setColumnVisibility, // ✅ Ensure visibility updates
-    onRowSelectionChange: setRowSelection, // ✅ Ensure row selection updates
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    onPaginationChange:setPagination,
+    onPaginationChange: setPagination,
     getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination
+      pagination,
     },
   });
+    React.useEffect(() => {
+      setPagination((prev) => ({
+        ...prev,
+        pageIndex: 0,
+        pageSize: Number(pageSize),
+      }));
+    }, [pageSize]);
 
   return (
     <div className="w-full">
       {/* Filter Section */}
       <div className="mt-5 flex items-center justify-between">
         <Filter selectedValues={selectedValues} setSelectedValues={setSelectedValues} data={tableData} />
-        <Button variant="primary" onClick={() => router.push("/Lms/lms-section/leads?createnotification=true&&type=Email")}>
+        <Button onClick={() => router.push("/Lms/lms-section/leads?createnotification=true&&type=Email")}>
           Create Notification
         </Button>
       </div>
@@ -95,20 +117,20 @@ const ExampleTwo = ({ selectedValues, setSelectedValues, tableData, tableColumns
           {/* Rows per Page */}
           <label className="text-sm text-gray-600">Rows per page:</label>
           <Select
-              onValueChange={(value) => setPageSize(Number(value))}
-              value={String(pageSize)}
-            >
-              <SelectTrigger className="w-20 border rounded px-2 py-1">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {[20, 50, 100].map((value) => (
-                  <SelectItem key={value} value={String(value)}>
-                    {value}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            onValueChange={(value) => setPageSize(Number(value))}
+            value={String(pageSize)}
+          >
+            <SelectTrigger className="w-20 border rounded px-2 py-1">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {[20, 50, 100].map((value) => (
+                <SelectItem key={value} value={String(value)}>
+                  {value}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           {/* Column Visibility Toggle */}
           <label className="text-sm text-gray-600">Hide Column:</label>

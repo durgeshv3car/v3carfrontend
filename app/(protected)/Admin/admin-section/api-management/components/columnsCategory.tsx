@@ -10,26 +10,26 @@ import { SquarePen, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { NextRouter } from "next/router";
 import { ColumnDef } from "@tanstack/react-table";
 import ActiveToggleCell from "./ActiveToggleCell";
 import { deleteAPi } from "@/app/(protected)/services/apiManagement/api";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
-interface Category {
-  id: string;
-  title: string;
-
+export interface Categorys {
+  id: string; // Ensure this matches the key in your data
+  title: string; // Ensure this matches the key in your data
+  active: boolean; // Add this field if it exists in your data
 }
 
 interface ColumnsCategoryProps {
   fetchData: () => void;
-  router: NextRouter;
+  router: AppRouterInstance;
 }
 
-export const columnsCategory = (
-  fetchData: ColumnsCategoryProps["fetchData"],
-  router: ColumnsCategoryProps["router"]
-): ColumnDef<Category>[] => [
+export const columnsCategory = ({
+  fetchData,
+  router,
+}: ColumnsCategoryProps): ColumnDef<Categorys>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -63,7 +63,7 @@ export const columnsCategory = (
     enableSorting: false,
   },
   {
-    accessorKey: "title",
+    accessorKey: "title", // Ensure this matches the key in your data
     header: "Title",
     cell: ({ row }) => (
       <div className="flex gap-3 items-center">
@@ -72,7 +72,7 @@ export const columnsCategory = (
     ),
   },
   {
-    accessorKey: "active",
+    accessorKey: "active", // Ensure this matches the key in your data
     header: "isActive",
     cell: ({ row }) => <ActiveToggleCell row={row} refreshData={fetchData} />,
   },

@@ -47,11 +47,8 @@ import { SelectedValues } from "../page";
 interface FilterProps {
   selectedValues: SelectedValues;
   setSelectedValues: React.Dispatch<React.SetStateAction<SelectedValues>>;
-  data: Array<{
-    offer?: { category: string };
-    title: string;
-    user?: { phoneNumber: string; firstName: string };
-  }>;
+  data: DataProps[];
+ 
 }
 
 interface ExampleTwoProps {
@@ -95,6 +92,16 @@ const ExampleTwo: React.FC<ExampleTwoProps> = ({ selectedValues, setSelectedValu
       pagination,
     },
   });
+
+  React.useEffect(() => {
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: 0,
+      pageSize: Number(pageSize),
+    }));
+  }, [pageSize]);
+
+
 
   return (
     <div className="w-full">

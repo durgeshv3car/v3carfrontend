@@ -1,16 +1,16 @@
-import { useAtom } from "jotai"
-import { atomWithStorage } from "jotai/utils"
+// import { useAtom } from "jotai"
+// import { atomWithStorage } from "jotai/utils"
 
-export type TodoConfig = {
-  isOpen: boolean
-}
+// export type TodoConfig = {
+//   isOpen: boolean
+// }
 
-const todoConfigAtom = atomWithStorage<TodoConfig>("todoConfig", {
-  isOpen: false,
+// const todoConfigAtom = atomWithStorage<TodoConfig>("todoConfig", {
+//   isOpen: false,
  
-})
+// })
 
-export function useTodoConfig() {
+// export function useTodoConfig() {
   
-  return useAtom(todoConfigAtom)
-}
+//   return useAtom(todoConfigAtom)
+// }

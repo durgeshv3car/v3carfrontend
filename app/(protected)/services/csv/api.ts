@@ -8,7 +8,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5
  * @param {File} file - The file to upload
  * @returns {Promise<Object>} Response from the server
  */
-export const addcsv = async (file) => {
+export const addcsv = async (file: File ) => {
     try {
       // Create a FormData object to properly send the file
       const formData = new FormData();
@@ -28,6 +28,6 @@ export const addcsv = async (file) => {
       return { success: true, data: response.data };
     } catch (error) {
       console.error("Error uploading file:", error);
-      return { success: false, error: error.message };
+      return { success: false, error: (error as any).message };
     }
 };

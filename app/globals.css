@@ -541,9 +541,9 @@ html[dir=rtl] .react-select .select__loading-indicator {
 }
 
 /* Required for Radix UI dropdowns, popovers, etc. */
-[data-radix-popper-content-wrapper] {
+/* [data-radix-popper-content-wrapper] {
   z-index: 9999 !important;
-}
+} */
 
 
 

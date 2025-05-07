@@ -6,16 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { updateUser } from "@/app/(protected)/services/users/api";
+import { DataProps } from "../table/columns";
 
-interface TableRow {
-  id?: string; // Ensure `id` is required and explicitly typed
-  title?: string;
-}
 
 interface EditModalProps {
   id: string;
   onClose: () => void;
-  tableData: TableRow[];
+  tableData: DataProps[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -27,7 +24,7 @@ const EditModal: React.FC<EditModalProps> = ({
 }: EditModalProps) => {
   const router = useRouter();
   const [editedData, setEditedData] = useState<Record<string, any>>({});
-  const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
+  const [selectedRow, setSelectedRow] = useState<DataProps | null>(null);
 
   useEffect(() => {
     if (!id) return;

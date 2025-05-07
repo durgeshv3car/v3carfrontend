@@ -46,6 +46,8 @@ export const updateService = async (
       formDataSend.append("companyUrl", editedData.companyUrl);
     if (editedData.annualFee)
       formDataSend.append("annualFee", editedData.annualFee);
+    if (editedData.joiningFee)
+      formDataSend.append("joiningFee", editedData.joiningFee);
     if (editedData.active !== undefined)
       formDataSend.append("active", editedData.active);
 
@@ -78,6 +80,7 @@ export const addService = async (
     if (webFile) formDataSend.append("web", webFile);
 
     formDataSend.append("companyUrl", formData["Company URL"] || "");
+    formDataSend.append("joiningFee", formData["Joining Fee"] || "");
     formDataSend.append("annualFee", formData["Annual Fee"] || "");
 
     const response = await axios.post(`${API_BASE_URL}/service`, formDataSend, {

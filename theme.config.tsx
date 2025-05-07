@@ -6,7 +6,7 @@ const config: DocsThemeConfig = {
   logo: (
     <span className=" inline-flex gap-2.5 items-center">
       <DashCodeLogo className="  text-default-900 h-8 w-8 [&>path:nth-child(3)]:text-background [&>path:nth-child(2)]:text-background" />
-      <span className="  text-lg font-bold text-default ">Dashcode</span>
+      <span className="  text-lg font-bold text-default ">CreditCircle</span>
     </span>
   ),
   project: {
@@ -20,29 +20,29 @@ const config: DocsThemeConfig = {
       </a>
     ),
   },
-  footer: {
-    text: (
-      <span>
-        {new Date().getFullYear()} ©{" "}
-        <a href="https://codeshaper.net/" target="_blank">
-          CodeShaper
-        </a>
-        .
-      </span>
-    ),
-  },
+  // footer: {
+  //   text: (
+  //     <span>
+  //       {new Date().getFullYear()} ©{" "}
+  //       <a href="https://codeshaper.net/" target="_blank">
+  //         CodeShaper
+  //       </a>
+  //       .
+  //     </span>
+  //   ),
+  // },
   themeSwitch: {
     useOptions() {
       return {
         light: 'Light',
         dark: 'Dark',
-        system: 'System', // Add this line
+        system: 'System',
       };
     },
   },
   useNextSeoProps() {
     return {
-      titleTemplate: "%s – Dashcode",
+      titleTemplate: "%s – CreditCircle",
     };
   },
 };

@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "@/i18n/routing";
 import { Icon } from "@/components/ui/icon";
-import { useForm } from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
@@ -14,13 +14,20 @@ import { Loader2 } from "lucide-react";
 import { loginUser } from "@/action/auth-action";
 import { toast } from "sonner";
 import { useRouter } from "@/components/navigation";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
+type Inputs = {
+
+  email: string;
+  password: string;
+ 
+};
 
 const schema = z.object({
   email: z.string().email({ message: "Your email is invalid." }),
   password: z.string().min(4),
 });
 
-const LoginForm = ({ token }) => {
+const LoginForm = ({ token }:{token:string}) => {
   const [isPending, startTransition] = React.useTransition();
   const router = useRouter();
   const [passwordType, setPasswordType] = React.useState("password");
@@ -56,7 +63,7 @@ const LoginForm = ({ token }) => {
 
   if (token) return null;
 
-  const onSubmit = (data) => {
+  const onSubmit:SubmitHandler<Inputs> = async (data) => {
     startTransition(async () => {
       try {
         const response = await loginUser(data);
@@ -71,7 +78,7 @@ const LoginForm = ({ token }) => {
           toast.success("Successfully logged in");
         }
       } catch (err) {
-        toast.error(err.message);
+        toast.error((err as Error).message || "An unexpected error occurred");
       }
     });
   };

@@ -2,11 +2,29 @@
 import { useState, useEffect } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dropdown } from 'primereact/dropdown';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { DataProps } from "../table/columns";
 
 // Define types for props
 interface Offer {
@@ -15,18 +33,19 @@ interface Offer {
   isActive: boolean;
 }
 
-interface SelectedRowData {
-  id: string | number;
-}
-
 interface OfferSelectionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectOffer: (offer: Offer) => void;
-  selectedRowsData: SelectedRowData[];
+  selectedRowsData: DataProps[];
 }
 
-const OfferSelectionModal: React.FC<OfferSelectionModalProps> = ({ isOpen, onClose, onSelectOffer, selectedRowsData }) => {
+const OfferSelectionModal: React.FC<OfferSelectionModalProps> = ({
+  isOpen,
+  onClose,
+  onSelectOffer,
+  selectedRowsData,
+}) => {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [selectedOffer, setSelectedOffer] = useState<Offer | null>(null);
   const [open, setOpen] = useState<boolean>(false);
@@ -35,11 +54,8 @@ const OfferSelectionModal: React.FC<OfferSelectionModalProps> = ({ isOpen, onClo
   const searchParams = useSearchParams();
   const type = searchParams?.get("type") || null;
 
-
-
-
-
   // Fetch offers when the modal opens
+  
   useEffect(() => {
     if (!isOpen) return;
 
@@ -54,7 +70,9 @@ const OfferSelectionModal: React.FC<OfferSelectionModalProps> = ({ isOpen, onClo
 
         const data = await response.json();
         console.log("Offers fetched successfully:", data);
-        const offers = data.offers.filter((offer: Offer) => offer.isActive === true);
+        const offers = data.offers.filter(
+          (offer: Offer) => offer.isActive === true
+        );
         setOffers(offers);
       } catch (error: any) {
         console.error("Error fetching offers:", error.message);
@@ -66,6 +84,7 @@ const OfferSelectionModal: React.FC<OfferSelectionModalProps> = ({ isOpen, onClo
 
   // Handle offer selection (Dropdown stays open)
   const handleSelectOffer = (offer: Offer) => {
+    console.log("Selected offer:", offer);
     setSelectedOffer(offer);
   };
 
@@ -97,11 +116,9 @@ const OfferSelectionModal: React.FC<OfferSelectionModalProps> = ({ isOpen, onClo
       });
 
       if (!response.ok) {
-        toast.error("Notification not send again")
-        onClose()
+        toast.error("Notification not send again");
+        onClose();
         throw new Error(`HTTP error! Status: ${response.status}`);
-        
-        
       }
 
       const result = await response.json();
@@ -128,43 +145,28 @@ const OfferSelectionModal: React.FC<OfferSelectionModalProps> = ({ isOpen, onClo
       setLoading(false);
     }
   };
+  console.log("offers", offers);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle>Select an Offer</DialogTitle>
         </DialogHeader>
 
         {/* ShadCN Combobox */}
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
-              {selectedOffer ? selectedOffer.title : "Select an Offer"}
-              <ChevronsUpDown className="opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-full p-0">
-            <Command>
-              <CommandInput placeholder="Search offer..." className="h-9" />
-              <CommandList>
-                <CommandEmpty>No offers found.</CommandEmpty>
-                <CommandGroup>
-                  {offers.map((offer) => (
-                    <CommandItem
-                      key={offer.id}
-                      value={offer.id}
-                      onSelect={() => handleSelectOffer(offer)}
-                    >
-                      {offer.title}
-                      <Check className={`ml-auto ${selectedOffer?.id === offer.id ? "opacity-100" : "opacity-0"}`} />
-                    </CommandItem>
-                  ))}
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
+
+        <Dropdown
+          value={selectedOffer}
+          onChange={(e) => handleSelectOffer(e.value)}
+          options={offers}
+          optionLabel="title"
+          placeholder="Select an Offer"
+          className="w-full"
+          appendTo="self" 
+          checkmark
+          highlightOnSelect={false}
+        />
 
         {/* Submit Button (Only active when an offer is selected) */}
         <Button

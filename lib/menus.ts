@@ -1,3 +1,34 @@
+
+// Define or import the Group type
+export type Group = {
+  groupLabel: string;
+  id: string;
+  menus: Menu[];
+};
+
+export type Menu = {
+  id: string;
+  href: string;
+  label: string;
+  active?: boolean;
+  icon: string;
+  submenus: Submenu[];
+};
+
+export type Submenu = {
+  href: string;
+  label: string;
+  active?: boolean;
+  icon: string;
+  children: Submenu[];
+};
+export type SubChildren = {
+  href: string;
+  label: string;
+  active?: boolean;
+  icon: string;
+  children: Submenu[];
+};
 export function getMenuList(pathname: string, role: string): Group[] {
   return [
     {

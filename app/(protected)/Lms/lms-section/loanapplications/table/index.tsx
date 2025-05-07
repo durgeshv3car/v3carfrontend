@@ -13,6 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { RowSelectionState, ColumnDef } from "@tanstack/react-table";
 import { columns } from "./columns";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,39 +49,41 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-
 import TablePagination from "./table-pagination";
 import Filter from "../components/Filter";
 import OfferSelectionModal from "../components/OfferSelectionModal";
 import { useSearchParams } from "next/navigation";
+import { SelectedValues } from "../page";
 
-const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }) => {
+interface ExampleTwoProps {
+  selectedValues:SelectedValues;
+  setSelectedValues: React.Dispatch<React.SetStateAction<SelectedValues>>;
+  tableData: any[];
+  tableColumns: ColumnDef<any, any>[];
+}
+
+const ExampleTwo: React.FC<ExampleTwoProps> = ({ selectedValues, setSelectedValues, tableData, tableColumns }) => {
   const searchParams = useSearchParams();
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [selectedColumn, setSelectedColumn] = React.useState<
-    string | undefined
-  >();
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [pageSize, setPageSize] = React.useState(20); // Default to 20 rows per page
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [selectedOffer, setSelectedOffer] = React.useState(null);
-  const [selectedRowsData, setSelectedRowsData] = React.useState([]);
-  const [isCreatingNotification, setIsCreatingNotification] =React.useState(false);
-   const [pagination, setPagination] = React.useState<PaginationState>({
-      pageIndex: 0,
-      pageSize
-    })
-    
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [selectedColumn, setSelectedColumn] = React.useState<string | undefined>();
+  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
+  const [pageSize, setPageSize] = React.useState<number>(20); // Default to 20 rows per page
+  const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
+  const [selectedOffer, setSelectedOffer] = React.useState<any>(null);
+  const [selectedRowsData, setSelectedRowsData] = React.useState<any[]>([]);
+  const [isCreatingNotification, setIsCreatingNotification] = React.useState<boolean>(false);
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize,
+  });
 
-  const [type, setType] = React.useState(null);
+  const [type, setType] = React.useState<string | null>(null);
+
   const table = useReactTable({
-    data:tableData,
-    columns:tableColumns,
+    data: tableData,
+    columns: tableColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -95,29 +98,34 @@ const ExampleTwo = ({ selectedValues, setSelectedValues,tableData,tableColumns }
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination
+      pagination,
     },
   });
+
   React.useEffect(() => {
     const selectedData = table
       .getSelectedRowModel()
       .rows.map((row) => row.original);
     setSelectedRowsData(selectedData);
-  }, [table,rowSelection]);
-
+  }, [table, rowSelection]);
 
   React.useEffect(() => {
-    const creatingNotification = searchParams.get("createnotification");
-    setType( searchParams.get("type")); 
+    const creatingNotification = searchParams?.get("createnotification");
+    setType(String(searchParams?.get("type")));
 
     if (creatingNotification === "true") {
       console.log("creatingNotification detected");
       setIsCreatingNotification(true);
     }
   }, [searchParams]);
-  const handleRemoveFilter = (key) => {
-    setSelectedValues((prev) => ({ ...prev, [key]: "" }));
-  };
+
+     React.useEffect(() => {
+       setPagination((prev) => ({
+         ...prev,
+         pageIndex: 0,
+         pageSize: Number(pageSize),
+       }));
+     }, [pageSize]);
 
   return (
     <div className="w-full">

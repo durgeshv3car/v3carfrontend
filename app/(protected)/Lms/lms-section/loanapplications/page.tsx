@@ -2,14 +2,43 @@
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { fetchLoans } from "../../../services/loans/api";
+import { DataProps } from "../loanapplications/table/columns";
 
 const ExampleTwo = dynamic(() => import("./table"), {
   loading: () => <p>Loading table...</p>,
   ssr: false,
 });
 
+export interface SelectedValues {
+
+  netMonthlyIncome: string[] | null;
+  loanType: (string | { name: string })[] | null;
+  profession: (string | { name: string })[] | null;
+  phoneNumber: (string | { name: string })[] | null; 
+  desiredLoanAmount: (string | { name: string })[] | null;
+  loanTenure: (string | { name: string })[] | null;
+  employmentStatus: (string | { name: string })[] | null;
+  hasCreditCard: (string | { name: string })[] | null;
+  companyName: (string | { name: string })[] | null;
+  employmentLevel: (string | { name: string })[] | null;
+  loanPurpose: (string | { name: string })[] | null;
+  hasGST: (boolean | { name: boolean })[] | null;
+  businessName: (string | { name: string })[] | null;
+  tradeName: (string | { name: string })[] | null;
+  PrincipalPlaceofBusiness: (string | { name: string })[] | null;
+  businessType: (string | { name: string })[] | null;
+  natureOfBusiness: (string | { name: string })[] | null;
+  yearsInBusiness: (string | { name: string })[] | null;
+  businessTurnover: (string | { name: string })[] | null;
+  businessIncome: (string | { name: string })[] | null;
+  businessBank: (string | { name: string })[] | null;
+  yearRegistration: (string | { name: string })[] | null;
+  studentIncome: (string | { name: string })[] | null;
+  livesWithParents: (string | { name: string })[] | null;
+}
+
 const LeadPage = () => {
-  const [selectedValues, setSelectedValues] = useState({
+  const [selectedValues, setSelectedValues] = useState<SelectedValues>({
     phoneNumber: null,
     desiredLoanAmount: null,
     loanTenure: null,
@@ -54,7 +83,9 @@ const LeadPage = () => {
   const filteredSelectedValues = Object.fromEntries(
     Object.entries(selectedValues).filter(([key]) => {
       if (businessFields.includes(key)) {
-        return selectedValues.hasGST === "true";
+        return selectedValues.hasGST?.some((item) => 
+          typeof item === "boolean" ? item : item?.name === true
+        );
       }
       return true;
     })
@@ -91,10 +122,10 @@ const LeadPage = () => {
 
   const filteredData = data.filter((item) => {
     return Object.entries(filteredSelectedValues).every(([key, value]) => {
-      if (!value || !value.toString().trim()) return true;
+      if (!value || !(value as string | number).toString().trim()) return true;
       const fieldValue = item[key];
       if (typeof fieldValue === "string") {
-        return fieldValue.toLowerCase().includes(value.toLowerCase());
+        return typeof fieldValue === "string" && typeof value === "string" && (fieldValue as string).toLowerCase().includes((value as string).toLowerCase());
       }
       return fieldValue == value;
     });

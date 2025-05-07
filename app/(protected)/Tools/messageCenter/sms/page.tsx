@@ -1,12 +1,26 @@
 "use client";
+import { fetchNotifications } from "../../../services/notifications/app/api";
 import { useState, useEffect } from "react";
 
 import ExampleTwo from "./table";
 import { columns } from "./table/columns";
-import { fetchNotifications } from "../../../services/notifications/app/api";
+import {DataProps} from "./table/columns";
+
+export type SelectedValues = {
+  title: string | null;
+  status: string | null;
+  category: string | null;
+  user: string;
+  phone: string | null;
+};
+
+
+
 
 const NotificationCenterPage = () => {
-  const [selectedValues, setSelectedValues] = useState({
+  const [selectedValues, setSelectedValues] = useState<
+   SelectedValues
+  >({
     title: null,
     status: null,
     category: null,
@@ -17,10 +31,11 @@ const NotificationCenterPage = () => {
   const [data, setData] = useState<DataProps[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
+
   const fetchData = async () => {
     try {
       const result = await fetchNotifications();
-      if (result.status == 404) {
+      if (result.status === 404) {
         setData([]);
         return;
       }
@@ -40,42 +55,32 @@ const NotificationCenterPage = () => {
   const filteredData = data.filter((item) => {
     return (
       (!selectedValues.title ||
-        item.title
-          .toLowerCase()
-          .includes(selectedValues.title.toLowerCase())) &&
+        item.title.toLowerCase().includes(selectedValues.title.toLowerCase())) &&
       (!selectedValues.category ||
         (item.offer?.category &&
-          item.offer.category
-            .toLowerCase()
-            .includes(selectedValues.category.toLowerCase()))) &&
+          item.offer.category.toLowerCase().includes(selectedValues.category.toLowerCase()))) &&
       (!selectedValues.user ||
-        (item.user?.firstName &&
-          item.user.firstName === selectedValues.user)) &&
+        (item.user?.firstName && item.user.firstName === selectedValues.user)) &&
       (!selectedValues.phone ||
-        (item.user?.phoneNumber &&
-          item.user.phoneNumber.includes(selectedValues.phone)))
+        (item.user?.phoneNumber && item.user.phoneNumber.includes(selectedValues.phone)))
     );
   });
 
   return (
     <>
-    <div className="text-xl  font-medium">Notifications Data</div>
-    <div className="bg-white p-3 mt-5 shadow rounded-md">
-      
-      <div className="  space-y-6">
-      
-            <ExampleTwo
-              selectedValues={selectedValues}
-              setSelectedValues={setSelectedValues}
-              tableData={filteredData}
-              tableColumns={columns}
-              setRefresh={setRefresh}
-            />
-          
+      <div className="mt-6 space-y-6">
+        <ExampleTwo
+          selectedValues={selectedValues}
+          setSelectedValues={setSelectedValues}
+          tableData={filteredData}
+          tableColumns={columns}
+          setRefresh={setRefresh}
+        />
       </div>
-    </div>
     </>
   );
 };
 
 export default NotificationCenterPage;
+
+

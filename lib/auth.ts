@@ -33,7 +33,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
             throw new Error(data.message || "Invalid login credentials");
           }
 
-          // Return the user object
           return {
             id: data.id,
             name: data.name,
@@ -50,7 +49,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }:{ token: any; user: any }) {
       if (user) {
         token.id = user.id;
         token.name = user.name;
@@ -61,7 +60,10 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       return token;
     },
 
-    async session({ session, token }) {
+    async session({ session, token }:{ session: any; token: any }) {
+      const res = await fetch(`http://localhost:5000/api/auth/user/${token.id}`);
+      
+      if (!res.ok) return null; 
       if (session.user) {
         session.user.id = token.id;
         session.user.name = token.name;
