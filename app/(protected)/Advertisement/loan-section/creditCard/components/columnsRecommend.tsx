@@ -34,10 +34,13 @@ export interface RowData {
   description?: string;
   thumbnail?: string | { web?: string; mobile?: string };
   companyUrl: string;
+  joiningFee: string;
   annualFee: string;
   buttonType: string;
   active: boolean;
+
 }
+
 interface ColumnsLogoProps {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   router: AppRouterInstance;
@@ -92,7 +95,7 @@ export const columnsRecommend = ({
       </div>
     ),
   },
- {
+  {
     accessorKey: "description",
     header: "Description",
     cell: ({ row }: { row: { original: RowData } }) => {
@@ -107,6 +110,7 @@ export const columnsRecommend = ({
       );
     },
   },
+  
   {
     accessorKey: "thumbnail.web",
     header: "Web",
@@ -183,6 +187,15 @@ export const columnsRecommend = ({
     ),
   },
   {
+    accessorKey: "joining fee",
+    header: "Joining Fee",
+    cell: ({ row }: { row: { original: RowData } }) => (
+      <div className="flex gap-3 items-center">
+        <span className="text-sm">{row.original.joiningFee}</span>
+      </div>
+    ),
+  },
+  {
     accessorKey: "annual fee",
     header: "Annual Fee",
     cell: ({ row }: { row: { original: RowData } }) => (
@@ -195,7 +208,7 @@ export const columnsRecommend = ({
   {
     accessorKey: "active",
     header: "isActive",
-    cell: ({ row }) => <ActiveToggleCell row={row} type={type} setRefresh={setRefresh} />,
+    cell: ({ row }) => <ActiveToggleCell row={row} type={type} setRefresh={setRefresh}  />,
   },
   {
     id: "actions",
@@ -208,7 +221,7 @@ export const columnsRecommend = ({
           const result = await deleteService(id);
           if (result.success) {
             toast.success("Offer data deleted");
-            setRefresh((prev) => !prev); 
+            setRefresh((prev) => !prev); // Trigger refresh
           } else {
             toast.error("Offer data not deleted");
           }

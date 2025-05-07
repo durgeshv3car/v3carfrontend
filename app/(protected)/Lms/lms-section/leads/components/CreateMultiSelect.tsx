@@ -86,7 +86,7 @@ const CategoryMultiSelect = ({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full max-h-64 overflow-y-auto p-0">
+      <PopoverContent className="w-full overflow-y-auto p-0">
         <Command>
           <div className="relative p-2 pb-0">
             <CommandInput

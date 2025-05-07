@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { StatisticsBlock } from "@/components/blocks/statistics-block";
-import { BlockBadge, WelcomeBlock } from "@/components/blocks/welcome-block";
+import { WelcomeBlock } from "@/components/blocks/welcome-block";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import RevinueBarChart from "@/components/revenue-bar-chart";
 import DashboardDropdown from "@/components/dashboard-dropdown";
@@ -9,7 +9,6 @@ import CompanyTable from "./components/company-table";
 import RecentActivity from "./components/recent-activity";
 import MostSales from "./components/most-sales";
 import OverviewRadialChart from "./components/overview-radial";
-import { useTranslations } from "next-intl";
 const DashboardPage = () => {
 
     return (

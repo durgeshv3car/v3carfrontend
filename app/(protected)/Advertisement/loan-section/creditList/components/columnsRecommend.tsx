@@ -34,10 +34,13 @@ export interface RowData {
   description?: string;
   thumbnail?: string | { web?: string; mobile?: string };
   companyUrl: string;
+  joiningFee: string;
   annualFee: string;
   buttonType: string;
   active: boolean;
+
 }
+
 interface ColumnsLogoProps {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   router: AppRouterInstance;
@@ -93,20 +96,21 @@ export const columnsRecommend = ({
     ),
   },
   {
-     accessorKey: "description",
-     header: "Description",
-     cell: ({ row }: { row: { original: RowData } }) => {
-       const rawDescription = row.original?.description || "";
-       const plainText = rawDescription.replace(/<[^>]*>/g, ""); 
-       const truncated = plainText.length > 20 ? plainText.slice(0, 20) + "..." : plainText;
-   
-       return (
-         <div className="flex gap-3 items-center">
-           <span className="text-sm">{truncated}</span>
-         </div>
-       );
-     },
-   },
+    accessorKey: "description",
+    header: "Description",
+    cell: ({ row }: { row: { original: RowData } }) => {
+      const rawDescription = row.original?.description || "";
+      const plainText = rawDescription.replace(/<[^>]*>/g, ""); 
+      const truncated = plainText.length > 20 ? plainText.slice(0, 20) + "..." : plainText;
+  
+      return (
+        <div className="flex gap-3 items-center">
+          <span className="text-sm">{truncated}</span>
+        </div>
+      );
+    },
+  },
+  
   {
     accessorKey: "thumbnail.web",
     header: "Web",
@@ -183,6 +187,15 @@ export const columnsRecommend = ({
     ),
   },
   {
+    accessorKey: "joining fee",
+    header: "Joining Fee",
+    cell: ({ row }: { row: { original: RowData } }) => (
+      <div className="flex gap-3 items-center">
+        <span className="text-sm">{row.original.joiningFee}</span>
+      </div>
+    ),
+  },
+  {
     accessorKey: "annual fee",
     header: "Annual Fee",
     cell: ({ row }: { row: { original: RowData } }) => (
@@ -195,7 +208,7 @@ export const columnsRecommend = ({
   {
     accessorKey: "active",
     header: "isActive",
-    cell: ({ row }) => <ActiveToggleCell row={row} type={type} setRefresh={setRefresh} />,
+    cell: ({ row }) => <ActiveToggleCell row={row} type={type} setRefresh={setRefresh}  />,
   },
   {
     id: "actions",
@@ -227,7 +240,7 @@ export const columnsRecommend = ({
                   className="w-7 h-7 border-default-200 dark:border-default-300 text-default-400"
                   onClick={() =>
                     router.push(
-                      `/Advertisement/loan-section/creditList?id=${row.original.id}`
+                      `/Advertisement/loan-section/creditCard?id=${row.original.id}`
                     )
                   }
                 >

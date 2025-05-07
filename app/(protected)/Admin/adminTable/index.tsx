@@ -158,6 +158,13 @@ const ExampleTwo = ({
 
     setColumnsField(headers);
   }, [table]);
+    React.useEffect(() => {
+      setPagination((prev) => ({
+        ...prev,
+        pageIndex: 0,
+        pageSize: Number(pageSize),
+      }));
+    }, [pageSize]);
 
   // Select modals based on the type
   const CreateModalComponent = modalMap[type]?.create;

@@ -1,14 +1,14 @@
-import { useAtom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
+// import { useAtom } from "jotai";
+// import { atomWithStorage } from "jotai/utils";
 
-export type MailConfig = {
-  isOpen: boolean;
-};
+// export type MailConfig = {
+//   isOpen: boolean;
+// };
 
-const mailConfigAtom = atomWithStorage<MailConfig>("mailConfig", {
-  isOpen: false,
-});
+// const mailConfigAtom = atomWithStorage<MailConfig>("mailConfig", {
+//   isOpen: false,
+// });
 
-export function useMailConfig() {
-  return useAtom(mailConfigAtom);
-}
+// export function useMailConfig() {
+//   return useAtom(mailConfigAtom);
+// }

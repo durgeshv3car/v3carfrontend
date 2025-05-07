@@ -43,7 +43,7 @@ const DashCodeHeader = dynamic(() => import("@/components/partials/header"), {
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
-  console.log("session", session);
+  
 
   if (!session?.user?.id) { 
     redirect("/");

@@ -34,6 +34,7 @@ export interface RowData {
   description?: string;
   thumbnail?: string | { web?: string; mobile?: string };
   companyUrl: string;
+  joiningFee: string;
   annualFee: string;
   buttonType: string;
   active: boolean;
@@ -182,6 +183,15 @@ export const columnsRecommend = ({
         >
           {row.original.companyUrl}
         </a>
+      </div>
+    ),
+  },
+  {
+    accessorKey: "joining fee",
+    header: "Joining Fee",
+    cell: ({ row }: { row: { original: RowData } }) => (
+      <div className="flex gap-3 items-center">
+        <span className="text-sm">{row.original.joiningFee}</span>
       </div>
     ),
   },

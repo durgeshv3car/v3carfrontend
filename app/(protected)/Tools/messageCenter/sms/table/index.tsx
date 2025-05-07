@@ -92,6 +92,13 @@ const ExampleTwo: React.FC<ExampleTwoProps> = ({ selectedValues, setSelectedValu
       pagination,
     },
   });
+     React.useEffect(() => {
+       setPagination((prev) => ({
+         ...prev,
+         pageIndex: 0,
+         pageSize: Number(pageSize),
+       }));
+     }, [pageSize]);
 
   return (
     <div className="w-full">

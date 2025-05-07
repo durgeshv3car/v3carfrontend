@@ -77,7 +77,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataProps } from "./columns";
 import { SelectedValues } from "../page";
 
-
 interface ExampleTwoProps {
   selectedValues: SelectedValues;
   setSelectedValues: React.Dispatch<React.SetStateAction<SelectedValues>>;
@@ -105,9 +104,10 @@ const ExampleTwo = <TData extends Record<string, any>>({
   const [selectedColumn, setSelectedColumn] = React.useState<
     string | undefined
   >();
-  
+
   const [isModalOpenOffer, setIsModalOpenOffer] = React.useState(false);
-  const [pageSize, setPageSize] = React.useState(20); // Default to 20 rows per page
+  const [pageSize, setPageSize] = React.useState(20);
+
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [rowSelection, setRowSelection] = React.useState<Record<string, boolean>>({});
   const [selectedRowsData, setSelectedRowsData] = React.useState<DataProps[]>([]);
@@ -128,6 +128,15 @@ const ExampleTwo = <TData extends Record<string, any>>({
 
   const closeModal = () => setIsModalOpen(false);
 
+   React.useEffect(() => {
+     setPagination((prev) => ({
+       ...prev,
+       pageIndex: 0,
+       pageSize: Number(pageSize),
+     }));
+   }, [pageSize]);
+  
+
   const table = useReactTable({
     data: tableData,
     columns: tableColumns,
@@ -145,10 +154,10 @@ const ExampleTwo = <TData extends Record<string, any>>({
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination,
+      pagination, // Ensure pagination state is passed here
     },
   });
-  
+
   React.useEffect(() => {
     const selectedData = table
       .getSelectedRowModel()
@@ -165,8 +174,6 @@ const ExampleTwo = <TData extends Record<string, any>>({
       setIsCreatingNotification(true);
     }
   }, [searchParams]);
-  
- 
 
   return (
     <div className="w-full">

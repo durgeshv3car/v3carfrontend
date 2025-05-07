@@ -119,9 +119,13 @@ const ExampleTwo: React.FC<ExampleTwoProps> = ({ selectedValues, setSelectedValu
     }
   }, [searchParams]);
 
-  const handleRemoveFilter = (key: string) => {
-    setSelectedValues((prev) => ({ ...prev, [key]: "" }));
-  };
+     React.useEffect(() => {
+       setPagination((prev) => ({
+         ...prev,
+         pageIndex: 0,
+         pageSize: Number(pageSize),
+       }));
+     }, [pageSize]);
 
   return (
     <div className="w-full">
