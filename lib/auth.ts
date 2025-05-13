@@ -61,7 +61,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
 
     async session({ session, token }:{ session: any; token: any }) {
-      const res = await fetch(`http://localhost:5000/api/auth/user/${token.id}`);
+      const res = await fetch(`http://localhost:5000/api/auth/user/${token.id}`,{
+        headers:{
+          Authorization: `Bearer ${token.token}`,
+        }
+      });
       
       if (!res.ok) return null; 
       if (session.user) {
