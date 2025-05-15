@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import "primereact/resources/primereact.css";
 import "primereact/resources/themes/soho-light/theme.css";
 
+
 // Pre-load critical components
 // const ThemeCustomize = dynamic(() => import("@/components/partials/customizer"), {
 //   ssr: true, // Enable SSR for critical UI components
@@ -19,7 +20,6 @@ const LoadingPlaceholder = ({ text = "Loading..." }) => (
 );
 
 const DashCodeSidebar = dynamic(() => import("@/components/partials/sidebar"), {
-
   loading: () => <LoadingPlaceholder text="Loading Sidebar" />,
 });
 
@@ -37,17 +37,17 @@ const LayoutContentProvider = dynamic(
 );
 
 const DashCodeHeader = dynamic(() => import("@/components/partials/header"), {
-
   loading: () => <LoadingPlaceholder text="Loading Header" />,
 });
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
-  
 
-  if (!session?.user?.id) { 
+  if (!session?.user?.id) {
     redirect("/");
   }
+
+  
 
   return (
     <LayoutProvider>

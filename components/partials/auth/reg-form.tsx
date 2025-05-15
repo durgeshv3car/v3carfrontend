@@ -6,10 +6,18 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import axios from "axios";
+import PermissionPage from "@/app/(protected)/permissions/page";
 
 type Inputs = {
   username: string;
@@ -18,51 +26,77 @@ type Inputs = {
   role: string;
 };
 
-const RegForm = ({roleType}:{roleType:string}) => {
+const RegForm = ({ roleType }: { roleType: string }) => {
   const {
     register,
     handleSubmit,
     control,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<Inputs>();
 
   const [loading, setLoading] = useState(false);
+  const [selectedRole, setSelectedRole] = useState("");
+  const [customRole, setCustomRole] = useState("");
+  const [isDialogOpen, setDialogOpen] = useState(false);
+
+  const toggleDialog = () => {
+    setDialogOpen((prev) => !prev);
+  };
+
   const router = useRouter();
- 
+  
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setLoading(true);
 
-    try {
-      const response = await axios.post("http://localhost:5000/api/auth/register", data);
+    // Replace role with customRole if "Other" is selected
+    if (selectedRole === "Other") {
+      data.role = customRole;
+    }
 
-      console.log("API response:", response.data);
-      if (response.data.user.id) {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        data
+      );
+
+      if (response.data.user?.id) {
         toast.success("User created successfully");
-        router.push("/auth/login");
+        toggleDialog()
+        router.push(`/permissions?id=${response.data.user?.id}`);
       }
     } catch (error: any) {
+      toast.error("User not created")
       console.error("API Error:", error);
     } finally {
       setLoading(false);
     }
   };
-
   return (
+    <>
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {/* Username */}
       <div className="space-y-2">
-        <Label htmlFor="username">userName</Label>
+        <Label htmlFor="username">User Name</Label>
         <Input
           id="username"
           placeholder="John Doe"
           {...register("username", {
-            required: "userName is required",
-            minLength: { value: 4, message: "userName must be at least 4 characters" },
+            required: "Username is required",
+            minLength: {
+              value: 4,
+              message: "Username must be at least 4 characters",
+            },
           })}
         />
-        {errors.username && <p className="text-sm text-red-500">{errors.username.message}</p>}
+        {errors.username && (
+          <p className="text-sm text-red-500">{errors.username.message}</p>
+        )}
       </div>
 
+      {/* Email */}
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
@@ -76,9 +110,12 @@ const RegForm = ({roleType}:{roleType:string}) => {
             },
           })}
         />
-        {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+        {errors.email && (
+          <p className="text-sm text-red-500">{errors.email.message}</p>
+        )}
       </div>
 
+      {/* Password */}
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
         <Input
@@ -94,9 +131,12 @@ const RegForm = ({roleType}:{roleType:string}) => {
             },
           })}
         />
-        {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+        {errors.password && (
+          <p className="text-sm text-red-500">{errors.password.message}</p>
+        )}
       </div>
 
+      {/* Role Select */}
       <div className="space-y-2">
         <Label htmlFor="role">Role</Label>
         <Controller
@@ -104,7 +144,13 @@ const RegForm = ({roleType}:{roleType:string}) => {
           name="role"
           rules={{ required: "Role is required" }}
           render={({ field }) => (
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select
+              onValueChange={(val) => {
+                field.onChange(val);
+                setSelectedRole(val);
+              }}
+              value={field.value}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select your role" />
               </SelectTrigger>
@@ -116,6 +162,7 @@ const RegForm = ({roleType}:{roleType:string}) => {
                     <SelectItem value="Partner">Partner</SelectItem>
                     <SelectItem value="Developer">Developer</SelectItem>
                     <SelectItem value="Custom">Custom</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
                   </>
                 )}
                 {roleType === "Admin" && (
@@ -124,15 +171,32 @@ const RegForm = ({roleType}:{roleType:string}) => {
                     <SelectItem value="Partner">Partner</SelectItem>
                     <SelectItem value="Developer">Developer</SelectItem>
                     <SelectItem value="Custom">Custom</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
                   </>
                 )}
               </SelectContent>
             </Select>
           )}
         />
-        {errors.role && <p className="text-sm text-red-500">{errors.role.message}</p>}
+        {errors.role && (
+          <p className="text-sm text-red-500">{errors.role.message}</p>
+        )}
       </div>
 
+      {/* Custom Role Input if "Other" selected */}
+      {selectedRole === "Other" && (
+        <div className="space-y-2">
+          <Label htmlFor="customRole">Custom Role</Label>
+          <Input
+            id="customRole"
+            value={customRole}
+            placeholder="Type your role"
+            onChange={(e) => setCustomRole(e.target.value)}
+          />
+        </div>
+      )}
+
+      {/* Terms Checkbox */}
       <div className="flex items-center gap-2">
         <Checkbox id="checkbox" defaultChecked />
         <Label htmlFor="checkbox">
@@ -140,10 +204,13 @@ const RegForm = ({roleType}:{roleType:string}) => {
         </Label>
       </div>
 
+      {/* Submit Button */}
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? "Creating..." : "Create An Account"}
       </Button>
     </form>
+
+    </>
   );
 };
 

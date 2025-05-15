@@ -12,16 +12,18 @@ interface DecodedToken {
 const DashCodeSidebar = async () => {
    const session = await auth();
    let role = "";
+   let permissions: string[] = []; 
 
  
    if (session?.user && 'token' in session.user) {
      const decoded = jwtDecode<DecodedToken>((session.user as { token: string }).token);
      role = decoded.role;
+     permissions = (session.user as any).permissions || [];
    }
  
   return (
     <SidebarContent>
-      <Menu role={role} />
+      <Menu role={role} permissions={permissions} />
     </SidebarContent>
   );
 };

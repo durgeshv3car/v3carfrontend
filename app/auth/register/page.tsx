@@ -16,18 +16,21 @@ const Register = async () => {
   const session = await auth();
   let role = "";
   let token = "";
+  let permissions: string[] = [];
 
-  if (session?.user && 'token' in session.user) {
-    const decoded = jwtDecode<DecodedToken>((session.user as { token: string }).token);
+  if (session?.user && "token" in session.user) {
+    const decoded = jwtDecode<DecodedToken>(
+      (session.user as { token: string }).token
+    );
     token = (session.user as { token: string }).token;
     role = decoded.role;
+    permissions = (session.user as any).permissions || [];
   }
 
-  const allowed = ["Super Admin", "Admin"];
-  if (!allowed.includes(role)) {
+  const allowed = "Create Account";
+  if (role != "Super Admin" && !permissions.includes(allowed)) {
     notFound();
   }
-
   return (
     <>
       <div className="flex w-full items-center overflow-hidden min-h-dvh h-dvh basis-full">
