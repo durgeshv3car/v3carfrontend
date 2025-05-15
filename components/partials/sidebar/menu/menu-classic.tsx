@@ -28,14 +28,14 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 
 
 
-export function MenuClassic({role }: { role: string }) {
+export function MenuClassic({role,permissions}: { role: string,permissions: string[]; }) {
   const pathname = usePathname();
   const params = useParams<{ locale: string }>();
   const direction = getLangDir(params?.locale ?? "");
 
   const isDesktop = useMediaQuery("(min-width: 1280px)");
 
-  const menuList = getMenuList(pathname, role);
+  const menuList = getMenuList(pathname, role,permissions);
   const [config, setConfig] = useConfig();
   const collapsed = config.collapsed;
   const [hoverConfig] = useMenuHoverConfig();
@@ -57,6 +57,7 @@ export function MenuClassic({role }: { role: string }) {
     };
     scrollableNodeRef.current?.addEventListener("scroll", handleScroll);
   }, [scrollableNodeRef]);
+
 
   return (
     <>

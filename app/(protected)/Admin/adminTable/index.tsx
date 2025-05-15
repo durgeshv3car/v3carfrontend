@@ -46,9 +46,9 @@ import {
 } from "@/components/ui/table";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
-import { Categorys } from "../admin-section/api-management/components/columnsCategory";
+import { Categorys } from "../admin-section/user-management/components/columnsCategory";
 
-type ModalType = 'api' ;
+type ModalType = 'api' | 'logs' | 'user' ;
 
 // Define the props interface for the edit modal components
 interface EditModalProps<Categorys> {
@@ -83,6 +83,14 @@ const modalMap: Record<ModalType, {
   api: {
     create: dynamic(() => import("../admin-section/api-management/components/Create")) as CreateComponent,
     edit: dynamic(() => import("../admin-section/api-management/components/EditModal")),
+  },
+  logs: {
+    create: dynamic(() => import("../admin-section/user-logs/components/Create")) as CreateComponent,
+    edit: dynamic(() => import("../admin-section/user-logs/components/EditModal")),
+  },
+  user: {
+    create: dynamic(() => import("../admin-section/user-management/components/Create")) as CreateComponent,
+    edit: dynamic(() => import("../admin-section/user-management/components/EditModal")),
   },
 };
 
@@ -178,12 +186,7 @@ const ExampleTwo = ({
           <div className="text-xl font-medium text-gray-600">
             {tableHeading}
           </div>
-          <Button
-            onClick={createPage}
-            className="bg-gray-600 hover:bg-gray-700 text-white w-24 h-8 text-xs rounded-md shadow-sm transition-all"
-          >
-            Add {tableHeading}
-          </Button>
+         
         </div>
 
         <div className="flex items-center gap-4">

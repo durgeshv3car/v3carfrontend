@@ -75,7 +75,7 @@ import { ColumnDef } from "@tanstack/react-table";
 
 // import { SelectedValues } from "../page";
 import { DataProps } from "./columns";
-import { SelectedValues } from "../page";
+import { SelectedValues } from "../components/Leads";
 
 interface ExampleTwoProps {
   selectedValues: SelectedValues;

@@ -8,7 +8,7 @@ import { MenuClassic } from './menu-classic';
 
 import { useMediaQuery } from '@/hooks/use-media-query';
 
-export function Menu({role}: { role: string }) {
+export function Menu({role,permissions}: { role: string,permissions: string[];}) {
 
     const [config, setConfig] = useConfig()
     const isDesktop = useMediaQuery('(min-width: 1280px)')
@@ -17,6 +17,6 @@ export function Menu({role}: { role: string }) {
 
 
     return (
-        <MenuClassic role={role}/>
+        <MenuClassic role={role} permissions={permissions}/>
     );
 }
