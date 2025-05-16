@@ -15,7 +15,7 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { Check, ChevronsUpDown } from "lucide-react";
-import { SelectedValues } from "../page";
+import { SelectedValues } from "./LoanApplications";
 
 interface FilterProps {
   selectedValues: SelectedValues;

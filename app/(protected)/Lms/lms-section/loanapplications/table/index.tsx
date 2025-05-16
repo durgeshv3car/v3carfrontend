@@ -53,7 +53,7 @@ import TablePagination from "./table-pagination";
 import Filter from "../components/Filter";
 import OfferSelectionModal from "../components/OfferSelectionModal";
 import { useSearchParams } from "next/navigation";
-import { SelectedValues } from "../page";
+import { SelectedValues } from "../components/LoanApplications";
 
 interface ExampleTwoProps {
   selectedValues:SelectedValues;

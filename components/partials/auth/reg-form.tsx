@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import axios from "axios";
-import PermissionPage from "@/app/(protected)/permissions/page";
+
 
 type Inputs = {
   username: string;
@@ -166,6 +166,15 @@ const RegForm = ({ roleType }: { roleType: string }) => {
                   </>
                 )}
                 {roleType === "Admin" && (
+                  <>
+                    <SelectItem value="Employee">Employee</SelectItem>
+                    <SelectItem value="Partner">Partner</SelectItem>
+                    <SelectItem value="Developer">Developer</SelectItem>
+                    <SelectItem value="Custom">Custom</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </>
+                )}
+                {(roleType !== "Super Admin" && roleType !== "Admin") && (
                   <>
                     <SelectItem value="Employee">Employee</SelectItem>
                     <SelectItem value="Partner">Partner</SelectItem>

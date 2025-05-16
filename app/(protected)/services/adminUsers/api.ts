@@ -17,25 +17,35 @@ export const deleteUser = async (id: string,adminId: string) => {
     return { success: false };
   }
 };
-export const updateApi = async (id: string, title?: string, isActive?: boolean) => {
-    try {
-      const updatePayload: any = {};
-  
-      if (title !== undefined) updatePayload.title = title;
-      if (isActive !== undefined) updatePayload.isActive = String(isActive);
-  
-  
-      await axios.put(`${API_BASE_URL}/api-management/${id}`, updatePayload, {
+export const updateUser = async (
+  id: string,
+  username?: string,
+  email?: string,
+  role?: string,
+  permissions?: any
+) => {
+  try {
+    const updatePayload: any = {};
+
+    if (username !== undefined) updatePayload.username = username;
+    if (email !== undefined) updatePayload.email = email;
+    if (role !== undefined) updatePayload.role = role;
+    if (permissions !== undefined) updatePayload.permissions = permissions;
+
+    await axios.put(
+      `${API_BASE_URL}/auth/update/${id}`,
+      updatePayload,
+      {
         headers: { "Content-Type": "application/json" },
-      });
-  
-      return { success: true };
-    } catch (error) {
-      console.error("Error updating category:", error);
-      return { success: false };
-    }
-  };
-  
+      }
+    );
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return { success: false };
+  }
+};
 
 
 export const addApi = async (title: string) => {
