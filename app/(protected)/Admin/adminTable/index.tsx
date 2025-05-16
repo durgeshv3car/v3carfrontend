@@ -13,7 +13,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table'
+} from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -48,7 +48,7 @@ import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { Categorys } from "../admin-section/user-management/components/columnsCategory";
 
-type ModalType = 'api' | 'logs' | 'user' ;
+type ModalType = "api" | "logs" | "user";
 
 // Define the props interface for the edit modal components
 interface EditModalProps<Categorys> {
@@ -75,22 +75,36 @@ const TablePagination = dynamic(() => import("./table-pagination"), {
   ssr: false,
 });
 
-const modalMap: Record<ModalType, {
-  create: CreateComponent;
-  edit: any; // Using any temporarily for dynamic imports
-}> = {
-  
+const modalMap: Record<
+  ModalType,
+  {
+    create: CreateComponent;
+    edit: any; // Using any temporarily for dynamic imports
+  }
+> = {
   api: {
-    create: dynamic(() => import("../admin-section/api-management/components/Create")) as CreateComponent,
-    edit: dynamic(() => import("../admin-section/api-management/components/EditModal")),
+    create: dynamic(
+      () => import("../admin-section/api-management/components/Create")
+    ) as CreateComponent,
+    edit: dynamic(
+      () => import("../admin-section/api-management/components/EditModal")
+    ),
   },
   logs: {
-    create: dynamic(() => import("../admin-section/user-logs/components/Create")) as CreateComponent,
-    edit: dynamic(() => import("../admin-section/user-logs/components/EditModal")),
+    create: dynamic(
+      () => import("../admin-section/user-logs/components/Create")
+    ) as CreateComponent,
+    edit: dynamic(
+      () => import("../admin-section/user-logs/components/EditModal")
+    ),
   },
   user: {
-    create: dynamic(() => import("../admin-section/user-management/components/Create")) as CreateComponent,
-    edit: dynamic(() => import("../admin-section/user-management/components/EditModal")),
+    create: dynamic(
+      () => import("../admin-section/user-management/components/Create")
+    ) as CreateComponent,
+    edit: dynamic(
+      () => import("../admin-section/user-management/components/EditModal")
+    ),
   },
 };
 
@@ -100,6 +114,8 @@ interface TableProps {
   tableData: Categorys[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   type: ModalType;
+  role: string;
+  permissions: [];
 }
 
 const ExampleTwo = ({
@@ -108,6 +124,8 @@ const ExampleTwo = ({
   tableColumns,
   setRefresh,
   type,
+  role,
+  permissions,
 }: TableProps) => {
   const searchParams = useSearchParams();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -123,20 +141,22 @@ const ExampleTwo = ({
   const closeCreateModal = () => setIsCreateOpen(false);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnsField, setColumnsField] = React.useState<string[]>([]);
   const [pageSize, setPageSize] = React.useState(20);
   const [pagination, setPagination] = React.useState<PaginationState>({
-      pageIndex: 0,
-      pageSize
-    })
-  
+    pageIndex: 0,
+    pageSize,
+  });
 
   const table = useReactTable({
     data: tableData,
-    columns: tableColumns as ColumnDef<Categorys>[], 
+    columns: tableColumns as ColumnDef<Categorys>[],
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -161,18 +181,20 @@ const ExampleTwo = ({
     const headers = table
       .getHeaderGroups()
       .flatMap((headerGroup) =>
-        headerGroup.headers.map((header) => String(header.column.columnDef.header))
+        headerGroup.headers.map((header) =>
+          String(header.column.columnDef.header)
+        )
       );
 
     setColumnsField(headers);
   }, [table]);
-    React.useEffect(() => {
-      setPagination((prev) => ({
-        ...prev,
-        pageIndex: 0,
-        pageSize: Number(pageSize),
-      }));
-    }, [pageSize]);
+  React.useEffect(() => {
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: 0,
+      pageSize: Number(pageSize),
+    }));
+  }, [pageSize]);
 
   // Select modals based on the type
   const CreateModalComponent = modalMap[type]?.create;
@@ -186,7 +208,16 @@ const ExampleTwo = ({
           <div className="text-xl font-medium text-gray-600">
             {tableHeading}
           </div>
-         
+          {type == "api" ? (
+            <Button
+              onClick={createPage}
+              className="bg-gray-600 hover:bg-gray-700 text-white w-24 h-8 text-xs rounded-md shadow-sm transition-all"
+            >
+              Add {tableHeading}
+            </Button>
+          ) : (
+            <></>
+          )}
         </div>
 
         <div className="flex items-center gap-4">
@@ -238,7 +269,7 @@ const ExampleTwo = ({
           {/* Input for Filtering */}
           <Input
             placeholder="Filter Title..."
-            value={table.getColumn("title")?.getFilterValue() as string ?? ""}
+            value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("title")?.setFilterValue(event.target.value)
             }
@@ -273,9 +304,7 @@ const ExampleTwo = ({
                                     <Icon icon="heroicons:arrow-up" />
                                   </span>
                                 </TooltipTrigger>
-                                <TooltipContent>
-                                  Sort Ascending
-                                </TooltipContent>
+                                <TooltipContent>Sort Ascending</TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
                           ) : (
@@ -286,9 +315,7 @@ const ExampleTwo = ({
                                     <Icon icon="heroicons:arrow-down" />
                                   </span>
                                 </TooltipTrigger>
-                                <TooltipContent>
-                                  Sort Descending
-                                </TooltipContent>
+                                <TooltipContent>Sort Descending</TooltipContent>
                               </Tooltip>
                             </TooltipProvider>
                           )}
@@ -326,29 +353,31 @@ const ExampleTwo = ({
         </TableBody>
       </Table>
       <TablePagination table={table} />
-      
+
       {/* Create Modal */}
       <React.Suspense fallback={<div>Loading...</div>}>
-      {isCreateOpen && CreateModalComponent && (
-        <CreateModalComponent
-          onClose={closeCreateModal}
-          columnsField={columnsField}
-          setRefresh={setRefresh}
-          type={type}
-        />
-      )}
+        {isCreateOpen && CreateModalComponent && (
+          <CreateModalComponent
+            onClose={closeCreateModal}
+            columnsField={columnsField}
+            setRefresh={setRefresh}
+            type={type}
+          />
+        )}
       </React.Suspense>
-      
+
       {/* Edit Modal */}
       <React.Suspense fallback={<div>Loading...</div>}>
-      {isModalOpen && EditModalComponent && (
-        <EditModalComponent
-          id={leadId}
-          onClose={closeModal}
-          tableData={tableData}
-          setRefresh={setRefresh}
-        />
-      )}
+        {isModalOpen && EditModalComponent && (
+          <EditModalComponent
+            id={leadId}
+            onClose={closeModal}
+            tableData={tableData}
+            setRefresh={setRefresh}
+            role={role}
+            permissions={permissions}
+          />
+        )}
       </React.Suspense>
     </div>
   );

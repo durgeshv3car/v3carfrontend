@@ -4,9 +4,11 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch"; // Added missing import
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { updateApi } from "@/app/(protected)/services/apiManagement/api";
+import PermissionPage from "./PermissionView";
+import { updateUser } from "@/app/(protected)/services/adminUsers/api";
 
 // Match the same interface structure as in the main component
 interface EditModalProps<T> {
@@ -14,6 +16,9 @@ interface EditModalProps<T> {
   onClose: () => void;
   tableData: T[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  adminId: string;
+  role: string;
+  permissions: string[];
 }
 
 const EditModal = <T extends Record<string, any>>({
@@ -21,10 +26,15 @@ const EditModal = <T extends Record<string, any>>({
   onClose,
   tableData,
   setRefresh,
+  role,
+  permissions,
 }: EditModalProps<T>) => {
   const router = useRouter();
   const [editedData, setEditedData] = useState<Record<string, any>>({});
   const [selectedRow, setSelectedRow] = useState<T | null>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [permissionList, setPermissionList] = useState<string[]>([]);
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
 
   useEffect(() => {
     if (!id) return;
@@ -53,22 +63,30 @@ const EditModal = <T extends Record<string, any>>({
     if (!id) return;
 
     try {
-      const result = await updateApi(id, editedData.title, editedData.isActive);
+      const result = await updateUser(
+        id,
+        editedData.username,
+        editedData.email,
+        editedData.role,
+        selectedPermissions
+      );
       if (result.success) {
-        toast.success("Category data updated successfully.");
+        toast.success("User data updated successfully.");
         refreshData();
         handleClose();
       } else {
-        toast.error("Failed to update category data.");
+        toast.error("Failed to update User data.");
       }
     } catch (error) {
-      console.error("Error updating category:", error);
-      toast.error("An error occurred while updating the category.");
+      console.error("Error updating User:", error);
+      toast.error("An error occurred while updating the User.");
     }
   };
 
-  const handleEditPermissions = () => {
-    router.push(`/permissions?id=${id}&update=true`);
+  const handleEditPermissions = (data: string[]) => {
+    setIsOpen(true);
+    router.push(`/Admin/admin-section/user-management?id=${id}`);
+    setPermissionList(data);
   };
 
   if (!selectedRow) return null;
@@ -133,7 +151,7 @@ const EditModal = <T extends Record<string, any>>({
                 >
                   <span className="text-sm font-medium">Permissions</span>
                   <button
-                    onClick={handleEditPermissions}
+                    onClick={() => handleEditPermissions(editedData[key])}
                     className="text-blue-600 hover:text-blue-800"
                     title="Edit Permissions"
                   >
@@ -155,6 +173,16 @@ const EditModal = <T extends Record<string, any>>({
             }
           })}
         </div>
+        {isOpen && (
+          <PermissionPage
+            role={role}
+            permissions={permissions}
+            data={{ permissions: permissionList }}
+            setIsOpen={setIsOpen}
+            selectedPermissions={selectedPermissions}
+            setSelectedPermissions={setSelectedPermissions}
+          />
+        )}
 
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="outline" onClick={handleClose}>

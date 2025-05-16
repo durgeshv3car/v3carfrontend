@@ -15,7 +15,15 @@ const ExampleTwo = dynamic(() => import("../../../adminTable"), {
   ssr: false,
 });
 
-function Category() {
+function Category({
+  adminId,
+  role,
+  permissions,
+}: {
+  adminId: string;
+  role: string;
+  permissions: any;
+}) {
 
 
   const router = useRouter();
@@ -57,6 +65,8 @@ function Category() {
           }) as ColumnDef<Categorys>[]} 
           setRefresh={setRefresh}
           type={type}
+          role={role}
+          permissions={permissions}
         />
       </div>
     </>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { SelectedValues } from "../page";
+import { SelectedValues } from "./Leads";
 
 import { DataProps } from "../table/columns";
 import CategoryMultiSelect from "./CreateMultiSelect";

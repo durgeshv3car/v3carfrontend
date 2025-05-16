@@ -15,10 +15,19 @@ import ActiveToggleCell from "./ActiveToggleCell";
 import { deleteAPi } from "@/app/(protected)/services/apiManagement/api";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
+
 export interface Categorys {
   id: string; // Ensure this matches the key in your data
   title: string; // Ensure this matches the key in your data
   active: boolean; // Add this field if it exists in your data
+  name:string;
+  ipAddress:string;
+  action:string;
+  createdAt:Date;
+  username: string; // Ensure this matches the key in your data
+  email: string;
+  role: string;
+  permissions:[]
 }
 
 interface ColumnsCategoryProps {

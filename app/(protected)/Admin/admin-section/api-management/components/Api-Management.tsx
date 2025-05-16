@@ -15,12 +15,16 @@ const ExampleTwo = dynamic(() => import("../../../adminTable"), {
   ssr: false,
 });
 
-function Category() {
-  const allowed = ["Super Admin", "Admin"];
-  const role = "Admin";
-  if (!allowed.includes(role)) {
-    notFound();
-  }
+function Category({
+  adminId,
+  role,
+  permissions,
+}: {
+  adminId: string;
+  role: string;
+  permissions: any;
+}) {
+ 
 
   const router = useRouter();
   const [data, setData] = useState<Categorys[]>([]);
@@ -61,6 +65,8 @@ function Category() {
           }) as ColumnDef<Categorys>[]} 
           setRefresh={setRefresh}
           type={type}
+          role={role}
+          permissions={permissions}
         />
       </div>
     </>

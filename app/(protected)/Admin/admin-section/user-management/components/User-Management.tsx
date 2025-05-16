@@ -15,17 +15,21 @@ const ExampleTwo = dynamic(() => import("../../../adminTable"), {
   ssr: false,
 });
 
-function Category({adminId}:{adminId:string}) {
-  const allowed = ["Super Admin", "Admin"];
-  const role = "Admin";
-  if (!allowed.includes(role)) {
-    notFound();
-  }
-
+function Category({
+  adminId,
+  role,
+  permissions,
+}: {
+  adminId: string;
+  role: string;
+  permissions: any;
+}) {
   const router = useRouter();
   const [data, setData] = useState<Categorys[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refresh, setRefresh] = useState<boolean>(false);
+  const [open, setOpen] = useState(false);
+  const [permissionList, setPermissionList] = useState<string[]>([]);
 
   const type = "user";
 
@@ -46,8 +50,7 @@ function Category({adminId}:{adminId:string}) {
     fetchData();
   }, [refresh]);
 
-  if (loading)
-    return <Loader2 className="me-2 h-4 w-4 animate-spin" />;
+  if (loading) return <Loader2 className="me-2 h-4 w-4 animate-spin" />;
 
   return (
     <>
@@ -55,13 +58,21 @@ function Category({adminId}:{adminId:string}) {
         <ExampleTwo
           tableHeading="User List"
           tableData={data}
-          tableColumns={columnsCategory({
-            fetchData,
-            router,
-            adminId
-          }) as ColumnDef<Categorys>[]} 
+          tableColumns={
+            columnsCategory({
+              fetchData,
+              router,
+              adminId,
+              open,
+              setOpen,
+              permissionList,
+              setPermissionList,
+            }) as ColumnDef<Categorys>[]
+          }
           setRefresh={setRefresh}
           type={type}
+          role={role}
+          permissions={permissions}
         />
       </div>
     </>

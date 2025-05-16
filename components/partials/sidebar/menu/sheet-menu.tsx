@@ -42,7 +42,7 @@ export function SheetMenu() {
                         </h1>
                     </Link>
                 </SheetHeader>
-                <MenuClassic role="" />
+                <MenuClassic role="" permissions={[]} />
             </SheetContent>
         </Sheet>
     );
