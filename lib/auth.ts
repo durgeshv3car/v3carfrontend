@@ -15,15 +15,16 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required");
         }
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
 
         try {
-          const res = await fetch("http://localhost:5000/api/auth/login", {
+          const res = await fetch(`${API_BASE_URL}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               email: credentials.email,
               password: credentials.password,
-              expiresInMins: 30,
+              expiresInMins: 1440,
             }),
           });
 
@@ -62,7 +63,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
 
     async session({ session, token }:{ session: any; token: any }) {
-      const res = await fetch(`http://localhost:5000/api/auth/user/${token.id}`,{
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
+      const res = await fetch(`${API_BASE_URL}/auth/user/${token.id}`,{
         headers:{
           Authorization: `Bearer ${token.token}`,
         }
