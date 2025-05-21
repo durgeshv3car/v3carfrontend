@@ -839,8 +839,8 @@ export const gradientSidebarColorSvg = (
         y2="36"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#A831AA" />
-        <stop offset="1" stop-color="#4A154B" />
+        <stop stopColor="#A831AA" />
+        <stop offset="1" stopColor="#4A154B" />
       </linearGradient>
     </defs>
   </svg>

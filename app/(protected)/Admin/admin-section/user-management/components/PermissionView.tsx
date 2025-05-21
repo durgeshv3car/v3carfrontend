@@ -50,7 +50,7 @@ export default function PermissionPage({
     if (data && data.permissions && Array.isArray(data.permissions)) {
       setSelectedPermissions(data.permissions);
     }
-  }, []);
+  });
 
   const handleCheckboxChange = (perm: string) => {
     setSelectedPermissions(

@@ -39,7 +39,7 @@ const LeadPage = () => {
   useEffect(() => {
     const loadColumns = async () => {
       const mod = await import("../table/columns");
-      setColumns(mod.columns);
+      setColumns(mod.columns(fetchData));
     };
     loadColumns();
   }, []);

@@ -21,7 +21,9 @@ export type DataProps = {
   [key in (typeof fields)[number]]?: string | number | boolean;
 };
 
-export const columns: ColumnDef<DataProps>[] = [
+export const columns = (
+  fetchData: () => Promise<void>, 
+): ColumnDef<DataProps>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -66,8 +68,8 @@ export const columns: ColumnDef<DataProps>[] = [
     header: "Action",
     enableHiding: false,
     cell: ({ row }) => {
-      const handleDelete = async () => {
-        const id = row.original.id;
+      const handleDelete = async (id:string| undefined) => {
+   
         if (!id) {
           toast.error("Invalid device ID");
           return;
@@ -82,6 +84,7 @@ export const columns: ColumnDef<DataProps>[] = [
             toast.success("Device deleted successfully");
             // You'd typically want to refresh data here
             // This might need to be handled by a parent component
+            fetchData()
           } else {
             toast.error("Failed to delete device");
           }
@@ -100,7 +103,9 @@ export const columns: ColumnDef<DataProps>[] = [
                   variant="outline"
                   size="icon"
                   className="w-7 h-7 border-default-200 dark:border-default-300 text-default-400"
-                  onClick={() => handleDelete}
+                   onClick={() =>
+                    handleDelete(row.original.id as string | undefined)
+                  }
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
