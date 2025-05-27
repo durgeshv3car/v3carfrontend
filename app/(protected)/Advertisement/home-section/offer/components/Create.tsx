@@ -71,8 +71,9 @@ const CreateModal: React.FC<CreateModalProps> = ({
 
   // Fetch categories from API
   useEffect(() => {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
     axios
-      .get("http://localhost:5000/api/category")
+      .get(`${API_BASE_URL}/category`)
       .then((response) => {
         setCategories(response.data);
       })

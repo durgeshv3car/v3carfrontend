@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
-  secret: process.env.NEXTAUTH_SECRET,
+  secret:process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
   },

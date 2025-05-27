@@ -47,11 +47,15 @@ const nextConfig = {
       //   protocol: "https",
       //   hostname: "i.pravatar.cc",
       // },
-      {
-        protocol: "http",
-        hostname: "192.168.0.17",
-        port: "5000",
-        pathname: "/uploads/**",
+      // {
+      //   protocol: "http",
+      //   hostname: "localhost",
+      //   port: "5000",
+      //   pathname: "/uploads/**",
+      // },
+            {
+        protocol: "https",
+        hostname: "imageccp.s3.amazonaws.com", 
       },
     ],
   },

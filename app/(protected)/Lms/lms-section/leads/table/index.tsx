@@ -2,12 +2,12 @@
 
 import * as React from "react";
 import {
+  flexRender,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
-  PaginationState,
-  flexRender,
   getCoreRowModel,
+  PaginationState,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -154,7 +154,7 @@ const ExampleTwo = <TData extends Record<string, any>>({
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination, // Ensure pagination state is passed here
+      pagination, 
     },
   });
 

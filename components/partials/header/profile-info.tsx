@@ -78,18 +78,18 @@ const ProfileInfo = async () => {
               </Link>
             </div>
           </DropdownMenuLabel>
-          <DropdownMenuGroup>
+          {/* <DropdownMenuGroup>
             {[
               // {
               //   name: "profile",
               //   icon: "heroicons:user",
               //   href: "/user-profile",
               // },
-              {
-                name: "Settings",
-                icon: "heroicons:paper-airplane",
-                href: "/dashboard",
-              },
+              // {
+              //   name: "Settings",
+              //   icon: "heroicons:paper-airplane",
+              //   href: "/dashboard",
+              // },
             ].map((item, index) => (
               <Link
                 href={item.href}
@@ -102,15 +102,15 @@ const ProfileInfo = async () => {
                 </DropdownMenuItem>
               </Link>
             ))}
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
+          </DropdownMenuGroup> */}
+          {/* <DropdownMenuSeparator /> */}
           <DropdownMenuGroup>
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="flex items-center gap-2 text-sm font-medium text-default-600 capitalize px-3 py-1.5 ">
+              {/* <DropdownMenuSubTrigger className="flex items-center gap-2 text-sm font-medium text-default-600 capitalize px-3 py-1.5 ">
                 <Icon icon="heroicons:user-plus" className="w-4 h-4" />
                 Invite user
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
+              </DropdownMenuSubTrigger> */}
+              {/* <DropdownMenuPortal>
                 <DropdownMenuSubContent>
                   {[
                     {
@@ -134,7 +134,7 @@ const ProfileInfo = async () => {
                     </Link>
                   ))}
                 </DropdownMenuSubContent>
-              </DropdownMenuPortal>
+              </DropdownMenuPortal> */}
             </DropdownMenuSub>
 
             {/* <DropdownMenuSub>

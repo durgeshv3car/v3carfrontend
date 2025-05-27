@@ -35,35 +35,8 @@ const EditModal: React.FC<EditModalProps> = ({
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
-  const [categories, setCategories] = useState([]);
 
-  const buttonsType = [
-    { id: "apply_now", name: "Apply Now" },
-    { id: "book_now", name: "Book Now" },
-    { id: "download_app", name: "Download App" },
-    { id: "sign_up", name: "Sign Up" },
-    { id: "get_offer", name: "Get Offer" },
-    { id: "get_quote", name: "Get Quote" },
-    { id: "learn_more", name: "Learn More" },
-    { id: "know_more", name: "Know More" },
-    { id: "shop_now", name: "Shop Now" },
-  ];
 
-    useEffect(() => {
-      axios
-        .get("http://localhost:5000/api/category")
-        .then((response) => {
-          console.log(response, "category");
-          setCategories(response.data);
-        })
-        .catch((error) => {
-          if (error.response && error.response.status === 404) {
-            setCategories([]);
-          } else {
-            console.error("Error fetching categories:", error);
-          }
-        });
-    }, []);
 
   // Find the row data based on the id
   useEffect(() => {
@@ -152,7 +125,8 @@ const EditModal: React.FC<EditModalProps> = ({
               "detailDescription",
               "category",
               "offerBanner",
-              "deletionDate"
+              "deletionDate",
+              "buttonType",
             ].includes(key) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">

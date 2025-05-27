@@ -6,22 +6,13 @@ import "primereact/resources/primereact.css";
 import "primereact/resources/themes/soho-light/theme.css";
 
 
-// Pre-load critical components
-// const ThemeCustomize = dynamic(() => import("@/components/partials/customizer"), {
-//   ssr: true, // Enable SSR for critical UI components
-//   loading: () => null, // Minimize loading placeholders for critical UI
-// });
-
-// Optimize loading states with lightweight placeholders
 const LoadingPlaceholder = ({ text = "Loading..." }) => (
   <div className="animate-pulse bg-gray-100 dark:bg-slate-800 rounded-md h-12 flex items-center justify-center">
     <span className="text-gray-500 text-sm">{text}</span>
   </div>
 );
 
-const DashCodeSidebar = dynamic(() => import("@/components/partials/sidebar"), {
-  loading: () => <LoadingPlaceholder text="Loading Sidebar" />,
-});
+const DashCodeSidebar = dynamic(() => import("@/components/partials/sidebar"));
 
 const LayoutProvider = dynamic(() => import("@/providers/layout.provider"), {
   ssr: true,
@@ -37,7 +28,7 @@ const LayoutContentProvider = dynamic(
 );
 
 const DashCodeHeader = dynamic(() => import("@/components/partials/header"), {
-  loading: () => <LoadingPlaceholder text="Loading Header" />,
+ 
 });
 
 const layout = async ({ children }: { children: React.ReactNode }) => {

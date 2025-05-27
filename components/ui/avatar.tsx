@@ -20,7 +20,7 @@ const avatarVariant = cva(
   {
     variants: {
       color: {
-        default: "bg-default text-default-foreground hover:bg-default/90 hover:ring-default",
+        default: "bg-default text-default-foreground text-black border-width-1",
         primary: "bg-primary text-primary-foreground hover:bg-primary/90 hover:ring-primary",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:ring-secondary",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:ring-destructive",
