@@ -114,6 +114,7 @@ const EditModal: React.FC<EditModalProps> = ({
             ![
               "id",
               "action",
+              "webUrl",
               "createdAt",
               "updatedAt",
               "type",
@@ -123,9 +124,8 @@ const EditModal: React.FC<EditModalProps> = ({
               <div key={key}>
                 <label className="block text-sm font-medium">
                   {key === "mobileUrl"
-                    ? "mobile"
-                    : key === "webUrl"
-                    ? "web"
+                    ? "logo"
+                   
                     : key}
                 </label>
                 {key.toLowerCase() === "mobileurl" ? (

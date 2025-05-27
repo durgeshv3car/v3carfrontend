@@ -2,7 +2,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
-  secret:process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
   },
@@ -16,7 +16,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required");
         }
-        const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
+        const API_BASE_URL =
+          process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
 
         try {
           const res = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -34,7 +35,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
           if (!res.ok) {
             throw new Error(data.message || "Invalid login credentials");
           }
-     
 
           return {
             id: data.id,
@@ -52,7 +52,7 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
   ],
 
   callbacks: {
-    async jwt({ token, user }:{ token: any; user: any }) {
+    async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
         token.id = user.id;
         token.permissions = user.permissions;
@@ -63,15 +63,22 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       return token;
     },
 
-    async session({ session, token }:{ session: any; token: any }) {
-      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
-      const res = await fetch(`${API_BASE_URL}/auth/user/${token.id}`,{
-        headers:{
+    async session({ session, token }: { session: any; token: any }) {
+      const API_BASE_URL =
+        process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
+      const res = await fetch(`${API_BASE_URL}/auth/user/${token.id}`, {
+        headers: {
           Authorization: `Bearer ${token.token}`,
-        }
+        },
       });
-      
-      if (!res.ok) return null; 
+
+      if (res.status === 401) {
+        return null;
+      }
+
+      if (!res.ok) {
+        return session;
+      }
       if (session.user) {
         session.user.id = token.id;
         session.user.permissions = token.permissions;

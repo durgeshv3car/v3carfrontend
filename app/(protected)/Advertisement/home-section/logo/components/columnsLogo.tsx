@@ -88,29 +88,10 @@ export const columnsLogo = ({
       </div>
     ),
   },
-  {
-    accessorKey: "thumbnail.web",
-    header: "Web",
-    cell: ({ row }: { row: Row<LogoData> }) => {
-      const thumbnailData = row.original.thumbnail;
-      const imageUrls = typeof thumbnailData === 'string' ? JSON.parse(thumbnailData) : thumbnailData;
-      
-      return (
-        <div className="flex gap-3 items-center">
-          <Avatar className="w-8 h-8 rounded-none bg-transparent shadow-none border-none">
-            {imageUrls?.web ? (
-              <AvatarImage src={imageUrls.web} className="rounded-none" />
-            ) : (
-              <AvatarFallback className="rounded-none">NA</AvatarFallback>
-            )}
-          </Avatar>
-        </div>
-      );
-    },
-  },
+ 
   {
     accessorKey: "thumbnail.mobile",
-    header: "Mobile",
+    header: "Logo",
     cell: ({ row }: { row: Row<LogoData> }) => {
       const thumbnailData = row.original.thumbnail;
       const imageUrls = typeof thumbnailData === 'string' ? JSON.parse(thumbnailData) : thumbnailData;
