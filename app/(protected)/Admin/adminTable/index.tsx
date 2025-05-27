@@ -149,10 +149,18 @@ const ExampleTwo = ({
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnsField, setColumnsField] = React.useState<string[]>([]);
   const [pageSize, setPageSize] = React.useState(20);
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize,
-  });
+   const [pagination, setPagination] = React.useState<PaginationState>({
+     pageIndex: 0,
+     pageSize,
+   });
+ 
+    React.useEffect(() => {
+       setPagination((prev) => ({
+         ...prev,
+         pageIndex: 0,
+         pageSize: Number(pageSize),
+       }));
+     }, [pageSize]);
 
   const table = useReactTable({
     data: tableData,
@@ -166,12 +174,12 @@ const ExampleTwo = ({
     onColumnVisibilityChange: setColumnVisibility,
     onPaginationChange: setPagination,
     onRowSelectionChange: setRowSelection,
-    state: {
+     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination: { pageIndex: 0, pageSize },
+      pagination, 
     },
   });
 
@@ -211,7 +219,7 @@ const ExampleTwo = ({
           {type == "api" ? (
             <Button
               onClick={createPage}
-              className="bg-gray-600 hover:bg-gray-700 text-white w-24 h-8 text-xs rounded-md shadow-sm transition-all"
+               className="bg-gray-600 hover:bg-gray-700 text-white h-8 text-xs rounded-md shadow-sm transition-all px-6"
             >
               Add {tableHeading}
             </Button>

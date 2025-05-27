@@ -163,7 +163,11 @@ const EditModal: React.FC<EditModalProps> = ({
             ].includes(key) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">
-                  {key === "offerImage" || key === "brandLogo" ? "" : key}
+                  {key === "mobileUrl"
+                    ? "mobile"
+                    : key === "webUrl"
+                    ? "web"
+                    : key}
                 </label>
 
                 {key.toLowerCase() === "mobileurl" ? (

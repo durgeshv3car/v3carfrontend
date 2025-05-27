@@ -267,7 +267,7 @@ const ExampleTwo =<T,> ({
           </div>
           <Button
             onClick={createPage}
-            className="bg-gray-600 hover:bg-gray-700 text-white w-24 h-8 text-xs rounded-md shadow-sm transition-all"
+            className="bg-gray-600 hover:bg-gray-700 text-white h-8 text-xs rounded-md shadow-sm transition-all px-6"
           >
             Add {tableHeading}
           </Button>

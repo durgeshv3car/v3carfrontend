@@ -20,15 +20,13 @@ import {
 } from "@/components/ui/select";
 import TextEditor from "../components/SunEditor";
 
-
-
 interface TableRow {
   id: string;
   name?: string;
 
   imageUrl?: string;
   [key: string]: any;
-  type?:string
+  type?: string;
 }
 
 interface EditModalProps {
@@ -36,7 +34,7 @@ interface EditModalProps {
   onClose: () => void;
   tableData: TableRow[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  type: string ;
+  type: string;
 }
 
 const EditModal: React.FC<EditModalProps> = ({
@@ -44,7 +42,7 @@ const EditModal: React.FC<EditModalProps> = ({
   onClose,
   tableData,
   setRefresh,
-  type
+  type,
 }) => {
   const router = useRouter();
   const [editedData, setEditedData] = useState<Partial<TableRow>>({});
@@ -101,7 +99,6 @@ const EditModal: React.FC<EditModalProps> = ({
     }
   }, [id, tableData]);
 
-
   const handleClose = () => {
     onClose();
     router.push("/Advertisement/loan-section/carInsurance");
@@ -112,7 +109,7 @@ const EditModal: React.FC<EditModalProps> = ({
   };
 
   const refreshData = () => setRefresh((prev) => !prev);
- 
+
   const handleUpdate = async () => {
     if (!id) return;
 
@@ -169,7 +166,11 @@ const EditModal: React.FC<EditModalProps> = ({
             ].includes(key) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">
-                  {key === "offerImage" || key === "brandLogo" ? "" : key}
+                  {key === "mobileUrl"
+                    ? "mobile"
+                    : key === "webUrl"
+                    ? "web"
+                    : key}
                 </label>
 
                 {key.toLowerCase() === "mobileurl" ? (
@@ -207,7 +208,6 @@ const EditModal: React.FC<EditModalProps> = ({
                       setEditedData((prev) => ({ ...prev, [key]: value }))
                     }
                   />
-               
                 ) : key === "description" ? (
                   <TextEditor
                     value={editedData.description || ""}
