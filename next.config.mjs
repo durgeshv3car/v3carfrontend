@@ -1,6 +1,5 @@
 import nextra from "nextra";
 
-
 /** @type {import('next').NextConfig} */
 
 const withNextra = nextra({
@@ -12,16 +11,13 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
     scrollRestoration: true,
-    
   },
   turbopack: {
     resolveAlias: {
-      underscore: 'lodash',
+      underscore: "lodash",
     },
-    resolveExtensions: ['.mdx', '.tsx', '.ts', '.jsx', '.js', '.json'],
+    resolveExtensions: [".mdx", ".tsx", ".ts", ".jsx", ".js", ".json"],
   },
-
-  
 
   compress: true,
 
@@ -47,15 +43,15 @@ const nextConfig = {
       //   protocol: "https",
       //   hostname: "i.pravatar.cc",
       // },
-      // {
-      //   protocol: "http",
-      //   hostname: "localhost",
-      //   port: "5000",
-      //   pathname: "/uploads/**",
-      // },
-            {
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "5000",
+        pathname: "/uploads/**",
+      },
+      {
         protocol: "https",
-        hostname: "imageccp.s3.amazonaws.com", 
+        hostname: "imageccp.s3.ap-south-1.amazonaws.com",
       },
     ],
   },

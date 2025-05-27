@@ -7,10 +7,9 @@ import ImageUpload from "../../../components/ImageUpload";
 import { toast } from "sonner";
 import { uploadLogoImage } from "@/app/(protected)/services/logos/api";
 
-interface FileWithPreview  {
+interface FileWithPreview {
   preview: string;
   file: File;
- 
 }
 
 interface CreateModalProps {
@@ -54,31 +53,31 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const refreshData = () => setRefresh((prev) => !prev);
   console.log(mobileFile, webFile);
 
-   const handleSubmit = async () => {
-      try {
-        const result = await uploadLogoImage({
-          type,
-          title: formData.Title,
-          mobileFile: mobileFile?.file || null,
-          webFile: webFile?.file || null,
-          companyUrl: formData["Company URL"],
-        });
-    
-        if (result.success) {
-          toast.success("Slider image added");
-          console.log("Upload success:", result.data);
-          setMobileFile(null);
-          setWebFile(null);
-          refreshData();
-          handleClose();
-        } else {
-          toast.error("Slider image not added");
-        }
-      } catch (error) {
-        console.error("Error submitting:", error);
+  const handleSubmit = async () => {
+    try {
+      const result = await uploadLogoImage({
+        type,
+        title: formData.Title,
+        mobileFile: mobileFile?.file || null,
+        webFile: webFile?.file || null,
+        companyUrl: formData["Company URL"],
+      });
+
+      if (result.success) {
+        toast.success("Slider image added");
+        console.log("Upload success:", result.data);
+        setMobileFile(null);
+        setWebFile(null);
+        refreshData();
+        handleClose();
+      } else {
+        toast.error("Slider image not added");
       }
-    };
-  const excludedFields = ["Schedule Expire", "isactive"];
+    } catch (error) {
+      console.error("Error submitting:", error);
+    }
+  };
+  const excludedFields = ["Schedule Expire", "isactive", "web"];
 
   return (
     <>
@@ -102,17 +101,14 @@ const CreateModal: React.FC<CreateModalProps> = ({
             !excludedFields.includes(key.toLowerCase()) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">
-                  {key === "mobile" ? "Mobile" : key === "web" ? "Web" : key}
+                  {key === "logo" ? "Logo" : key}
                 </label>
-                {key.toLowerCase() === "web" ? (
-                  <ImageUpload
-                    files={webFile ? [webFile] : []}
-                    setFiles={(files: FileWithPreview[]) => setWebFile(files[0] || null)}
-                  />
-                ) : key.toLowerCase() === "mobile" ? (
+                {key.toLowerCase() === "logo" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
-                    setFiles={(files: FileWithPreview[]) => setMobileFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setMobileFile(files[0] || null)
+                    }
                   />
                 ) : (
                   <Input
