@@ -59,7 +59,7 @@ const EditModal: React.FC<EditModalProps> = ({
   const Logo_DIMENSIONS = { width: 150, height: 150 };
   const Web_DIMENSIONS = { width: 1920, height: 970 };
   const Banner_DIMENSIONS = { width: 356, height: 180 };
-  const Mobile_DIMENSIONS = { width: 150, height: 275 };
+  const Mobile_DIMENSIONS = { width: 150, height: 280 };
 
   const buttonsType = [
     { id: "apply_now", name: "Apply Now" },

@@ -26,9 +26,8 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
 
   const Web_DIMENSIONS = { width: 1920, height: 970 };
-  const Mobile_DIMENSIONS = { width: 356, height: 180 };
-  const Banner_DIMENSIONS = { width: 356, height: 180 };
-  const Logo_DIMENSIONS = { width: 150, height: 150 };
+  const Mobile_DIMENSIONS = { width: 365, height: 140 };
+
 
   useEffect(() => {
     if (columnsField.length > 0) {
