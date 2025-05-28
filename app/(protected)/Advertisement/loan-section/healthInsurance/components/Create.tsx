@@ -16,8 +16,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { addService } from "@/app/(protected)/services/ourServices/api";
-
-import { FileWithPreview } from "../../../components/ImageUpload";
+import type { FileWithPreview } from "../../../components/ImageUpload";
 
 interface CreateModalProps {
   onClose: () => void;
@@ -36,11 +35,11 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const [fieldDescription, setFieldDescription] = useState<string>("");
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
-  const [brandMobileFile, setBrandMobileFile] =
-    useState<FileWithPreview | null>(null);
-  const [brandWebFile, setBrandWebFile] = useState<FileWithPreview | null>(
-    null
-  );
+
+
+  const Web_DIMENSIONS = { width: 1920, height: 970 };
+  const Mobile_DIMENSIONS = { width: 356, height: 180 };
+ 
 
   useEffect(() => {
     if (columnsField.length > 0) {
@@ -54,7 +53,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
       setFormData(initialData);
     }
   }, [columnsField]);
-  const [categories, setCategories] = useState([]);
+ 
   const buttonsType = [
     { id: "apply_now", name: "Apply Now" },
     { id: "book_now", name: "Book Now" },
@@ -67,21 +66,8 @@ const CreateModal: React.FC<CreateModalProps> = ({
     { id: "shop_now", name: "Shop Now" },
   ];
 
-  // Fetch categories from API
-  useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/category")
-      .then((response) => {
-        setCategories(response.data);
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 404) {
-          setCategories([]);
-        } else {
-          console.error("Error fetching categories:", error);
-        }
-      });
-  }, []);
+ 
+
 
   const handleClose = () => {
     onClose();
@@ -105,8 +91,6 @@ const CreateModal: React.FC<CreateModalProps> = ({
       toast.success(result.message);
       setMobileFile(null);
       setWebFile(null);
-      setBrandMobileFile(null);
-      setBrandWebFile(null);
       refreshData();
       handleClose();
     } else {
@@ -177,22 +161,20 @@ const CreateModal: React.FC<CreateModalProps> = ({
                 key.toLowerCase() === "web" ? (
                   <ImageUpload
                     files={webFile ? [webFile] : []}
-                    setFiles={(files) => setWebFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setWebFile(files[0] || null)
+                    }
+                    expectedDimensions={Web_DIMENSIONS}
+                    label="Web"
                   />
                 ) : key.toLowerCase() === "mobile" ? (
-                  <ImageUpload
+                 <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
-                    setFiles={(files) => setMobileFile(files[0] || null)}
-                  />
-                ) : key.toLowerCase() === "brand web" ? (
-                  <ImageUpload
-                    files={brandWebFile ? [brandWebFile] : []}
-                    setFiles={(files) => setBrandWebFile(files[0] || null)}
-                  />
-                ) : key.toLowerCase() === "brand mobile" ? (
-                  <ImageUpload
-                    files={brandMobileFile ? [brandMobileFile] : []}
-                    setFiles={(files) => setBrandMobileFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setMobileFile(files[0] || null)
+                    }
+                    expectedDimensions={Mobile_DIMENSIONS}
+                    label="Mobile"
                   />
                 ) : (
                   <Input

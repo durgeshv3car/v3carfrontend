@@ -49,12 +49,9 @@ const EditModal: React.FC<EditModalProps> = ({
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
-  const [brandWebFile, setBrandWebFile] = useState<FileWithPreview | null>(
-    null
-  );
-  const [brandMobileFile, setBrandMobileFile] =
-    useState<FileWithPreview | null>(null);
-  const [categories, setCategories] = useState([]);
+   const Web_DIMENSIONS = { width: 1920, height: 970 };
+  const Mobile_DIMENSIONS = { width: 356, height: 180 };
+
 
   const buttonsType = [
     { id: "apply_now", name: "Apply Now" },
@@ -68,21 +65,6 @@ const EditModal: React.FC<EditModalProps> = ({
     { id: "shop_now", name: "Shop Now" },
   ];
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/category")
-      .then((response) => {
-        console.log(response, "category");
-        setCategories(response.data);
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 404) {
-          setCategories([]);
-        } else {
-          console.error("Error fetching categories:", error);
-        }
-      });
-  }, []); // Fixed dependency array to avoid infinite re-fetching
 
   // Find the row data based on the id
   useEffect(() => {
@@ -176,12 +158,20 @@ const EditModal: React.FC<EditModalProps> = ({
                 {key.toLowerCase() === "mobileurl" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
-                    setFiles={(files) => setMobileFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setMobileFile(files[0] || null)
+                    }
+                    expectedDimensions={Mobile_DIMENSIONS}
+                    label="Mobile"
                   />
                 ) : key.toLowerCase() === "weburl" ? (
                   <ImageUpload
                     files={webFile ? [webFile] : []}
-                    setFiles={(files) => setWebFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setWebFile(files[0] || null)
+                    }
+                    expectedDimensions={Web_DIMENSIONS}
+                    label="Web"
                   />
                 ) : key === "buttonType" ? (
                   <Select

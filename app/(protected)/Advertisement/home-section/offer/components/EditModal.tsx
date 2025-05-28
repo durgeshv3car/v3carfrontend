@@ -53,8 +53,13 @@ const EditModal: React.FC<EditModalProps> = ({
   const [brandLogoFile, setBrandLogoFile] = useState<FileWithPreview | null>(
     null
   );
- 
- const [categories, setCategories] = useState<Category[]>([]);
+
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  const Logo_DIMENSIONS = { width: 150, height: 150 };
+  const Web_DIMENSIONS = { width: 1920, height: 970 };
+  const Banner_DIMENSIONS = { width: 356, height: 180 };
+  const Mobile_DIMENSIONS = { width: 150, height: 275 };
 
   const buttonsType = [
     { id: "apply_now", name: "Apply Now" },
@@ -67,10 +72,10 @@ const EditModal: React.FC<EditModalProps> = ({
     { id: "know_more", name: "Know More" },
     { id: "shop_now", name: "Shop Now" },
   ];
-
+  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/category")
+      .get(`${API_URL}/category`)
       .then((response) => {
         console.log(response, "category");
         setCategories(response.data);
@@ -90,19 +95,25 @@ const EditModal: React.FC<EditModalProps> = ({
       const foundRow = tableData.find((row) => row.id === id) || null;
       setSelectedRow(foundRow);
       setEditedData(foundRow || {});
-      const mobileUrl = foundRow?.offerImage?.mobile 
-      console.log(mobileUrl, "mobileUrl")      
+      const mobileUrl = foundRow?.offerImage?.mobile;
+      console.log(mobileUrl, "mobileUrl");
       if (foundRow?.offerImage?.mobile) {
-        setMobileFile({ preview: foundRow.offerImage.mobile } as FileWithPreview);
+        setMobileFile({
+          preview: foundRow.offerImage.mobile,
+        } as FileWithPreview);
       }
       if (foundRow?.offerImage?.web) {
         setWebFile({ preview: foundRow.offerImage.web } as FileWithPreview);
       }
       if (foundRow?.brandLogo?.logo) {
-        setBrandLogoFile({ preview: foundRow.brandLogo.logo } as FileWithPreview);
+        setBrandLogoFile({
+          preview: foundRow.brandLogo.logo,
+        } as FileWithPreview);
       }
       if (foundRow?.offerBanner?.banner) {
-        setBannerFile({ preview: foundRow.offerBanner.banner } as FileWithPreview);
+        setBannerFile({
+          preview: foundRow.offerBanner.banner,
+        } as FileWithPreview);
       }
     }
   }, [id, tableData]);
@@ -133,7 +144,6 @@ const EditModal: React.FC<EditModalProps> = ({
       webFile?.preview,
       bannerFile?.preview,
       brandLogoFile?.preview
-
     );
 
     if (result.success) {
@@ -179,12 +189,15 @@ const EditModal: React.FC<EditModalProps> = ({
             ].includes(key) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">
-                  { key === "offerBanner" || key === "offerImage" || key === "brandLogo" ? "" : key}
+                  {key === "offerBanner" ||
+                  key === "offerImage" ||
+                  key === "brandLogo"
+                    ? ""
+                    : key}
                 </label>
 
-                {
-                   key === "offerBanner" &&
-                  typeof selectedRow[key] === "object" ? (
+                {key === "offerBanner" &&
+                typeof selectedRow[key] === "object" ? (
                   <div className="space-y-3">
                     <div>
                       <label className="block text-sm font-medium">
@@ -192,22 +205,26 @@ const EditModal: React.FC<EditModalProps> = ({
                       </label>
                       <ImageUpload
                         files={bannerFile ? [bannerFile] : []}
-                        setFiles={(files) => setBannerFile(files[0] || null)}
+                        setFiles={(files: FileWithPreview[]) =>
+                          setBannerFile(files[0] || null)
+                        }
+                        expectedDimensions={Banner_DIMENSIONS}
+                        label="Banner"
                       />
                     </div>
-
-                   
                   </div>
-                ):
-                
-                key === "offerImage" &&
-                typeof selectedRow[key] === "object" ? (
+                ) : key === "offerImage" &&
+                  typeof selectedRow[key] === "object" ? (
                   <div className="space-y-3">
                     <div>
                       <label className="block text-sm font-medium">Web</label>
                       <ImageUpload
                         files={webFile ? [webFile] : []}
-                        setFiles={(files) => setWebFile(files[0] || null)}
+                        setFiles={(files: FileWithPreview[]) =>
+                          setWebFile(files[0] || null)
+                        }
+                        expectedDimensions={Web_DIMENSIONS}
+                        label="Web"
                       />
                     </div>
 
@@ -217,7 +234,11 @@ const EditModal: React.FC<EditModalProps> = ({
                       </label>
                       <ImageUpload
                         files={mobileFile ? [mobileFile] : []}
-                        setFiles={(files) => setMobileFile(files[0] || null)}
+                        setFiles={(files: FileWithPreview[]) =>
+                          setMobileFile(files[0] || null)
+                        }
+                        expectedDimensions={Mobile_DIMENSIONS}
+                        label="Mobile"
                       />
                     </div>
                   </div>
@@ -230,11 +251,13 @@ const EditModal: React.FC<EditModalProps> = ({
                       </label>
                       <ImageUpload
                         files={brandLogoFile ? [brandLogoFile] : []}
-                        setFiles={(files) => setBrandLogoFile(files[0] || null)}
+                        setFiles={(files: FileWithPreview[]) =>
+                          setBrandLogoFile(files[0] || null)
+                        }
+                        expectedDimensions={Logo_DIMENSIONS}
+                        label="Logo"
                       />
                     </div>
-
-                   
                   </div>
                 ) : key === "category" ? (
                   /* Category Selection */
@@ -273,14 +296,14 @@ const EditModal: React.FC<EditModalProps> = ({
                       ))}
                     </SelectContent>
                   </Select>
-                ): key === "isHome" ? (
+                ) : key === "isHome" ? (
                   <Switch
                     checked={Boolean(editedData[key])}
                     onCheckedChange={(value) =>
                       setEditedData((prev) => ({ ...prev, [key]: value }))
                     }
                   />
-                )  : key === "isActive" ? (
+                ) : key === "isActive" ? (
                   <Switch
                     checked={Boolean(editedData[key])}
                     onCheckedChange={(value) =>

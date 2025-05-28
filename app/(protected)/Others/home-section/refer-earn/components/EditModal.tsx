@@ -36,6 +36,9 @@ const EditModal: React.FC<EditModalProps> = ({
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
 
+  const Web_DIMENSIONS = { width: 1920, height: 970 };
+  const Mobile_DIMENSIONS = { width: 356, height: 180 };
+
   // Find the row data based on the id
   useEffect(() => {
     if (id && tableData) {
@@ -63,20 +66,27 @@ const EditModal: React.FC<EditModalProps> = ({
   const refreshData = () => setRefresh((prev) => !prev);
   const type = "refer";
 
- const handleUpdate = async () => {
-      if (!id) return;
-    
-      const result = await updateReferImage(id, type, editedData, mobileFile?.file, webFile?.file, mobileFile?.preview,
-        webFile?.preview);
-    
-      if (result.success) {
-        refreshData();
-        handleClose();
-        toast.success("Slider data updated");
-      } else {
-        toast.error("Slider data not updated");
-      }
-    };
+  const handleUpdate = async () => {
+    if (!id) return;
+
+    const result = await updateReferImage(
+      id,
+      type,
+      editedData,
+      mobileFile?.file,
+      webFile?.file,
+      mobileFile?.preview,
+      webFile?.preview
+    );
+
+    if (result.success) {
+      refreshData();
+      handleClose();
+      toast.success("Slider data updated");
+    } else {
+      toast.error("Slider data not updated");
+    }
+  };
 
   if (!selectedRow) return null;
 
@@ -109,7 +119,7 @@ const EditModal: React.FC<EditModalProps> = ({
               "updatedAt",
               "type",
               "thumbnail",
-              "deletionDate"
+              "deletionDate",
             ].includes(key) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">
@@ -122,15 +132,28 @@ const EditModal: React.FC<EditModalProps> = ({
                 {key.toLowerCase() === "mobileurl" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
-                    setFiles={(files) => setMobileFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setMobileFile(files[0] || null)
+                    }
+                    expectedDimensions={Mobile_DIMENSIONS}
+                    label="Mobile"
                   />
                 ) : key.toLowerCase() === "weburl" ? (
                   <ImageUpload
                     files={webFile ? [webFile] : []}
-                    setFiles={(files) => setWebFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setWebFile(files[0] || null)
+                    }
+                    expectedDimensions={Web_DIMENSIONS}
+                    label="Web"
                   />
                 ) : key.toLowerCase() === "active" ? (
-                   <Switch checked={editedData[key]} onCheckedChange={(value) => console.log("New value:", value)} />
+                  <Switch
+                    checked={editedData[key]}
+                    onCheckedChange={(value) =>
+                      console.log("New value:", value)
+                    }
+                  />
                 ) : (
                   <Input
                     name={key}

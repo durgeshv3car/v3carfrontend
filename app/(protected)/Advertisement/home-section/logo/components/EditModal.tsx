@@ -39,6 +39,8 @@ const EditModal: React.FC<EditModalProps> = ({
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
 
+  const Logo_DIMENSIONS = { width: 150, height: 150 };
+
   // Find the row data based on the id
   useEffect(() => {
     if (id && tableData) {
@@ -130,15 +132,14 @@ const EditModal: React.FC<EditModalProps> = ({
                 </label>
                 {key.toLowerCase() === "mobileurl" ? (
                   <ImageUpload
-                    files={mobileFile? [mobileFile]: []}
-                    setFiles={(files) => setMobileFile(files[0] || null)}
+                    files={mobileFile ? [mobileFile] : []}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setMobileFile(files[0] || null)
+                    }
+                    expectedDimensions={Logo_DIMENSIONS}
+                    label="Logo"
                   />
-                ) : key.toLowerCase() === "weburl" ? (
-                  <ImageUpload
-                  files={webFile? [webFile]: []}
-                    setFiles={(files) => setWebFile(files[0] || null)}
-                  />
-                ) : key.toLowerCase() === "active" ? (
+                )  : key.toLowerCase() === "active" ? (
                   <Switch
                     checked={Boolean(editedData[key])}
                     onCheckedChange={(value) =>
