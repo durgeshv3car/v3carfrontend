@@ -36,6 +36,8 @@ const EditModal: React.FC<EditModalProps> = ({
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
 
+  const Web_DIMENSIONS = { width: 1920, height: 970 };
+  const Mobile_DIMENSIONS = { width: 356, height: 180 };
 
 
   // Find the row data based on the id
@@ -44,9 +46,11 @@ const EditModal: React.FC<EditModalProps> = ({
       const foundRow = tableData.find((row) => row.id === id) || null;
       setSelectedRow(foundRow);
       setEditedData(foundRow || {});
-         
+
       if (foundRow?.offerImage?.mobile) {
-        setMobileFile({ preview: foundRow.offerImage.mobile } as FileWithPreview);
+        setMobileFile({
+          preview: foundRow.offerImage.mobile,
+        } as FileWithPreview);
       }
       if (foundRow?.offerImage?.web) {
         setWebFile({ preview: foundRow.offerImage.web } as FileWithPreview);
@@ -77,7 +81,6 @@ const EditModal: React.FC<EditModalProps> = ({
       mobileFile?.preview,
       webFile?.preview
     );
-    
 
     if (result?.success) {
       refreshData();
@@ -142,7 +145,11 @@ const EditModal: React.FC<EditModalProps> = ({
                       <label className="block text-sm font-medium">Web</label>
                       <ImageUpload
                         files={webFile ? [webFile] : []}
-                        setFiles={(files) => setWebFile(files[0] || null)}
+                        setFiles={(files: FileWithPreview[]) =>
+                          setWebFile(files[0] || null)
+                        }
+                        expectedDimensions={Web_DIMENSIONS}
+                        label="Web"
                       />
                     </div>
 
@@ -153,7 +160,11 @@ const EditModal: React.FC<EditModalProps> = ({
                       </label>
                       <ImageUpload
                         files={mobileFile ? [mobileFile] : []}
-                        setFiles={(files) => setMobileFile(files[0] || null)}
+                        setFiles={(files: FileWithPreview[]) =>
+                          setMobileFile(files[0] || null)
+                        }
+                        expectedDimensions={Mobile_DIMENSIONS}
+                        label="Mobile"
                       />
                     </div>
                   </div>

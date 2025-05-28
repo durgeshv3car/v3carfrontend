@@ -29,6 +29,10 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
 
+  // Define dimension requirements
+  const Logo_DIMENSIONS = { width: 150, height: 150 };
+  const WEB_DIMENSIONS = { width: 1920, height: 971 };
+
   useEffect(() => {
     if (columnsField.length > 0) {
       const filteredColumns = columnsField.slice(1);
@@ -51,7 +55,6 @@ const CreateModal: React.FC<CreateModalProps> = ({
   };
 
   const refreshData = () => setRefresh((prev) => !prev);
-  console.log(mobileFile, webFile);
 
   const handleSubmit = async () => {
     try {
@@ -75,8 +78,10 @@ const CreateModal: React.FC<CreateModalProps> = ({
       }
     } catch (error) {
       console.error("Error submitting:", error);
+      toast.error("Error submitting form");
     }
   };
+
   const excludedFields = ["Schedule Expire", "isactive", "web"];
 
   return (
@@ -109,6 +114,8 @@ const CreateModal: React.FC<CreateModalProps> = ({
                     setFiles={(files: FileWithPreview[]) =>
                       setMobileFile(files[0] || null)
                     }
+                    expectedDimensions={Logo_DIMENSIONS}
+                    label="Logo"
                   />
                 ) : (
                   <Input
@@ -121,6 +128,9 @@ const CreateModal: React.FC<CreateModalProps> = ({
               </div>
             ) : null
           )}
+
+       
+  
         </div>
 
         <div className="mt-4 flex justify-end gap-2">

@@ -44,6 +44,11 @@ const CreateModal: React.FC<CreateModalProps> = ({
     null
   );
 
+  const Logo_DIMENSIONS = { width: 150, height: 150 };
+  const Web_DIMENSIONS = { width: 1920, height: 970 };
+  const Banner_DIMENSIONS = { width: 356, height: 180 };
+  const Mobile_DIMENSIONS = { width: 150, height: 275 };
+
   useEffect(() => {
     if (columnsField.length > 0) {
       const filteredColumns = columnsField.slice(1);
@@ -71,7 +76,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
 
   // Fetch categories from API
   useEffect(() => {
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
     axios
       .get(`${API_BASE_URL}/category`)
       .then((response) => {
@@ -191,22 +196,38 @@ const CreateModal: React.FC<CreateModalProps> = ({
                 ) : key.toLowerCase() === "banner" ? (
                   <ImageUpload
                     files={bannerFile ? [bannerFile] : []}
-                    setFiles={(files) => setBannerFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setBannerFile(files[0] || null)
+                    }
+                    expectedDimensions={Banner_DIMENSIONS}
+                    label="Banner"
                   />
                 ) : key.toLowerCase() === "web" ? (
                   <ImageUpload
                     files={webFile ? [webFile] : []}
-                    setFiles={(files) => setWebFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setWebFile(files[0] || null)
+                    }
+                    expectedDimensions={Web_DIMENSIONS}
+                    label="Web"
                   />
                 ) : key.toLowerCase() === "mobile" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
-                    setFiles={(files) => setMobileFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setMobileFile(files[0] || null)
+                    }
+                    expectedDimensions={Mobile_DIMENSIONS}
+                    label="Mobile"
                   />
                 ) : key.toLowerCase() === "brand logo" ? (
                   <ImageUpload
                     files={brandLogoFile ? [brandLogoFile] : []}
-                    setFiles={(files) => setBrandLogoFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setBrandLogoFile(files[0] || null)
+                    }
+                    expectedDimensions={Logo_DIMENSIONS}
+                    label="Logo"
                   />
                 ) : (
                   <Input

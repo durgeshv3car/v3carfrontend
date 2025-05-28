@@ -38,6 +38,10 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
+
+  const Web_DIMENSIONS = { width: 1920, height: 970 };
+  const Mobile_DIMENSIONS = { width: 356, height: 180 };
+
   const router = useRouter();
 
   useEffect(() => {
@@ -162,12 +166,20 @@ const CreateModal: React.FC<CreateModalProps> = ({
                 key.toLowerCase() === "web" ? (
                   <ImageUpload
                     files={webFile ? [webFile] : []}
-                    setFiles={(files) => setWebFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setWebFile(files[0] || null)
+                    }
+                    expectedDimensions={Web_DIMENSIONS}
+                    label="Web"
                   />
                 ) : key.toLowerCase() === "mobile" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
-                    setFiles={(files) => setMobileFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setMobileFile(files[0] || null)
+                    }
+                    expectedDimensions={Mobile_DIMENSIONS}
+                    label="Mobile"
                   />
                 ) : (
                   <Input

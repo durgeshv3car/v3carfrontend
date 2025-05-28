@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import axios from "axios";
 import { Switch } from "@/components/ui/switch";
 import { updateService } from "@/app/(protected)/services/ourServices/api";
+import type { FileWithPreview } from "../../../components/ImageUpload";
+
 import {
   Select,
   SelectTrigger,
@@ -17,13 +19,14 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import TextEditor from "../components/SunEditor";
-import { FileWithPreview } from "../../../components/ImageUpload";
+
 interface TableRow {
   id: string;
   name?: string;
+
   imageUrl?: string;
   [key: string]: any;
-  type?:string
+  type?: string;
 }
 
 interface EditModalProps {
@@ -31,7 +34,7 @@ interface EditModalProps {
   onClose: () => void;
   tableData: TableRow[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
-  type: string ;
+  type: string;
 }
 
 const EditModal: React.FC<EditModalProps> = ({
@@ -39,19 +42,16 @@ const EditModal: React.FC<EditModalProps> = ({
   onClose,
   tableData,
   setRefresh,
-  type
+  type,
 }) => {
   const router = useRouter();
   const [editedData, setEditedData] = useState<Partial<TableRow>>({});
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
-  const [brandWebFile, setBrandWebFile] = useState<FileWithPreview | null>(
-    null
-  );
-  const [brandMobileFile, setBrandMobileFile] =
-    useState<FileWithPreview | null>(null);
-  const [categories, setCategories] = useState([]);
+   const Web_DIMENSIONS = { width: 1920, height: 970 };
+  const Mobile_DIMENSIONS = { width: 356, height: 180 };
+
 
   const buttonsType = [
     { id: "apply_now", name: "Apply Now" },
@@ -65,21 +65,6 @@ const EditModal: React.FC<EditModalProps> = ({
     { id: "shop_now", name: "Shop Now" },
   ];
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/category")
-      .then((response) => {
-        console.log(response, "category");
-        setCategories(response.data);
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 404) {
-          setCategories([]);
-        } else {
-          console.error("Error fetching categories:", error);
-        }
-      });
-  }, []); // Fixed dependency array to avoid infinite re-fetching
 
   // Find the row data based on the id
   useEffect(() => {
@@ -106,7 +91,7 @@ const EditModal: React.FC<EditModalProps> = ({
   };
 
   const refreshData = () => setRefresh((prev) => !prev);
- 
+
   const handleUpdate = async () => {
     if (!id) return;
 
@@ -163,7 +148,7 @@ const EditModal: React.FC<EditModalProps> = ({
             ].includes(key) ? (
               <div key={key}>
                 <label className="block text-sm font-medium">
-                   {key === "mobileUrl"
+                  {key === "mobileUrl"
                     ? "mobile"
                     : key === "webUrl"
                     ? "web"
@@ -173,12 +158,20 @@ const EditModal: React.FC<EditModalProps> = ({
                 {key.toLowerCase() === "mobileurl" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
-                    setFiles={(files) => setMobileFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setMobileFile(files[0] || null)
+                    }
+                    expectedDimensions={Mobile_DIMENSIONS}
+                    label="Mobile"
                   />
                 ) : key.toLowerCase() === "weburl" ? (
                   <ImageUpload
                     files={webFile ? [webFile] : []}
-                    setFiles={(files) => setWebFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setWebFile(files[0] || null)
+                    }
+                    expectedDimensions={Web_DIMENSIONS}
+                    label="Web"
                   />
                 ) : key === "buttonType" ? (
                   <Select

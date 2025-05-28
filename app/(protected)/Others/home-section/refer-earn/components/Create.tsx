@@ -26,6 +26,9 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
 
+  const Web_DIMENSIONS = { width: 1920, height: 970 };
+  const Mobile_DIMENSIONS = { width: 356, height: 180 };
+
   useEffect(() => {
     if (columnsField.length > 0) {
       const filteredColumns = columnsField.slice(1);
@@ -48,32 +51,32 @@ const CreateModal: React.FC<CreateModalProps> = ({
   };
 
   const refreshData = () => setRefresh((prev) => !prev);
-  console.log(mobileFile,webFile)
+  console.log(mobileFile, webFile);
 
- const handleSubmit = async () => {
-      try {
-        const result = await uploadReferImage({
-          type,
-          title: formData.Title,
-          mobileFile: mobileFile?.file || null,
-          webFile: webFile?.file || null,
-          companyUrl: formData["Company URL"],
-        });
-    
-        if (result.success) {
-          toast.success("Slider image added");
-          console.log("Upload success:", result.data);
-          setMobileFile(null);
-          setWebFile(null);
-          refreshData();
-          handleClose();
-        } else {
-          toast.error("Slider image not added");
-        }
-      } catch (error) {
-        console.error("Error submitting:", error);
+  const handleSubmit = async () => {
+    try {
+      const result = await uploadReferImage({
+        type,
+        title: formData.Title,
+        mobileFile: mobileFile?.file || null,
+        webFile: webFile?.file || null,
+        companyUrl: formData["Company URL"],
+      });
+
+      if (result.success) {
+        toast.success("Slider image added");
+        console.log("Upload success:", result.data);
+        setMobileFile(null);
+        setWebFile(null);
+        refreshData();
+        handleClose();
+      } else {
+        toast.error("Slider image not added");
       }
-    };
+    } catch (error) {
+      console.error("Error submitting:", error);
+    }
+  };
   const excludedFields = ["schedulexpire", "isactive"];
   return (
     <>
@@ -81,7 +84,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
         className="fixed inset-0 bg-black bg-opacity-50 z-40"
         onClick={handleClose}
       />
-<div className="fixed right-0 top-0 h-full w-1/3 bg-white shadow-lg transform transition-transform duration-300 translate-x-0 z-50 p-6 overflow-y-auto max-h-screen">
+      <div className="fixed right-0 top-0 h-full w-1/3 bg-white shadow-lg transform transition-transform duration-300 translate-x-0 z-50 p-6 overflow-y-auto max-h-screen">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-medium">Create New Entry</h2>
           <button
@@ -92,7 +95,6 @@ const CreateModal: React.FC<CreateModalProps> = ({
           </button>
         </div>
 
-       
         <div className="space-y-3">
           {Object.keys(formData).map((key) =>
             !excludedFields.includes(key.toLowerCase()) ? (
@@ -103,12 +105,20 @@ const CreateModal: React.FC<CreateModalProps> = ({
                 {key.toLowerCase() === "web" ? (
                   <ImageUpload
                     files={webFile ? [webFile] : []}
-                    setFiles={(files) => setWebFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setWebFile(files[0] || null)
+                    }
+                    expectedDimensions={Web_DIMENSIONS}
+                    label="Web"
                   />
                 ) : key.toLowerCase() === "mobile" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
-                    setFiles={(files) => setMobileFile(files[0] || null)}
+                    setFiles={(files: FileWithPreview[]) =>
+                      setMobileFile(files[0] || null)
+                    }
+                    expectedDimensions={Mobile_DIMENSIONS}
+                    label="Mobile"
                   />
                 ) : (
                   <Input
