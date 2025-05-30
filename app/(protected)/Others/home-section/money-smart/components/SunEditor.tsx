@@ -1,4 +1,3 @@
-// ./SunEditor.tsx
 "use client";
 
 import dynamic from "next/dynamic";
@@ -36,6 +35,7 @@ const TextEditor = ({
     "Helvetica",
     ...defaultFonts,
   ].sort();
+
   return (
     <SunEditor
       setContents={value}
@@ -51,7 +51,7 @@ const TextEditor = ({
           ["align", "list", "lineHeight"],
           ["outdent", "indent"],
           ["table", "horizontalRule"],
-          ["codeView"],
+          ["codeView"], 
         ],
         font: sortedFontOptions,
       }}

@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import ImageUpload from "../../../components/ImageUpload";
 import { toast } from "sonner";
 import axios from "axios";
+import TextEditor from "./SunEditor";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   Select,
@@ -38,6 +39,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
+   const [fieldDescription, setFieldDescription] = useState<string>("");
 
   const Web_DIMENSIONS = { width: 1920, height: 970 };
   const Mobile_DIMENSIONS = { width: 356, height: 180 };
@@ -70,21 +72,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
   ];
 
   // Fetch categories from API
-  useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/category")
-      .then((response) => {
-        console.log(response, "category");
-        setCategories(response.data);
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 404) {
-          setCategories([]);
-        } else {
-          console.error("Error fetching categories:", error);
-        }
-      });
-  }, [categories]);
+ 
 
   const handleClose = () => {
     onClose();
@@ -102,7 +90,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
 
     const result = await addMoney(
       type,
-      formData,
+      { ...formData, fieldDescription: fieldDescription },
       mobileFile?.file,
       webFile?.file
     );
@@ -192,6 +180,15 @@ const CreateModal: React.FC<CreateModalProps> = ({
               </div>
             ) : null
           )}
+           <div>
+            <label className="block text-sm font-medium">
+              Detail Description
+            </label>
+            <TextEditor
+              value={fieldDescription}
+              onChange={setFieldDescription}
+            />
+          </div>
         </div>
 
         <div className="mt-4 flex justify-end gap-2">

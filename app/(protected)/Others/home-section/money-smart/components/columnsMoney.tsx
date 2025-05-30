@@ -93,14 +93,20 @@ export const columnsMoney = ({fetchData,router,setSelectedDate,selectedDate,open
       </div>
     ),
   },
-  {
+ {
     accessorKey: "description",
     header: "Description",
-    cell: ({ row }) => (
-      <div className="flex gap-3 items-center">
-        <span className="text-sm">{row.original?.description}</span>
-      </div>
-    ),
+    cell: ({ row  }) => {
+      const rawDescription = row.original?.description || "";
+      const plainText = rawDescription.replace(/<[^>]*>/g, ""); 
+      const truncated = plainText.length > 20 ? plainText.slice(0, 20) + "..." : plainText;
+  
+      return (
+        <div className="flex gap-3 items-center">
+          <span className="text-sm">{truncated}</span>
+        </div>
+      );
+    },
   },
 
   {

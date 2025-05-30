@@ -39,7 +39,7 @@ const EditModal: React.FC<EditModalProps> = ({
 
 
  const Web_DIMENSIONS = { width: 1920, height: 970 };
-   const Mobile_DIMENSIONS = { width: 365, height: 140 };
+ const Mobile_DIMENSIONS = { width: 365, height: 140 };
 
 
   

@@ -16,7 +16,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import TextEditor from "../components/SunEditor";
+import TextEditor from "./SunEditor";
 
 import type { FileWithPreview } from "../../../components/ImageUpload";
 
