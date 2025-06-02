@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dropdown } from 'primereact/dropdown';
+import axios from "axios";
 import {
   Command,
   CommandEmpty,
@@ -55,32 +56,31 @@ const OfferSelectionModal: React.FC<OfferSelectionModalProps> = ({
   const type = searchParams?.get("type") || null;
 
   // Fetch offers when the modal opens
+useEffect(() => {
+  if (!isOpen) return;
+
+  const fetchOffers = async () => {
+    const Api_url = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+    try {
+      console.log("Fetching offers from API...");
+      const response = await axios.get(`${Api_url}/offer/offer`);
   
-  useEffect(() => {
-    if (!isOpen) return;
 
-    const fetchOffers = async () => {
-      try {
-        console.log("Fetching offers from API...");
-        const response = await fetch("http://localhost:5000/api/offer/offer");
+      const offers = response.data.offers.filter(
+        (offer: Offer) => offer.isActive === true
+      );
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+      console.log("Offers fetched successfully:", offers);
+      setOffers(offers);
+    } catch (error: any) {
+      console.error("Error fetching offers:", error.message);
+    }
+  };
 
-        const data = await response.json();
-        console.log("Offers fetched successfully:", data);
-        const offers = data.offers.filter(
-          (offer: Offer) => offer.isActive === true
-        );
-        setOffers(offers);
-      } catch (error: any) {
-        console.error("Error fetching offers:", error.message);
-      }
-    };
+  fetchOffers();
+}, [isOpen]);
 
-    fetchOffers();
-  }, [isOpen]);
 
   // Handle offer selection (Dropdown stays open)
   const handleSelectOffer = (offer: Offer) => {
@@ -89,63 +89,53 @@ const OfferSelectionModal: React.FC<OfferSelectionModalProps> = ({
   };
 
   // Submit the selected offer
-  const handleSubmit = async () => {
-    if (!selectedOffer || !selectedRowsData.length) return;
+ const handleSubmit = async () => {
+  const Api_url = process.env.NEXT_PUBLIC_API_BASE_URL;
+  if (!selectedOffer || !selectedRowsData.length) return;
 
-    try {
-      setLoading(true);
-      console.log("Submitting selected offer:", selectedOffer);
-      console.log("Selected rows:", selectedRowsData);
-      let sending: string;
-      if (type === "Notification") {
-        sending = "Application";
-      } else {
-        sending = type || "";
-      }
+  try {
+    setLoading(true);
+    console.log("Submitting selected offer:", selectedOffer);
+    console.log("Selected rows:", selectedRowsData);
 
-      const response = await fetch("http://localhost:5000/api/notifications", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          offerIds: [selectedOffer.id], // Array format
-          userIds: selectedRowsData.map((row) => String(row.id)), // Array of row IDs
-          type: `${sending}_create`,
-        }),
-      });
+    const sending = type === "Notification" ? "Application" : (type || "");
 
-      if (!response.ok) {
-        toast.error("Notification not send again");
-        onClose();
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+    const payload = {
+      offerIds: [selectedOffer.id],
+      userIds: selectedRowsData.map((row) => String(row.id)),
+      type: `${sending}_create`,
+    };
 
-      const result = await response.json();
-      console.log("Offer submitted successfully:", result);
-      if (type === "Email") {
-        router.push("/Tools/messageCenter/email");
-      } else if (type === "Notification") {
-        router.push("/Tools/messageCenter/application");
-      } else if (type === "Sms") {
-        router.push("/Tools/messageCenter/sms");
-      } else if (type === "Whatsapp") {
-        router.push("/Tools/messageCenter/whatsapp");
-      }
+    const response = await axios.post(`${Api_url}/notifications`, payload, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-      // Notify parent component
-      onSelectOffer(selectedOffer);
+    console.log("Offer submitted successfully:", response.data);
 
-      // Close modal only after submitting
-      onClose();
-    } catch (error: any) {
-      console.error("Error submitting offer:", error.message);
-      onClose();
-    } finally {
-      setLoading(false);
+    // Redirect based on type
+    if (type === "Email") {
+      router.push("/Tools/messageCenter/email");
+    } else if (type === "Notification") {
+      router.push("/Tools/messageCenter/application");
+    } else if (type === "Sms") {
+      router.push("/Tools/messageCenter/sms");
+    } else if (type === "Whatsapp") {
+      router.push("/Tools/messageCenter/whatsapp");
     }
-  };
-  console.log("offers", offers);
+
+    onSelectOffer(selectedOffer);
+    onClose();
+  } catch (error: any) {
+    console.error("Error submitting offer:", error?.response?.data || error.message);
+    toast.error("Notification not sent");
+    onClose();
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

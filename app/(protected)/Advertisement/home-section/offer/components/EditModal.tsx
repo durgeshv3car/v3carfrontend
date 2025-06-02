@@ -72,8 +72,9 @@ const EditModal: React.FC<EditModalProps> = ({
     { id: "know_more", name: "Know More" },
     { id: "shop_now", name: "Shop Now" },
   ];
-  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
   useEffect(() => {
+    const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
     axios
       .get(`${API_URL}/category`)
       .then((response) => {
