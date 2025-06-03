@@ -50,6 +50,7 @@ const RegForm = ({ roleType }: { roleType: string }) => {
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setLoading(true);
+    const Api_url=process.env.NEXT_PUBLIC_API_BASE_URL
 
     // Replace role with customRole if "Other" is selected
     if (selectedRole === "Other") {
@@ -58,7 +59,7 @@ const RegForm = ({ roleType }: { roleType: string }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
+        `${Api_url}/auth/register`,
         data
       );
 

@@ -16,10 +16,8 @@ import { toast } from "sonner";
 import { useRouter } from "@/components/navigation";
 import { useForm, SubmitHandler, Controller } from "react-hook-form";
 type Inputs = {
-
   email: string;
   password: string;
- 
 };
 
 const schema = z.object({
@@ -27,11 +25,10 @@ const schema = z.object({
   password: z.string().min(4),
 });
 
-const LoginForm = ({ token }:{token:string}) => {
+const LoginForm = ({ token }: { token: string }) => {
   const [isPending, startTransition] = React.useTransition();
   const router = useRouter();
   const [passwordType, setPasswordType] = React.useState("password");
-
 
   const togglePasswordType = () => {
     if (passwordType === "text") {
@@ -50,8 +47,8 @@ const LoginForm = ({ token }:{token:string}) => {
     resolver: zodResolver(schema),
     mode: "all",
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
@@ -63,12 +60,12 @@ const LoginForm = ({ token }:{token:string}) => {
 
   if (token) return null;
 
-  const onSubmit:SubmitHandler<Inputs> = async (data) => {
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
     startTransition(async () => {
       try {
         const response = await loginUser(data);
         console.log(response, "loginData");
-       
+
         if (!!response.error) {
           toast("Event has been created", {
             description: "Sunday, December 03, 2023 at 9:00 AM",
@@ -117,20 +114,20 @@ const LoginForm = ({ token }:{token:string}) => {
             {...register("password")}
             type={passwordType}
             id="password"
-            className="peer"
+            className="peer pr-10" 
             placeholder=" "
           />
 
           <div
-            className="absolute top-1/2 -translate-y-1/2 ltr:right-4 rtl:left-4 cursor-pointer"
+            className="absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer"
             onClick={togglePasswordType}
           >
             {passwordType === "password" ? (
-              <Icon icon="heroicons:eye" className="w-5 h-5 text-default-400" />
+              <Icon icon="heroicons:eye" className="w-5 h-5 text-gray-400" />
             ) : (
               <Icon
                 icon="heroicons:eye-slash"
-                className="w-5 h-5 text-default-400"
+                className="w-5 h-5 text-gray-400"
               />
             )}
           </div>
