@@ -65,7 +65,7 @@ const EditModal = <T extends Record<string, any>>({
     try {
       const result = await updateUser(
         id,
-        editedData.username,
+        editedData.name,
         editedData.email,
         editedData.role,
         selectedPermissions

@@ -19,7 +19,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
   setRefresh,
   type,
 }) => {
-  const [title, setTitle] = useState("");
+  const [name, setName] = useState("");
 
   const handleClose = () => {
     onClose();
@@ -30,17 +30,17 @@ const CreateModal: React.FC<CreateModalProps> = ({
 
   const handleSubmit = async () => {
     try {
-      const result = await addApi(title);
+      const result = await addApi(name);
       if (result.success) {
-        toast.success("Title added successfully");
-        setTitle("");
+        toast.success("Name added successfully");
+        setName("");
         refreshData();
         handleClose();
       } else {
-        toast.error("Failed to add title");
+        toast.error("Failed to add Name");
       }
     } catch (error) {
-      console.error("Error adding title:", error);
+      console.error("Error adding Name:", error);
     }
   };
 
@@ -63,11 +63,11 @@ const CreateModal: React.FC<CreateModalProps> = ({
 
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium">Title</label>
+            <label className="block text-sm font-medium">Name</label>
             <Input
-              name="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              name="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="w-full"
             />
           </div>

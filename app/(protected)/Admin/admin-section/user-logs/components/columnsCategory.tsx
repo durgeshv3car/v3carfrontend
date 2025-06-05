@@ -70,8 +70,8 @@ export const columnsCategory = ({
     enableSorting: false,
   },
   {
-    accessorKey: "title", // Ensure this matches the key in your data
-    header: "Title",
+    accessorKey: "name", // Ensure this matches the key in your data
+    header: "Name",
     cell: ({ row }) => (
       <div className="flex gap-3 items-center">
         <span className="text-sm">{row.original.name}</span>

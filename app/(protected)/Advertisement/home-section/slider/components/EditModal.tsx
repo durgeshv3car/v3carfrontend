@@ -128,27 +128,39 @@ const EditModal: React.FC<EditModalProps> = ({
               "deletionDate"
             ].includes(key) ? (
               <div key={key}>
-                <label className="block text-sm font-medium">
-                  {key === "mobileUrl"
-                    ? "mobile"
-                    : key === "webUrl"
-                    ? "web"
-                    : key}
-                </label>
+                <div className="flex items-center">
+                  <label className="block text-sm font-medium">
+                    {key === "mobileUrl"
+                      ? "mobile"
+                      : key === "webUrl"
+                      ? "web"
+                      : key}
+                  </label>
+                  {key.toLowerCase() === "mobileurl" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Mobile_DIMENSIONS.width} x {Mobile_DIMENSIONS.height} )
+                    </span>
+                  )}
+                  {key.toLowerCase() === "weburl" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Web_DIMENSIONS.width} x {Web_DIMENSIONS.height} )
+                    </span>
+                  )}
+                </div>
                 {key.toLowerCase() === "mobileurl" ? (
-                 <ImageUpload
-  files={mobileFile ? [mobileFile] : []}
-  setFiles={(files: FileWithPreview[]) => setMobileFile(files[0] || null)}
-  expectedDimensions={Mobile_DIMENSIONS}
-  label="Mobile"
-/>
+                  <ImageUpload
+                    files={mobileFile ? [mobileFile] : []}
+                    setFiles={(files: FileWithPreview[]) => setMobileFile(files[0] || null)}
+                    expectedDimensions={Mobile_DIMENSIONS}
+                    label="Mobile"
+                  />
                 ) : key.toLowerCase() === "weburl" ? (
-                 <ImageUpload
-  files={webFile ? [webFile] : []}
-  setFiles={(files: FileWithPreview[]) => setWebFile(files[0] || null)}
-  expectedDimensions={Web_DIMENSIONS}
-  label="Web"
-/>
+                  <ImageUpload
+                    files={webFile ? [webFile] : []}
+                    setFiles={(files: FileWithPreview[]) => setWebFile(files[0] || null)}
+                    expectedDimensions={Web_DIMENSIONS}
+                    label="Web"
+                  />
                 ) : key.toLowerCase() === "active" ? (
                   <Switch
                     checked={Boolean(editedData[key])}

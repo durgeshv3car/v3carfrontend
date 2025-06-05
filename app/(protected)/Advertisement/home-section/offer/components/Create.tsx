@@ -145,17 +145,43 @@ const CreateModal: React.FC<CreateModalProps> = ({
           {Object.keys(formData).map((key) =>
             !excludedFields.includes(key.toLowerCase()) ? (
               <div key={key}>
-                <label className="block text-sm font-medium">
-                  {key === "mobile"
-                    ? "Mobile"
-                    : key === "web"
-                    ? "Web"
-                    : key === "brand web"
-                    ? "Brand Web"
-                    : key === "brand mobile"
-                    ? "Brand Mobile"
-                    : key}
-                </label>
+                <div className="flex items-center">
+                  <label className="block text-sm font-medium">
+                    {key === "mobile"
+                      ? "Mobile"
+                      : key === "web"
+                      ? "Web"
+                      : key === "brand web"
+                      ? "Brand Web"
+                      : key === "brand mobile"
+                      ? "Brand Mobile"
+                      : key === "banner"
+                      ? "Banner"
+                      : key === "brand logo"
+                      ? "Logo"
+                      : key}
+                  </label>
+                  {key.toLowerCase() === "mobile" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Mobile_DIMENSIONS.width} x {Mobile_DIMENSIONS.height} )
+                    </span>
+                  )}
+                  {key.toLowerCase() === "web" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Web_DIMENSIONS.width} x {Web_DIMENSIONS.height} )
+                    </span>
+                  )}
+                  {key.toLowerCase() === "banner" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Banner_DIMENSIONS.width} x {Banner_DIMENSIONS.height} )
+                    </span>
+                  )}
+                  {key.toLowerCase() === "brand logo" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Logo_DIMENSIONS.width} x {Logo_DIMENSIONS.height} )
+                    </span>
+                  )}
+                </div>
 
                 {key.toLowerCase() === "category name" ? (
                   <Select

@@ -105,9 +105,16 @@ const CreateModal: React.FC<CreateModalProps> = ({
           {Object.keys(formData).map((key) =>
             !excludedFields.includes(key.toLowerCase()) ? (
               <div key={key}>
-                <label className="block text-sm font-medium">
-                  {key === "logo" ? "Logo" : key}
-                </label>
+                <div className="flex items-center">
+                  <label className="block text-sm font-medium">
+                    {key === "logo" ? "Logo" : key}
+                  </label>
+                  {key.toLowerCase() === "logo" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                     ( {Logo_DIMENSIONS.width} x {Logo_DIMENSIONS.height} )
+                    </span>
+                  )}
+                </div>
                 {key.toLowerCase() === "logo" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}

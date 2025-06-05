@@ -189,21 +189,43 @@ const EditModal: React.FC<EditModalProps> = ({
               "userId",
             ].includes(key) ? (
               <div key={key}>
-                <label className="block text-sm font-medium">
-                  {key === "offerBanner" ||
+                {(key === "offerBanner" ||
                   key === "offerImage" ||
-                  key === "brandLogo"
-                    ? ""
-                    : key}
-                </label>
+                  key === "brandLogo") ? null : (
+                  <div className="flex items-center">
+                    <label className="block text-sm font-medium">{key}</label>
+                    {key === "banner" && (
+                      <span className="text-xs text-gray-500 ml-2">
+                        ( {Banner_DIMENSIONS.width} x {Banner_DIMENSIONS.height} )
+                      </span>
+                    )}
+                    {key === "web" && (
+                      <span className="text-xs text-gray-500 ml-2">
+                        ( {Web_DIMENSIONS.width} x {Web_DIMENSIONS.height} )
+                      </span>
+                    )}
+                    {key === "mobile" && (
+                      <span className="text-xs text-gray-500 ml-2">
+                        ( {Mobile_DIMENSIONS.width} x {Mobile_DIMENSIONS.height} )
+                      </span>
+                    )}
+                    {key === "brand logo" && (
+                      <span className="text-xs text-gray-500 ml-2">
+                        ( {Logo_DIMENSIONS.width} x {Logo_DIMENSIONS.height} )
+                      </span>
+                    )}
+                  </div>
+                )}
 
-                {key === "offerBanner" &&
-                typeof selectedRow[key] === "object" ? (
+                {key === "offerBanner" && typeof selectedRow[key] === "object" ? (
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium">
-                        Banner
-                      </label>
+                      <div className="flex items-center">
+                        <label className="block text-sm font-medium">Banner</label>
+                        <span className="text-xs text-gray-500 ml-2">
+                          ( {Banner_DIMENSIONS.width} x {Banner_DIMENSIONS.height} )
+                        </span>
+                      </div>
                       <ImageUpload
                         files={bannerFile ? [bannerFile] : []}
                         setFiles={(files: FileWithPreview[]) =>
@@ -214,11 +236,15 @@ const EditModal: React.FC<EditModalProps> = ({
                       />
                     </div>
                   </div>
-                ) : key === "offerImage" &&
-                  typeof selectedRow[key] === "object" ? (
+                ) : key === "offerImage" && typeof selectedRow[key] === "object" ? (
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium">Web</label>
+                      <div className="flex items-center">
+                        <label className="block text-sm font-medium">Web</label>
+                        <span className="text-xs text-gray-500 ml-2">
+                          ( {Web_DIMENSIONS.width} x {Web_DIMENSIONS.height} )
+                        </span>
+                      </div>
                       <ImageUpload
                         files={webFile ? [webFile] : []}
                         setFiles={(files: FileWithPreview[]) =>
@@ -228,11 +254,13 @@ const EditModal: React.FC<EditModalProps> = ({
                         label="Web"
                       />
                     </div>
-
                     <div>
-                      <label className="block text-sm font-medium">
-                        Mobile
-                      </label>
+                      <div className="flex items-center">
+                        <label className="block text-sm font-medium">Mobile</label>
+                        <span className="text-xs text-gray-500 ml-2">
+                          ( {Mobile_DIMENSIONS.width} x {Mobile_DIMENSIONS.height} )
+                        </span>
+                      </div>
                       <ImageUpload
                         files={mobileFile ? [mobileFile] : []}
                         setFiles={(files: FileWithPreview[]) =>
@@ -243,13 +271,17 @@ const EditModal: React.FC<EditModalProps> = ({
                       />
                     </div>
                   </div>
-                ) : key === "brandLogo" &&
-                  typeof selectedRow[key] === "object" ? (
+                ) : key === "brandLogo" && typeof selectedRow[key] === "object" ? (
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-sm font-medium">
-                        Brand Logo
-                      </label>
+                      <div className="flex items-center">
+                        <label className="block text-sm font-medium">
+                          Brand Logo
+                        </label>
+                        <span className="text-xs text-gray-500 ml-2">
+                          ( {Logo_DIMENSIONS.width} x {Logo_DIMENSIONS.height} )
+                        </span>
+                      </div>
                       <ImageUpload
                         files={brandLogoFile ? [brandLogoFile] : []}
                         setFiles={(files: FileWithPreview[]) =>

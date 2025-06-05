@@ -124,12 +124,16 @@ const EditModal: React.FC<EditModalProps> = ({
               "deletionDate"
             ].includes(key) ? (
               <div key={key}>
-                <label className="block text-sm font-medium">
-                  {key === "mobileUrl"
-                    ? "logo"
-                   
-                    : key}
-                </label>
+                   <div className="flex items-center">
+                  <label className="block text-sm font-medium">
+                    {key === "mobileUrl" ? "Logo" : key}
+                  </label>
+                  {key.toLowerCase() === "mobileurl" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                     ( {Logo_DIMENSIONS.width} x {Logo_DIMENSIONS.height} )
+                    </span>
+                  )}
+                </div>
                 {key.toLowerCase() === "mobileurl" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}

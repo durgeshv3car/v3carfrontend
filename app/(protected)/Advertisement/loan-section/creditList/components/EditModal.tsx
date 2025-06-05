@@ -149,14 +149,25 @@ const EditModal: React.FC<EditModalProps> = ({
               "userId",
             ].includes(key) ? (
               <div key={key}>
-                <label className="block text-sm font-medium">
-                  {key === "mobileUrl"
-                    ? "mobile"
-                    : key === "webUrl"
-                    ? "web"
-                    : key}
-                </label>
-
+                <div className="flex items-center">
+                  <label className="block text-sm font-medium">
+                    {key === "mobileUrl"
+                      ? "mobile"
+                      : key === "webUrl"
+                      ? "web"
+                      : key}
+                  </label>
+                  {key.toLowerCase() === "mobileurl" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Mobile_DIMENSIONS.width} x {Mobile_DIMENSIONS.height} )
+                    </span>
+                  )}
+                  {key.toLowerCase() === "weburl" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Web_DIMENSIONS.width} x {Web_DIMENSIONS.height} )
+                    </span>
+                  )}
+                </div>
                 {key.toLowerCase() === "mobileurl" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
