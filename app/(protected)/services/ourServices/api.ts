@@ -72,6 +72,8 @@ export const addService = async (
   mobileFile?: File,
   webFile?: File,
 
+  
+
 ) => {
   try {
     const formDataSend = new FormData();
