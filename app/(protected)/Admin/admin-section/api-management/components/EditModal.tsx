@@ -53,7 +53,7 @@ const EditModal = <T extends Record<string, any>>({
     if (!id) return;
     
     try {
-      const result = await updateApi(id, editedData.title,editedData.isActive);
+      const result = await updateApi(id, editedData.name,editedData.isActive);
       if (result.success) {
         toast.success("Category data updated successfully.");
         refreshData();

@@ -26,8 +26,8 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
 
-  const Web_DIMENSIONS = { width: 1920, height: 970 };
-  const Mobile_DIMENSIONS = { width: 356, height: 180 };
+  const Web_DIMENSIONS = { width: "", height: "" };
+  const Mobile_DIMENSIONS = { width: "", height: "" };
 
   useEffect(() => {
     if (columnsField.length > 0) {
@@ -108,7 +108,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
                     setFiles={(files: FileWithPreview[]) =>
                       setWebFile(files[0] || null)
                     }
-                    expectedDimensions={Web_DIMENSIONS}
+             
                     label="Web"
                   />
                 ) : key.toLowerCase() === "mobile" ? (
@@ -117,7 +117,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
                     setFiles={(files: FileWithPreview[]) =>
                       setMobileFile(files[0] || null)
                     }
-                    expectedDimensions={Mobile_DIMENSIONS}
+                
                     label="Mobile"
                   />
                 ) : (

@@ -28,7 +28,6 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const Web_DIMENSIONS = { width: 1920, height: 970 };
   const Mobile_DIMENSIONS = { width: 365, height: 140 };
 
-
   useEffect(() => {
     if (columnsField.length > 0) {
       const filteredColumns = columnsField.slice(1);
@@ -99,9 +98,21 @@ const CreateModal: React.FC<CreateModalProps> = ({
           {Object.keys(formData).map((key) =>
             !excludedFields.includes(key.toLowerCase()) ? (
               <div key={key}>
-                <label className="block text-sm font-medium">
-                  {key === "mobile" ? "Mobile" : key === "web" ? "Web" : key}
-                </label>
+                <div className="flex items-center">
+                  <label className="block text-sm font-medium">
+                    {key === "mobile" ? "Mobile" : key === "web" ? "Web" : key}
+                  </label>
+                  {key.toLowerCase() === "web" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Web_DIMENSIONS.width} x {Web_DIMENSIONS.height} )
+                    </span>
+                  )}
+                  {key.toLowerCase() === "mobile" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Mobile_DIMENSIONS.width} x {Mobile_DIMENSIONS.height} )
+                    </span>
+                  )}
+                </div>
                 {key.toLowerCase() === "web" ? (
                   <ImageUpload
                     files={webFile ? [webFile] : []}

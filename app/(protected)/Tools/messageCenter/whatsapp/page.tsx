@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 import ExampleTwo from "./table";
 import { columns } from "./table/columns";
-import { fetchNotifications } from "../../../services/notifications/app/api";
+import { fetchNotifications } from "../../../services/notifications/whatsapp/api";
 import {DataProps} from "./table/columns";
 
 export type SelectedValues = {

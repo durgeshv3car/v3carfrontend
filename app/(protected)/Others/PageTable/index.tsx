@@ -13,7 +13,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table'
+} from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -48,9 +48,8 @@ import TablePagination from "./table-pagination";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 
-type ModalType = 'faq' | 'policy' ;
+type ModalType = "faq" | "policy" | "creditScore";
 
-// Define the props interface for the edit modal components
 interface EditModalProps<T> {
   id: string;
   onClose: () => void;
@@ -58,7 +57,6 @@ interface EditModalProps<T> {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-// Define the props interface for the create modal components
 interface CreateModalProps {
   onClose: () => void;
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
@@ -66,36 +64,46 @@ interface CreateModalProps {
   type: ModalType;
 }
 
-// Type for modal components
 type ModalComponent<T> = React.ComponentType<EditModalProps<T>>;
 type CreateComponent = React.ComponentType<CreateModalProps>;
 
-
-// Dynamically import different modals based on type
-
-const modalMap: Record<ModalType, {
-  create: CreateComponent;
-  edit: any; 
-}> = {
+const modalMap: Record<
+  ModalType,
+  {
+    create: CreateComponent;
+    edit: any;
+  }
+> = {
   faq: {
-    create: dynamic(
-      () => import("../page-section/faq/components/Create"),
-      { ssr: false }
-    ) as CreateComponent,
+    create: dynamic(() => import("../page-section/faq/components/Create"), {
+      ssr: false,
+    }) as CreateComponent,
     edit: dynamic(() => import("../page-section/faq/components/EditModal"), {
       ssr: false,
     }),
   },
   policy: {
-    create: dynamic(
-      () => import("../page-section/policy/components/Create"),
-      { ssr: false }
-    ) as CreateComponent,
+    create: dynamic(() => import("../page-section/policy/components/Create"), {
+      ssr: false,
+    }) as CreateComponent,
     edit: dynamic(() => import("../page-section/policy/components/EditModal"), {
       ssr: false,
     }),
   },
+  creditScore: {
+    create: dynamic(
+      () => import("../page-section/credit-score/components/Create"),
+      { ssr: false }
+    ) as CreateComponent,
+    edit: dynamic(
+      () => import("../page-section/credit-score/components/EditModal"),
+      {
+        ssr: false,
+      }
+    ),
+  },
 };
+
 interface TableProps<T> {
   tableColumns: ColumnDef<T>[];
   tableHeading: string;
@@ -103,7 +111,6 @@ interface TableProps<T> {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   type: ModalType;
 }
-
 
 const ExampleTwo = <T,>({
   tableHeading,
@@ -125,66 +132,75 @@ const ExampleTwo = <T,>({
   const createPage = () => setIsCreateOpen(true);
   const closeCreateModal = () => setIsCreateOpen(false);
 
-
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnsField, setColumnsField] = React.useState<string[]>([]);
   const [pageSize, setPageSize] = React.useState(20);
-    const [pagination, setPagination] = React.useState<PaginationState>({
-          pageIndex: 0,
-          pageSize
-        })
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize,
+  });
+
+  const [globalFilter, setGlobalFilter] = React.useState(""); // ✅ ADDED
 
   const table = useReactTable({
     data: tableData,
     columns: tableColumns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onPaginationChange: setPagination,
-    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
       rowSelection,
-      pagination
+      pagination,
+      globalFilter, // ✅ ADDED
+    },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onColumnVisibilityChange: setColumnVisibility,
+    onPaginationChange: setPagination,
+    onRowSelectionChange: setRowSelection,
+    onGlobalFilterChange: setGlobalFilter, // ✅ ADDED
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+
+    // ✅ Custom global filter for "title" and "companyUrl"
+    globalFilterFn: (row, columnId, filterValue) => {
+      const title = row.getValue("title")?.toString().toLowerCase() ?? "";
+      const companyUrl = row.getValue("companyUrl")?.toString().toLowerCase() ?? "";
+      const filter = filterValue?.toLowerCase() ?? "";
+      return title.includes(filter) || companyUrl.includes(filter);
     },
   });
 
   React.useEffect(() => {
     if (!table) return;
-
     const headers = table
       .getHeaderGroups()
       .flatMap((headerGroup) =>
-        headerGroup.headers.map((header) => String(header.column.columnDef.header))
+        headerGroup.headers.map((header) =>
+          String(header.column.columnDef.header)
+        )
       );
-
     setColumnsField(headers);
   }, [table]);
 
-    React.useEffect(() => {
-      setPagination((prev) => ({
-        ...prev,
-        pageIndex: 0,
-        pageSize: Number(pageSize),
-      }));
-    }, [pageSize]);
-  // Select modals based on the `type`
+  React.useEffect(() => {
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: 0,
+      pageSize: Number(pageSize),
+    }));
+  }, [pageSize]);
+
   const CreateModalComponent = modalMap[type]?.create;
   const EditModalComponent = modalMap[type]?.edit;
- 
 
   return (
     <div className="w-full">
-      {/* Header & Filter Section */}
       <div className="flex items-center justify-between py-4 px-5">
         <div className="flex items-center gap-16">
           <div className="text-xl font-medium text-gray-600">
@@ -192,14 +208,13 @@ const ExampleTwo = <T,>({
           </div>
           <Button
             onClick={createPage}
-             className="bg-gray-600 hover:bg-gray-700 text-white h-8 text-xs rounded-md shadow-sm transition-all px-6"
+            className="bg-gray-600 hover:bg-gray-700 text-white h-8 text-xs rounded-md shadow-sm transition-all px-6"
           >
             Add {tableHeading}
           </Button>
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Select for Rows per Page */}
           <label className="text-sm text-gray-600">Rows per page:</label>
           <Select
             onValueChange={(value) => setPageSize(Number(value))}
@@ -217,11 +232,10 @@ const ExampleTwo = <T,>({
             </SelectContent>
           </Select>
 
-          {/* Select for Column Visibility */}
           <label className="text-sm text-gray-600">Hide Column:</label>
-          <DropdownMenu  onOpenChange={(open) => console.log("Dropdown state:", open)}>
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto" onClick={() => console.log("Dropdown clicked")}>
+              <Button variant="outline" className="ml-auto">
                 Columns
               </Button>
             </DropdownMenuTrigger>
@@ -244,18 +258,16 @@ const ExampleTwo = <T,>({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Input for Filtering */}
+          {/* ✅ Updated Filter Input */}
           <Input
-            placeholder="Filter Name..."
-            value={table.getColumn("title")?.getFilterValue() as string ?? ""}
-            onChange={(event) =>
-              table.getColumn("title")?.setFilterValue(event.target.value)
-            }
+            placeholder="Filter ..."
+            value={globalFilter}
+            onChange={(event) => setGlobalFilter(event.target.value)}
             className="max-w-sm"
           />
         </div>
       </div>
-      {/* Table Component */}
+
       <Table>
         <TableHeader className="bg-default-200">
           {table.getHeaderGroups().map((headerGroup) => (

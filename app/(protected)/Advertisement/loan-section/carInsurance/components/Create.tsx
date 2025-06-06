@@ -36,7 +36,6 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
 
-
   const Web_DIMENSIONS = { width: 1920, height: 970 };
   const Mobile_DIMENSIONS = { width: 356, height: 180 };
   const Logo_DIMENSIONS = { width: 150, height: 150 };
@@ -67,7 +66,6 @@ const CreateModal: React.FC<CreateModalProps> = ({
   ];
 
   // Fetch categories from API
- 
 
   const handleClose = () => {
     onClose();
@@ -119,18 +117,29 @@ const CreateModal: React.FC<CreateModalProps> = ({
           {Object.keys(formData).map((key) =>
             !excludedFields.includes(key.toLowerCase()) ? (
               <div key={key}>
-                <label className="block text-sm font-medium">
-                  {key === "mobile"
-                    ? "Mobile"
-                    : key === "web"
-                    ? "Web"
-                    : key === "brand web"
-                    ? "Brand Web"
-                    : key === "brand mobile"
-                    ? "Brand Mobile"
-                    : key}
-                </label>
-
+                <div className="flex items-center">
+                  <label className="block text-sm font-medium">
+                    {key === "mobile"
+                      ? "Mobile"
+                      : key === "web"
+                      ? "Web"
+                      : key === "brand web"
+                      ? "Brand Web"
+                      : key === "brand mobile"
+                      ? "Brand Mobile"
+                      : key}
+                  </label>
+                  {key.toLowerCase() === "web" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Web_DIMENSIONS.width} x {Web_DIMENSIONS.height} )
+                    </span>
+                  )}
+                  {key.toLowerCase() === "mobile" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Mobile_DIMENSIONS.width} x {Mobile_DIMENSIONS.height} )
+                    </span>
+                  )}
+                </div>
                 {/* Select Dropdown for Category Name */}
                 {key.toLowerCase() === "description" ? (
                   <TextEditor
@@ -162,11 +171,13 @@ const CreateModal: React.FC<CreateModalProps> = ({
                   <ImageUpload
                     files={webFile ? [webFile] : []}
                     setFiles={(files) => setWebFile(files[0] || null)}
+                    expectedDimensions={Web_DIMENSIONS}
                   />
                 ) : key.toLowerCase() === "mobile" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
                     setFiles={(files) => setMobileFile(files[0] || null)}
+                    expectedDimensions={Mobile_DIMENSIONS}
                   />
                 ) : (
                   <Input

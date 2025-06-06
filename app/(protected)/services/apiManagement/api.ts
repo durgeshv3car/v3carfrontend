@@ -16,11 +16,11 @@ export const deleteAPi = async (id: string) => {
     return { success: false };
   }
 };
-export const updateApi = async (id: string, title?: string, isActive?: boolean) => {
+export const updateApi = async (id: string, name?: string, isActive?: boolean) => {
     try {
       const updatePayload: any = {};
   
-      if (title !== undefined) updatePayload.title = title;
+      if (name !== undefined) updatePayload.name = name;
       if (isActive !== undefined) updatePayload.isActive = String(isActive);
   
   
@@ -37,11 +37,11 @@ export const updateApi = async (id: string, title?: string, isActive?: boolean) 
   
 
 
-export const addApi = async (title: string) => {
+export const addApi = async (name: string) => {
   try {
     const response = await axios.post(
       `${API_BASE_URL}/api-management`,
-      { title },
+      { name },
       {
         headers: { "Content-Type": "application/json" },
       }

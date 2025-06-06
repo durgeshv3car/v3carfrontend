@@ -19,7 +19,7 @@ export const deleteUser = async (id: string,adminId: string) => {
 };
 export const updateUser = async (
   id: string,
-  username?: string,
+  name?: string,
   email?: string,
   role?: string,
   permissions?: any
@@ -27,7 +27,7 @@ export const updateUser = async (
   try {
     const updatePayload: any = {};
 
-    if (username !== undefined) updatePayload.username = username;
+    if (name !== undefined) updatePayload.name = name;
     if (email !== undefined) updatePayload.email = email;
     if (role !== undefined) updatePayload.role = role;
     if (permissions !== undefined) updatePayload.permissions = permissions;

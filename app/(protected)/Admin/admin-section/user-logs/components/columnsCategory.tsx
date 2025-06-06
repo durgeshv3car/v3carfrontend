@@ -70,8 +70,8 @@ export const columnsCategory = ({
     enableSorting: false,
   },
   {
-    accessorKey: "title", // Ensure this matches the key in your data
-    header: "Title",
+    accessorKey: "name", // Ensure this matches the key in your data
+    header: "Name",
     cell: ({ row }) => (
       <div className="flex gap-3 items-center">
         <span className="text-sm">{row.original.name}</span>
@@ -96,21 +96,31 @@ export const columnsCategory = ({
       </div>
     ),
   },
-  {
-    accessorKey: "time",
-    header: "Time",
-    cell: ({ row }) => {
-      const utcDate = new Date(row.original.createdAt);
-      const istDate = new Date(utcDate.getTime() + 5.5 * 60 * 60 * 1000); // Convert to IST
-      const formatted = istDate.toISOString().replace("T", " ").slice(0, 19); // YYYY-MM-DD HH:MM:SS
-  
-      return (
-        <div className="flex gap-3 items-center">
-          <span className="text-sm">{formatted}</span>
-        </div>
-      );
-    },
-  }
+{
+  accessorKey: "time",
+  header: "Time",
+  cell: ({ row }) => {
+    const utcDate = new Date(row.original.createdAt);
+    const istDate = new Date(utcDate.getTime() + 5.5 * 60 * 60 * 1000); // Convert to IST
+
+    const day = String(istDate.getDate()).padStart(2, "0");
+    const month = String(istDate.getMonth() + 1).padStart(2, "0"); // Months are 0-indexed
+    const year = istDate.getFullYear();
+
+    const hours = String(istDate.getHours()).padStart(2, "0");
+    const minutes = String(istDate.getMinutes()).padStart(2, "0");
+    const seconds = String(istDate.getSeconds()).padStart(2, "0");
+
+    const formatted = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+
+    return (
+      <div className="flex gap-3 items-center">
+        <span className="text-sm">{formatted}</span>
+      </div>
+    );
+  },
+}
+
   
 
 

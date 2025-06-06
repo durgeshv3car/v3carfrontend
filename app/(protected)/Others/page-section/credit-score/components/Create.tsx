@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { addApi } from "@/app/(protected)/services/apiManagement/api";
+import { addcompanyUrl } from "@/app/(protected)/services/companyUrl/api";
 
 interface CreateModalProps {
   onClose: () => void;
@@ -19,7 +19,8 @@ const CreateModal: React.FC<CreateModalProps> = ({
   setRefresh,
   type,
 }) => {
-  const [name, setName] = useState("");
+  const [companyUrl, setCompanyUrl] = useState("");
+ 
 
   const handleClose = () => {
     onClose();
@@ -30,17 +31,18 @@ const CreateModal: React.FC<CreateModalProps> = ({
 
   const handleSubmit = async () => {
     try {
-      const result = await addApi(name);
+      const result = await addcompanyUrl(companyUrl);
       if (result.success) {
-        toast.success("Name added successfully");
-        setName("");
+        toast.success("Url added successfully");
+        setCompanyUrl("");
+
         refreshData();
         handleClose();
       } else {
-        toast.error("Failed to add Name");
+        toast.error("Failed to add url");
       }
     } catch (error) {
-      console.error("Error adding Name:", error);
+      console.error("Error adding url:", error);
     }
   };
 
@@ -63,14 +65,15 @@ const CreateModal: React.FC<CreateModalProps> = ({
 
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium">Name</label>
+            <label className="block text-sm font-medium">Company Url</label>
             <Input
-              name="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              name="companyUrl"
+              value={companyUrl}
+              onChange={(e) => setCompanyUrl(e.target.value)}
               className="w-full"
             />
           </div>
+        
         </div>
 
         <div className="mt-4 flex justify-end gap-2">

@@ -61,9 +61,10 @@ export default function PermissionPage({
 
   const handleSubmit = async () => {
     console.log("Selected permissions:", selectedPermissions);
+    const Api_url=process.env.NEXT_PUBLIC_API_BASE_URL
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/auth/update/${leadId}`,
+        `${Api_url}/auth/update/${leadId}`,
         {
           permissions: selectedPermissions,
         }

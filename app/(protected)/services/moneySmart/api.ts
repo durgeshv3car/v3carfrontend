@@ -32,6 +32,7 @@ export const updateMoney = async (id: string, type: string, editedData: any, mob
 
     if (editedData.title) formDataSend.append("title", editedData.title);
     if (editedData.description) formDataSend.append("description", editedData.description);
+    if (editedData.detailDescription) formDataSend.append("detailDescription", editedData.detailDescription);
     if (mobileFile) formDataSend.append("mobile", mobileFile);
     if (webFile) formDataSend.append("web", webFile);
     if (editedData.companyUrl) formDataSend.append("companyUrl", editedData.companyUrl);
@@ -56,6 +57,7 @@ export const addMoney = async (type: string, formData: any, mobileFile?: File, w
     formDataSend.append("title", formData["Title"] || "");
     formDataSend.append("description", formData["Description"] || "");
     formDataSend.append("category", formData["Category Name"] || "");
+    formDataSend.append("detailDescription", formData.fieldDescription || "");
     console.log()
 
     if (mobileFile) formDataSend.append("mobile", mobileFile);

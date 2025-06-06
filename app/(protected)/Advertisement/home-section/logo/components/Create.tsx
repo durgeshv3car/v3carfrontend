@@ -32,6 +32,10 @@ const CreateModal: React.FC<CreateModalProps> = ({
   // Define dimension requirements
   const Logo_DIMENSIONS = { width: 150, height: 150 };
   const WEB_DIMENSIONS = { width: 1920, height: 971 };
+  const dimensions ={
+    logo: Logo_DIMENSIONS,
+    web: WEB_DIMENSIONS,
+  }
 
   useEffect(() => {
     if (columnsField.length > 0) {
@@ -105,9 +109,16 @@ const CreateModal: React.FC<CreateModalProps> = ({
           {Object.keys(formData).map((key) =>
             !excludedFields.includes(key.toLowerCase()) ? (
               <div key={key}>
-                <label className="block text-sm font-medium">
-                  {key === "logo" ? "Logo" : key}
-                </label>
+                <div className="flex items-center">
+                  <label className="block text-sm font-medium">
+                    {key === "logo" ? "Logo" : key}
+                  </label>
+                  {key.toLowerCase() === "logo" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                     ( {Logo_DIMENSIONS.width} x {Logo_DIMENSIONS.height} )
+                    </span>
+                  )}
+                </div>
                 {key.toLowerCase() === "logo" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}

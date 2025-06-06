@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import axios from "axios";
 import { Switch } from "@/components/ui/switch";
 import { updateMoney } from "@/app/(protected)/services/moneySmart/api";
+import TextEditor from "./SunEditor";
 
 import { FileWithPreview } from "../../../components/ImageUpload";
 interface TableRow {
@@ -125,7 +126,6 @@ const EditModal: React.FC<EditModalProps> = ({
               "isHome",
               "brandLogo",
               "brandName",
-              "detailDescription",
               "category",
               "offerBanner",
               "deletionDate",
@@ -173,6 +173,16 @@ const EditModal: React.FC<EditModalProps> = ({
                     checked={Boolean(editedData[key])}
                     onCheckedChange={(value) =>
                       setEditedData((prev) => ({ ...prev, [key]: value }))
+                    }
+                  />
+                ) : key === "detailDescription" ? (
+                  <TextEditor
+                    value={editedData.detailDescription || ""}
+                    onChange={(value: string) =>
+                      setEditedData((prev) => ({
+                        ...prev,
+                        detailDescription: value,
+                      }))
                     }
                   />
                 ) : (

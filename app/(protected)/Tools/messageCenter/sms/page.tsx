@@ -1,5 +1,5 @@
 "use client";
-import { fetchNotifications } from "../../../services/notifications/app/api";
+import { fetchNotifications } from "../../../services/notifications/sms/api";
 import { useState, useEffect } from "react";
 
 import ExampleTwo from "./table";

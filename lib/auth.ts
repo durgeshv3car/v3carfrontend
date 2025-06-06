@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import axios from "axios";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET,
@@ -16,25 +17,16 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required");
         }
-        const API_BASE_URL =
-          process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
         try {
-          const res = await fetch(`${API_BASE_URL}/auth/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              email: credentials.email,
-              password: credentials.password,
-              expiresInMins: 1440,
-            }),
+          const response = await axios.post(`${API_BASE_URL}/auth/login`, {
+            email: credentials.email,
+            password: credentials.password,
+            expiresInMins: 1440,
           });
 
-          const data = await res.json();
-
-          if (!res.ok) {
-            throw new Error(data.message || "Invalid login credentials");
-          }
+          const data = response.data;
 
           return {
             id: data.id,
@@ -62,31 +54,32 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
       }
       return token;
     },
-
     async session({ session, token }: { session: any; token: any }) {
-      const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
-      const res = await fetch(`${API_BASE_URL}/auth/user/${token.id}`, {
-        headers: {
-          Authorization: `Bearer ${token.token}`,
-        },
-      });
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-      if (res.status === 401) {
-        return null;
-      }
+      try {
+        await axios.get(`${API_BASE_URL}/auth/user/${token.id}`, {
+          headers: {
+            Authorization: `Bearer ${token.token}`,
+          },
+        });
 
-      if (!res.ok) {
+        if (session.user) {
+          session.user.id = token.id;
+          session.user.permissions = token.permissions;
+          session.user.email = token.email;
+          session.user.role = token.role;
+          session.user.token = token.token;
+        }
+
+        return session;
+      } catch (error: any) {
+        if (error.response?.status === 401) {
+          return null;
+        }
+        console.error("Session Error:", error.message);
         return session;
       }
-      if (session.user) {
-        session.user.id = token.id;
-        session.user.permissions = token.permissions;
-        session.user.email = token.email;
-        session.user.role = token.role;
-        session.user.token = token.token;
-      }
-      return session;
     },
   },
 });

@@ -1,33 +1,28 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+
+
 import { SquarePen, Trash2 } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { ColumnDef } from "@tanstack/react-table";
-import ActiveToggleCell from "./ActiveToggleCell";
-import { deleteAPi } from "@/app/(protected)/services/apiManagement/api";
+
+
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { ColumnDef } from "@tanstack/react-table";
+import { deletecompanyUrl } from "@/app/(protected)/services/companyUrl/api";
+export interface Category {
+  id: string;
+  companyUrl: string;
 
 
-export interface Categorys {
-  id: string; // Ensure this matches the key in your data
-  title: string; // Ensure this matches the key in your data
-  active: boolean; // Add this field if it exists in your data
-  name:string;
-  ipAddress:string;
-  action:string;
-  createdAt:Date;
-  username: string; // Ensure this matches the key in your data
-  email: string;
-  role: string;
-  permissions:[]
 }
 
 interface ColumnsCategoryProps {
@@ -35,10 +30,13 @@ interface ColumnsCategoryProps {
   router: AppRouterInstance;
 }
 
-export const columnsCategory = ({
-  fetchData,
-  router,
-}: ColumnsCategoryProps): ColumnDef<Categorys>[] => [
+
+
+export const columnsCategory = (
+  fetchData: ColumnsCategoryProps["fetchData"],
+  router: ColumnsCategoryProps["router"]
+
+): ColumnDef<Category>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -46,7 +44,7 @@ export const columnsCategory = ({
         <Checkbox
           checked={
             table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() ? "indeterminate" : false)
+            (table.getIsSomePageRowsSelected() && "indeterminate")
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
@@ -55,6 +53,7 @@ export const columnsCategory = ({
     ),
     cell: ({ row }) => (
       <div className="flex items-center gap-2 xl:w-16">
+       
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -65,6 +64,7 @@ export const columnsCategory = ({
     enableSorting: false,
     enableHiding: false,
   },
+  
   {
     id: "serialNumber",
     header: "ID",
@@ -72,36 +72,35 @@ export const columnsCategory = ({
     enableSorting: false,
   },
   {
-    accessorKey: "name", // Ensure this matches the key in your data
-    header: "Name",
+    accessorKey: "companyUrl",
+    header: "Company URl",
     cell: ({ row }) => (
       <div className="flex gap-3 items-center">
-        <span className="text-sm">{row.original.name}</span>
+        <span className="text-sm">{row.original.companyUrl}</span>
       </div>
     ),
   },
-  {
-    accessorKey: "active", // Ensure this matches the key in your data
-    header: "isActive",
-    cell: ({ row }) => <ActiveToggleCell row={row} refreshData={fetchData} />,
-  },
+ 
+
+
+
   {
     id: "actions",
     header: "Action",
     enableHiding: false,
     cell: ({ row }) => {
+
       const handleDelete = async (id: string) => {
         try {
-          const result = await deleteAPi(id);
+          const result = await deletecompanyUrl(id);
           if (result.success) {
-            toast.success("Category data deleted");
+            toast.success("Faq data deleted");
             fetchData();
           } else {
-            toast.error("Category data not deleted");
+            toast.error("Faq data not deleted");
           }
         } catch (error) {
-          console.error("Error deleting category:", error);
-          toast.error("Failed to delete category");
+          console.error("Error deleting faq:", error);
         }
       };
 
@@ -115,7 +114,7 @@ export const columnsCategory = ({
                   size="icon"
                   className="w-7 h-7 border-default-200 dark:border-default-300 text-default-400"
                   onClick={() =>
-                    router.push(`/Admin/admin-section/api-management?id=${row.original.id}`)
+                    router.push(`/Others/page-section/credit-score?id=${row.original.id}`)
                   }
                 >
                   <SquarePen className="w-3 h-3" />
@@ -150,4 +149,7 @@ export const columnsCategory = ({
       );
     },
   },
+    
+  
+
 ];
