@@ -16,6 +16,7 @@ const API_BASE_URL =
       const formDataSend = new FormData();
       formDataSend.append("type", formData.type);
       formDataSend.append("title", formData.title || "");
+      formDataSend.append("dimensions", JSON.stringify(formData.dimensions));
   
       if (formData.mobileFile) {
         formDataSend.append("mobile", formData.mobileFile);
@@ -76,6 +77,7 @@ export const deleteLogoImage = async (id: string) => {
 export const updateLogoImage = async (
     id: string,
     type: string,
+    dimensions:any,
     editedData: { title?: string; companyUrl?: string; active?: boolean },
     mobileFile?: File | null,
     webFile?: File | null,
@@ -88,6 +90,7 @@ export const updateLogoImage = async (
       const formDataSend = new FormData();
       formDataSend.append("id", id);
       formDataSend.append("type", type);
+      formDataSend.append("dimensions", JSON.stringify(dimensions));
       if (!mobileUrl) formDataSend.append("mobileUrl", "empty");
       if (!webUrl) formDataSend.append("webUrl","empty");
   

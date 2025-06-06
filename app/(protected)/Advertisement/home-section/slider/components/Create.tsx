@@ -27,6 +27,10 @@ const CreateModal: React.FC<CreateModalProps> = ({
 
   const Web_DIMENSIONS = { width: 1920, height: 970 };
   const Mobile_DIMENSIONS = { width: 365, height: 140 };
+  const dimensions = {
+    web: Web_DIMENSIONS,
+    mobile: Mobile_DIMENSIONS,
+  };
 
   useEffect(() => {
     if (columnsField.length > 0) {
@@ -56,6 +60,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
     try {
       const result = await uploadSliderImage({
         type,
+        dimensions,
         title: formData.Title,
         mobileFile: mobileFile?.file || null,
         webFile: webFile?.file || null,
@@ -119,7 +124,6 @@ const CreateModal: React.FC<CreateModalProps> = ({
                     setFiles={(files: FileWithPreview[]) =>
                       setWebFile(files[0] || null)
                     }
-                    expectedDimensions={Web_DIMENSIONS}
                     label="Web"
                   />
                 ) : key.toLowerCase() === "mobile" ? (
@@ -128,7 +132,6 @@ const CreateModal: React.FC<CreateModalProps> = ({
                     setFiles={(files: FileWithPreview[]) =>
                       setMobileFile(files[0] || null)
                     }
-                    expectedDimensions={Mobile_DIMENSIONS}
                     label="Mobile"
                   />
                 ) : (

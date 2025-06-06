@@ -26,8 +26,13 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
 
-  const Web_DIMENSIONS = { width: "", height: "" };
-  const Mobile_DIMENSIONS = { width: "", height: "" };
+  const Web_DIMENSIONS = { width: 1920, height: 970 };
+  const Mobile_DIMENSIONS = { width: 356, height: 180 };
+   const dimensions={
+   
+    web: Web_DIMENSIONS,
+    mobile: Mobile_DIMENSIONS,
+  }
 
   useEffect(() => {
     if (columnsField.length > 0) {
@@ -57,6 +62,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
     try {
       const result = await uploadReferImage({
         type,
+        dimensions,
         title: formData.Title,
         mobileFile: mobileFile?.file || null,
         webFile: webFile?.file || null,
@@ -99,9 +105,26 @@ const CreateModal: React.FC<CreateModalProps> = ({
           {Object.keys(formData).map((key) =>
             !excludedFields.includes(key.toLowerCase()) ? (
               <div key={key}>
-                <label className="block text-sm font-medium">
-                  {key === "mobile" ? "Mobile" : key === "web" ? "Web" : key}
-                </label>
+                 <div className="flex items-center">
+                  <label className="block text-sm font-medium">
+                     {key === "mobileUrl"
+                    ? "mobile"
+                    : key === "webUrl"
+                    ? "web"
+                    : key}
+                  </label>
+                  {key.toLowerCase() === "mobile" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Mobile_DIMENSIONS.width} x {Mobile_DIMENSIONS.height} )
+                    </span>
+                  )}
+                  {key.toLowerCase() === "web" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Web_DIMENSIONS.width} x {Web_DIMENSIONS.height} )
+                    </span>
+                  )}
+                
+                </div>
                 {key.toLowerCase() === "web" ? (
                   <ImageUpload
                     files={webFile ? [webFile] : []}

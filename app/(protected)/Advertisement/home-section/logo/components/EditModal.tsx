@@ -39,7 +39,13 @@ const EditModal: React.FC<EditModalProps> = ({
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
   const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
 
-  const Logo_DIMENSIONS = { width: 150, height: 150 };
+const Logo_DIMENSIONS = { width: 150, height: 150 };
+  const WEB_DIMENSIONS = { width: 1920, height: 970 };
+  const MOBILE_DIMENSIONS = { width: 150, height: 150 };
+    const dimensions ={
+    web: WEB_DIMENSIONS,
+    mobile: MOBILE_DIMENSIONS,
+  }
 
   // Find the row data based on the id
   useEffect(() => {
@@ -74,6 +80,7 @@ const EditModal: React.FC<EditModalProps> = ({
     const result = await updateLogoImage(
       id,
       type,
+      dimensions,
       editedData,
       mobileFile?.file,
       webFile?.file,
@@ -140,7 +147,6 @@ const EditModal: React.FC<EditModalProps> = ({
                     setFiles={(files: FileWithPreview[]) =>
                       setMobileFile(files[0] || null)
                     }
-                    expectedDimensions={Logo_DIMENSIONS}
                     label="Logo"
                   />
                 )  : key.toLowerCase() === "active" ? (
