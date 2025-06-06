@@ -39,6 +39,10 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const Web_DIMENSIONS = { width: 1920, height: 970 };
   const Mobile_DIMENSIONS = { width: 356, height: 180 };
   const Logo_DIMENSIONS = { width: 150, height: 150 };
+   const dimensions={
+    web: Web_DIMENSIONS,
+    mobile: Mobile_DIMENSIONS,
+  }
 
   useEffect(() => {
     if (columnsField.length > 0) {
@@ -80,6 +84,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const handleSubmit = async () => {
     const result = await addService(
       type,
+      dimensions,
       { ...formData, fieldDescription: fieldDescription },
       mobileFile?.file,
       webFile?.file
@@ -171,13 +176,13 @@ const CreateModal: React.FC<CreateModalProps> = ({
                   <ImageUpload
                     files={webFile ? [webFile] : []}
                     setFiles={(files) => setWebFile(files[0] || null)}
-                    expectedDimensions={Web_DIMENSIONS}
+                  
                   />
                 ) : key.toLowerCase() === "mobile" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
                     setFiles={(files) => setMobileFile(files[0] || null)}
-                    expectedDimensions={Mobile_DIMENSIONS}
+                  
                   />
                 ) : (
                   <Input
