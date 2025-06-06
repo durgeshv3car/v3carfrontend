@@ -33,6 +33,7 @@ export const updateService = async (
     const formDataSend = new FormData();
     formDataSend.append("id", id);
     formDataSend.append("type", type);
+  
     if (!mobileUrl) formDataSend.append("mobileUrl", "empty");
     if (!webUrl) formDataSend.append("webUrl","empty");
 

@@ -32,6 +32,10 @@ const CreateModal: React.FC<CreateModalProps> = ({
   // Define dimension requirements
   const Logo_DIMENSIONS = { width: 150, height: 150 };
   const WEB_DIMENSIONS = { width: 1920, height: 971 };
+  const dimensions ={
+    logo: Logo_DIMENSIONS,
+    web: WEB_DIMENSIONS,
+  }
 
   useEffect(() => {
     if (columnsField.length > 0) {
@@ -60,6 +64,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
     try {
       const result = await uploadLogoImage({
         type,
+        dimensions,
         title: formData.Title,
         mobileFile: mobileFile?.file || null,
         webFile: webFile?.file || null,

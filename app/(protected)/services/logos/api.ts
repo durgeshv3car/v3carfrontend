@@ -7,6 +7,7 @@ const API_BASE_URL =
 
   export const uploadLogoImage = async (formData: {
     type: string;
+    dimensions: any,
     title?: string;
     mobileFile?: File | null;
     webFile?: File | null;

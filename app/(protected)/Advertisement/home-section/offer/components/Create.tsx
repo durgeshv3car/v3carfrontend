@@ -48,6 +48,12 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const Web_DIMENSIONS = { width: 1920, height: 970 };
   const Banner_DIMENSIONS = { width: 356, height: 180 };
   const Mobile_DIMENSIONS = { width: 150, height: 280 };
+  const dimensions={
+    brandLogo: Logo_DIMENSIONS,
+    web: Web_DIMENSIONS,
+    banner: Banner_DIMENSIONS,
+    mobile: Mobile_DIMENSIONS,
+  }
 
   useEffect(() => {
     if (columnsField.length > 0) {
@@ -104,6 +110,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const handleSubmit = async () => {
     const result = await addOffer(
       type,
+      dimensions,
       { ...formData, fieldDescription: fieldDescription },
       mobileFile?.file,
       webFile?.file,

@@ -1,3 +1,4 @@
+import { redirect } from './../../../../i18n/routing';
 import axios from "axios";
 
 const API_BASE_URL =
@@ -54,8 +55,8 @@ export const updateOffer = async (
     if (bannerFile) formDataSend.append("banner", bannerFile);
     if (brandLogoFile) formDataSend.append("brandLogo", brandLogoFile);
    
-    if (editedData.companyUrl)
-      formDataSend.append("companyUrl", editedData.companyUrl);
+    if (editedData.redirectUrl)
+      formDataSend.append("redirectUrl", editedData.redirectUrl);
     if (editedData.isActive !== undefined)
       formDataSend.append("isActive", editedData.isActive);
     if (editedData.isHome !== undefined)
@@ -74,6 +75,7 @@ export const updateOffer = async (
 
 export const addOffer = async (
   type: string,
+  dimensions: any,
   formData: any,
   mobileFile?: File,
   webFile?: File,
@@ -84,6 +86,7 @@ export const addOffer = async (
     
     const formDataSend = new FormData();
     formDataSend.append("type", type);
+    formDataSend.append("dimensions", JSON.stringify(dimensions));
     formDataSend.append("title", formData["Title"] || "");
     formDataSend.append("description", formData["Description"] || "");
     formDataSend.append("category", formData["Category Name"] || "");
