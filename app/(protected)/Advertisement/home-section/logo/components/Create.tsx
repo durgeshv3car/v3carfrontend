@@ -65,6 +65,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
     try {
       const result = await uploadLogoImage({
         type,
+        dimensions,
         title: formData.Title,
         mobileFile: mobileFile?.file || null,
         webFile: webFile?.file || null,

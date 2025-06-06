@@ -77,6 +77,7 @@ export const updateOffer = async (
 
 export const addOffer = async (
   type: string,
+  dimensions: any,
   formData: any,
   mobileFile?: File,
   webFile?: File,
@@ -87,6 +88,7 @@ export const addOffer = async (
     
     const formDataSend = new FormData();
     formDataSend.append("type", type);
+    formDataSend.append("dimensions", JSON.stringify(dimensions));
     formDataSend.append("title", formData["Title"] || "");
     formDataSend.append("description", formData["Description"] || "");
     formDataSend.append("category", formData["Category Name"] || "");

@@ -257,7 +257,7 @@ const EditModal: React.FC<EditModalProps> = ({
                         setFiles={(files: FileWithPreview[]) =>
                           setWebFile(files[0] || null)
                         }
-                        expectedDimensions={Web_DIMENSIONS}
+       
                         label="Web"
                       />
                     </div>
@@ -273,7 +273,7 @@ const EditModal: React.FC<EditModalProps> = ({
                         setFiles={(files: FileWithPreview[]) =>
                           setMobileFile(files[0] || null)
                         }
-                        expectedDimensions={Mobile_DIMENSIONS}
+   
                         label="Mobile"
                       />
                     </div>

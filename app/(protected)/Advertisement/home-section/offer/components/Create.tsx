@@ -110,6 +110,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
   const handleSubmit = async () => {
     const result = await addOffer(
       type,
+      dimensions,
       { ...formData, fieldDescription: fieldDescription },
       mobileFile?.file,
       webFile?.file,
@@ -240,7 +241,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
                     setFiles={(files: FileWithPreview[]) =>
                       setWebFile(files[0] || null)
                     }
-                    expectedDimensions={Web_DIMENSIONS}
+            
                     label="Web"
                   />
                 ) : key.toLowerCase() === "mobile" ? (
@@ -249,7 +250,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
                     setFiles={(files: FileWithPreview[]) =>
                       setMobileFile(files[0] || null)
                     }
-                    expectedDimensions={Mobile_DIMENSIONS}
+        
                     label="Mobile"
                   />
                 ) : key.toLowerCase() === "brand logo" ? (
