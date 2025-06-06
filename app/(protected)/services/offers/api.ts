@@ -22,6 +22,7 @@ export const fetchOffers = async () => {
 export const updateOffer = async (
   id: string,
   type: string,
+  dimensions: any,
   editedData: any,
   mobileFile?: File,
   webFile?: File,
@@ -38,6 +39,7 @@ export const updateOffer = async (
     const formDataSend = new FormData();
     formDataSend.append("id", id);
     formDataSend.append("type", type);
+    formDataSend.append("dimensions", JSON.stringify(dimensions));
     if (!mobileUrl) formDataSend.append("mobileUrl", "empty");
     if (!webUrl) formDataSend.append("webUrl","empty");
     if (!bannerUrl) formDataSend.append("bannerUrl", "empty");

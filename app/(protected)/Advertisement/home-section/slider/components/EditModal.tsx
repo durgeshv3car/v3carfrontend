@@ -40,6 +40,10 @@ const EditModal: React.FC<EditModalProps> = ({
 
  const Web_DIMENSIONS = { width: 1920, height: 970 };
  const Mobile_DIMENSIONS = { width: 365, height: 140 };
+  const dimensions={
+    web: Web_DIMENSIONS,
+    mobile: Mobile_DIMENSIONS,
+  }
 
 
   
@@ -78,6 +82,7 @@ const EditModal: React.FC<EditModalProps> = ({
     const result = await updateSliderImage(
       id,
       type,
+      dimensions,
       editedData,
       mobileFile?.file,
       webFile?.file,
@@ -151,14 +156,12 @@ const EditModal: React.FC<EditModalProps> = ({
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
                     setFiles={(files: FileWithPreview[]) => setMobileFile(files[0] || null)}
-                    expectedDimensions={Mobile_DIMENSIONS}
                     label="Mobile"
                   />
                 ) : key.toLowerCase() === "weburl" ? (
                   <ImageUpload
                     files={webFile ? [webFile] : []}
                     setFiles={(files: FileWithPreview[]) => setWebFile(files[0] || null)}
-                    expectedDimensions={Web_DIMENSIONS}
                     label="Web"
                   />
                 ) : key.toLowerCase() === "active" ? (

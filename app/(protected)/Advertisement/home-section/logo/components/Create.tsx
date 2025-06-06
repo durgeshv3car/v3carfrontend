@@ -31,10 +31,11 @@ const CreateModal: React.FC<CreateModalProps> = ({
 
   // Define dimension requirements
   const Logo_DIMENSIONS = { width: 150, height: 150 };
-  const WEB_DIMENSIONS = { width: 1920, height: 971 };
+  const WEB_DIMENSIONS = { width: 1920, height: 970 };
+  const MOBILE_DIMENSIONS = { width: 150, height: 150 };
   const dimensions ={
-    logo: Logo_DIMENSIONS,
     web: WEB_DIMENSIONS,
+    mobile: MOBILE_DIMENSIONS,
   }
 
   useEffect(() => {

@@ -7,6 +7,7 @@ const API_BASE_URL =
 
   export const uploadSliderImage = async (formData: {
     type: string;
+    dimensions: any,
     title?: string;
     mobileFile?: File | null;
     webFile?: File | null;
@@ -15,6 +16,7 @@ const API_BASE_URL =
     try {
       const formDataSend = new FormData();
       formDataSend.append("type", formData.type);
+      formDataSend.append("dimensions", JSON.stringify(formData.dimensions));
       formDataSend.append("title", formData.title || "");
   
       if (formData.mobileFile) {
@@ -76,6 +78,7 @@ export const deleteSliderImage = async (id: string) => {
 export const updateSliderImage = async (
     id: string,
     type: string,
+    dimensions:any,
     editedData: { title?: string; companyUrl?: string; active?: boolean },
     mobileFile?: File | null,
     webFile?: File | null,
@@ -86,6 +89,8 @@ export const updateSliderImage = async (
       const formDataSend = new FormData();
       formDataSend.append("id", id);
       formDataSend.append("type", type);
+      formDataSend.append("dimensions", JSON.stringify(dimensions));
+
       if (!mobileUrl) formDataSend.append("mobileUrl", "empty");
       if (!webUrl) formDataSend.append("webUrl","empty");
   

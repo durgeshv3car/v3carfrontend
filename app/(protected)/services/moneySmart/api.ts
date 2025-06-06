@@ -17,7 +17,7 @@ export const fetchMoney = async () => {
   }
 };
 
-export const updateMoney = async (id: string, type: string, editedData: any, mobileFile?: File, webFile?: File, mobileUrl?: string | null,
+export const updateMoney = async (id: string, type: string,dimensions:any, editedData: any, mobileFile?: File, webFile?: File, mobileUrl?: string | null,
   webUrl?: string | null) => {
   if (!id) return;
 
@@ -25,6 +25,7 @@ export const updateMoney = async (id: string, type: string, editedData: any, mob
     const formDataSend = new FormData();
     formDataSend.append("id", id);
     formDataSend.append("type", type);
+    formDataSend.append("dimensions", JSON.stringify(dimensions));
     if (!mobileUrl) formDataSend.append("mobileUrl", "empty");
     if (!webUrl) formDataSend.append("webUrl","empty");
 
@@ -50,10 +51,11 @@ export const updateMoney = async (id: string, type: string, editedData: any, mob
 };
 
 
-export const addMoney = async (type: string, formData: any, mobileFile?: File, webFile?: File) => {
+export const addMoney = async (type: string,dimensions:any, formData: any, mobileFile?: File, webFile?: File) => {
   try {
     const formDataSend = new FormData();
     formDataSend.append("type", type);
+    formDataSend.append("dimensions", JSON.stringify(dimensions));
     formDataSend.append("title", formData["Title"] || "");
     formDataSend.append("description", formData["Description"] || "");
     formDataSend.append("category", formData["Category Name"] || "");

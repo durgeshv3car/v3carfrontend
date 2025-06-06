@@ -21,6 +21,7 @@ export const fetchServices = async (type:string) => {
 export const updateService = async (
   id: string,
   type: string,
+  dimension: any,
   editedData: any,
   mobileFile?: File,
   webFile?: File,
@@ -33,6 +34,7 @@ export const updateService = async (
     const formDataSend = new FormData();
     formDataSend.append("id", id);
     formDataSend.append("type", type);
+    formDataSend.append("dimension", JSON.stringify(dimension));
   
     if (!mobileUrl) formDataSend.append("mobileUrl", "empty");
     if (!webUrl) formDataSend.append("webUrl","empty");
@@ -65,6 +67,7 @@ export const updateService = async (
 
 export const addService = async (
   type: string,
+  dimensions: any,
   formData: any,
   mobileFile?: File,
   webFile?: File,
@@ -73,6 +76,7 @@ export const addService = async (
   try {
     const formDataSend = new FormData();
     formDataSend.append("type", type);
+    formDataSend.append("dimension", JSON.stringify(dimensions));
     formDataSend.append("title", formData["Title"] || "");
     formDataSend.append("description", formData.fieldDescription || "");
     formDataSend.append("buttonType", formData["Button Name"] || "");

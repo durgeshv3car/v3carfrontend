@@ -39,7 +39,10 @@ const EditModal: React.FC<EditModalProps> = ({
 
   const Web_DIMENSIONS = { width: 1920, height: 970 };
   const Mobile_DIMENSIONS = { width: 356, height: 180 };
-
+  const dimensions = {
+    web: Web_DIMENSIONS,
+    mobile: Mobile_DIMENSIONS,
+  };
 
   // Find the row data based on the id
   useEffect(() => {
@@ -76,6 +79,7 @@ const EditModal: React.FC<EditModalProps> = ({
     const result = await updateMoney(
       id,
       type,
+      dimensions,
       editedData,
       mobileFile?.file,
       webFile?.file,
@@ -132,9 +136,12 @@ const EditModal: React.FC<EditModalProps> = ({
               "buttonType",
             ].includes(key) ? (
               <div key={key}>
-                <label className="block text-sm font-medium">
-                  {key === "offerImage" ? "" : key}
-                </label>
+                <div className="flex items-center">
+                  <label className="block text-sm font-medium">
+                    {key === "offerImage" ? "" : key}
+                  </label>
+              
+                </div>
 
                 {/* Handle Nested `offerImage` Object */}
                 {key === "offerImage" &&
@@ -142,13 +149,12 @@ const EditModal: React.FC<EditModalProps> = ({
                   <div className="space-y-3">
                     {/* Web Image */}
                     <div>
-                      <label className="block text-sm font-medium">Web</label>
+                      <label className="block text-sm font-medium">Web  ( {Web_DIMENSIONS.width} x {Web_DIMENSIONS.height} )</label>
                       <ImageUpload
                         files={webFile ? [webFile] : []}
                         setFiles={(files: FileWithPreview[]) =>
                           setWebFile(files[0] || null)
                         }
-                        expectedDimensions={Web_DIMENSIONS}
                         label="Web"
                       />
                     </div>
@@ -156,14 +162,13 @@ const EditModal: React.FC<EditModalProps> = ({
                     {/* Mobile Image */}
                     <div>
                       <label className="block text-sm font-medium">
-                        Mobile
+                        Mobile ( {Mobile_DIMENSIONS.width} x {Mobile_DIMENSIONS.height} )
                       </label>
                       <ImageUpload
                         files={mobileFile ? [mobileFile] : []}
                         setFiles={(files: FileWithPreview[]) =>
                           setMobileFile(files[0] || null)
                         }
-                        expectedDimensions={Mobile_DIMENSIONS}
                         label="Mobile"
                       />
                     </div>

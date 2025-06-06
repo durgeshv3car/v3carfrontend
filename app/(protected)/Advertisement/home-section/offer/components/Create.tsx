@@ -232,7 +232,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
                     setFiles={(files: FileWithPreview[]) =>
                       setBannerFile(files[0] || null)
                     }
-                    expectedDimensions={Banner_DIMENSIONS}
+                  
                     label="Banner"
                   />
                 ) : key.toLowerCase() === "web" ? (
@@ -259,7 +259,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
                     setFiles={(files: FileWithPreview[]) =>
                       setBrandLogoFile(files[0] || null)
                     }
-                    expectedDimensions={Logo_DIMENSIONS}
+                
                     label="Logo"
                   />
                 ) : (

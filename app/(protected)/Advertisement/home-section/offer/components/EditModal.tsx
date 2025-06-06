@@ -60,6 +60,12 @@ const EditModal: React.FC<EditModalProps> = ({
   const Web_DIMENSIONS = { width: 1920, height: 970 };
   const Banner_DIMENSIONS = { width: 356, height: 180 };
   const Mobile_DIMENSIONS = { width: 150, height: 280 };
+   const dimensions={
+    brandLogo: Logo_DIMENSIONS,
+    web: Web_DIMENSIONS,
+    banner: Banner_DIMENSIONS,
+    mobile: Mobile_DIMENSIONS,
+  }
 
   const buttonsType = [
     { id: "apply_now", name: "Apply Now" },
@@ -136,6 +142,7 @@ const EditModal: React.FC<EditModalProps> = ({
     const result = await updateOffer(
       id,
       type,
+      dimensions,
       editedData,
       mobileFile?.file,
       webFile?.file,
@@ -231,7 +238,7 @@ const EditModal: React.FC<EditModalProps> = ({
                         setFiles={(files: FileWithPreview[]) =>
                           setBannerFile(files[0] || null)
                         }
-                        expectedDimensions={Banner_DIMENSIONS}
+                      
                         label="Banner"
                       />
                     </div>
@@ -287,7 +294,6 @@ const EditModal: React.FC<EditModalProps> = ({
                         setFiles={(files: FileWithPreview[]) =>
                           setBrandLogoFile(files[0] || null)
                         }
-                        expectedDimensions={Logo_DIMENSIONS}
                         label="Logo"
                       />
                     </div>

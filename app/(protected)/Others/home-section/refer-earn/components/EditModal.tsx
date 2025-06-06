@@ -38,6 +38,10 @@ const EditModal: React.FC<EditModalProps> = ({
 
   const Web_DIMENSIONS = { width: 1920, height: 970 };
   const Mobile_DIMENSIONS = { width: 356, height: 180 };
+   const dimensions={
+    web: Web_DIMENSIONS,
+    mobile: Mobile_DIMENSIONS,
+  }
 
   // Find the row data based on the id
   useEffect(() => {
@@ -72,6 +76,7 @@ const EditModal: React.FC<EditModalProps> = ({
     const result = await updateReferImage(
       id,
       type,
+      dimensions,
       editedData,
       mobileFile?.file,
       webFile?.file,
@@ -122,13 +127,26 @@ const EditModal: React.FC<EditModalProps> = ({
               "deletionDate",
             ].includes(key) ? (
               <div key={key}>
-                <label className="block text-sm font-medium">
-                  {key === "mobileUrl"
+                <div className="flex items-center">
+                  <label className="block text-sm font-medium">
+                     {key === "mobileUrl"
                     ? "mobile"
                     : key === "webUrl"
                     ? "web"
                     : key}
-                </label>
+                  </label>
+                  {key.toLowerCase() === "mobile" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Mobile_DIMENSIONS.width} x {Mobile_DIMENSIONS.height} )
+                    </span>
+                  )}
+                  {key.toLowerCase() === "web" && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      ( {Web_DIMENSIONS.width} x {Web_DIMENSIONS.height} )
+                    </span>
+                  )}
+                
+                </div>
                 {key.toLowerCase() === "mobileurl" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
