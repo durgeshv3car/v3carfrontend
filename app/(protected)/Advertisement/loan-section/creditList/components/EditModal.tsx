@@ -52,6 +52,10 @@ const EditModal: React.FC<EditModalProps> = ({
    const Web_DIMENSIONS = { width: 1920, height: 970 };
   const Mobile_DIMENSIONS = { width: 356, height: 180 };
   const Logo_DIMENSIONS = { width: 150, height: 150 };
+   const dimensions={
+    web: Web_DIMENSIONS,
+    mobile: Mobile_DIMENSIONS,
+  }
 
 
 
@@ -100,6 +104,7 @@ const EditModal: React.FC<EditModalProps> = ({
     const result = await updateService(
       id,
       type,
+      dimensions,
       editedData,
       mobileFile?.file,
       webFile?.file,
@@ -174,7 +179,7 @@ const EditModal: React.FC<EditModalProps> = ({
                     setFiles={(files: FileWithPreview[]) =>
                       setMobileFile(files[0] || null)
                     }
-                    expectedDimensions={Mobile_DIMENSIONS}
+                    
                     label="Mobile"
                   />
                 ) : key.toLowerCase() === "weburl" ? (
@@ -183,7 +188,7 @@ const EditModal: React.FC<EditModalProps> = ({
                     setFiles={(files: FileWithPreview[]) =>
                       setWebFile(files[0] || null)
                     }
-                    expectedDimensions={Web_DIMENSIONS}
+                   
                     label="Web"
                   />
                 ) : key === "buttonType" ? (
