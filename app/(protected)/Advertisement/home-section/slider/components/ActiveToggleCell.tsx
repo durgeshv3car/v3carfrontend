@@ -4,20 +4,9 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { updateSliderImage } from "@/app/(protected)/services/sliders/api";
 
-interface ActiveToggleCellProps {
-  row: {
-    original: {
-      id: string ;
-      active: boolean;
-      type: string;
-      dimensions: string;
-      mobileUrl?: string;
-      webUrl?: string;
-    };
-  };
-}
 
-const ActiveToggleCell: React.FC<ActiveToggleCellProps> = ({ row }) => {
+
+const ActiveToggleCell = ({ row,refreshData }: { row: any,refreshData:()=>void }) => {
   const [isActive, setIsActive] = React.useState(row.original.active);
   const [isUpdating, setIsUpdating] = React.useState(false);
   
@@ -50,6 +39,7 @@ const ActiveToggleCell: React.FC<ActiveToggleCellProps> = ({ row }) => {
           `Slider ${value ? "activated" : "deactivated"} successfully`
         );
         setIsActive(value);
+        refreshData()
       } else {
         toast.error("Failed to update status");
         // Revert the switch state if update failed
