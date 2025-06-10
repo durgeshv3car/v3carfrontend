@@ -1,4 +1,3 @@
-import axios from "axios";
 
 
 
@@ -125,23 +124,4 @@ export const scheduleDeleteSliderImage = async (id: string, type: string, deleti
     }
   };
 
-  export const toggleSliderImageStatus = async (id: string, isActive: boolean) => {
-    try {
-      const formDataSend = new FormData();
-      formDataSend.append("id", id);
-      formDataSend.append("type", "slider");
-      formDataSend.append("active", String(isActive));
-  
-      const response = await fetch("/api/sliders", {
-        method: "PUT",
-        body: formDataSend,
-      });
-      const data = await response.json();
-  
-      return { success: response.ok, data };
-    } catch (error) {
-      console.error("Error toggling slider status:", error);
-      return { success: false };
-    }
-  };
 

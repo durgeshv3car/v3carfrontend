@@ -3,16 +3,27 @@
 import React from "react";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { toggleSliderImageStatus } from "@/app/(protected)/services/sliders/api"; 
+import { updateSliderImage } from "@/app/(protected)/services/sliders/api";
 
 const ActiveToggleCell = ({ row }: { row: any }) => {
   const [isActive, setIsActive] = React.useState(row.original.active);
 
   const handleToggle = async (value: boolean) => {
     try {
-      const result = await toggleSliderImageStatus(row.original.id, value);
+      const result = await updateSliderImage(
+        row.original.id,
+        row.original.type,
+        row.original.dimensions,
+        { active: value },
+        null,
+        null,
+        row.original.mobileUrl,
+        row.original.webUrl
+      );
       if (result.success) {
-        toast.success(`Slider ${value ? "activated" : "deactivated"} successfully`);
+        toast.success(
+          `Slider ${value ? "activated" : "deactivated"} successfully`
+        );
         setIsActive(value);
       } else {
         toast.error("Failed to update status");

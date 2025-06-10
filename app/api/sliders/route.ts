@@ -1,68 +1,138 @@
+// API Route (route.ts)
 import { NextRequest, NextResponse } from "next/server";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const type = searchParams.get("type") || "";
-  const res = await fetch(`${BASE_URL}/banner/images/${type}`);
-  const data = await res.json();
-  return NextResponse.json(data);
+  try {
+    const { searchParams } = new URL(req.url);
+    const type = searchParams.get("type") || "";
+
+    const res = await fetch(`${BASE_URL}/banner/images/${type}`);
+
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: "Failed to fetch data" },
+        { status: res.status }
+      );
+    }
+
+    const data = await res.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("GET Error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(req: NextRequest) {
-  const contentType = req.headers.get("content-type") || "";
-  let res;
-  if (contentType.includes("multipart/form-data")) {
-    const formData = await req.formData();
-    res = await fetch(`${BASE_URL}/banner/upload`, {
-      method: "POST",
-      body: formData,
-    });
-  } else {
-    const body = await req.json();
-    res = await fetch(`${BASE_URL}/banner/upload`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+  try {
+    const contentType = req.headers.get("content-type") || "";
+    let res;
+
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await req.formData();
+      res = await fetch(`${BASE_URL}/banner/upload`, {
+        method: "POST",
+        body: formData,
+      });
+    } else {
+      const body = await req.json();
+      res = await fetch(`${BASE_URL}/banner/upload`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+    }
+
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: "Failed to upload" },
+        { status: res.status }
+      );
+    }
+
+    const data = await res.json();
+    return NextResponse.json(data, { status: res.status });
+  } catch (error) {
+    console.error("POST Error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
-  const data = await res.json();
-  return NextResponse.json(data, { status: res.status });
 }
 
 export async function PUT(req: NextRequest) {
-  const contentType = req.headers.get("content-type") || "";
-  let res;
-  if (contentType.includes("multipart/form-data")) {
-    const formData = await req.formData();
-    res = await fetch(`${BASE_URL}/banner/image`, {
-      method: "PUT",
-      body: formData,
-    });
-  } else {
-    const body = await req.json();
-    res = await fetch(`${BASE_URL}/banner/image`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+  try {
+    const contentType = req.headers.get("content-type") || "";
+    let res;
+
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await req.formData();
+      res = await fetch(`${BASE_URL}/banner/image`, {
+        method: "PUT",
+        body: formData,
+      });
+    } else {
+      const body = await req.json();
+      res = await fetch(`${BASE_URL}/banner/image`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+    }
+
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: "Failed to update" },
+        { status: res.status }
+      );
+    }
+
+    const data = await res.json();
+    return NextResponse.json(data, { status: res.status });
+  } catch (error) {
+    console.error("PUT Error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
-  const data = await res.json();
-  return NextResponse.json(data, { status: res.status });
 }
 
 export async function DELETE(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const id = searchParams.get("id");
-  if (!id) {
-    return NextResponse.json({ error: "ID is required" }, { status: 400 });
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ error: "ID is required" }, { status: 400 });
+    }
+
+    const res = await fetch(`${BASE_URL}/banner/image`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
+
+    if (!res.ok) {
+      return NextResponse.json(
+        { error: "Failed to delete" },
+        { status: res.status }
+      );
+    }
+
+    const data = await res.json();
+    return NextResponse.json(data, { status: res.status });
+  } catch (error) {
+    console.error("DELETE Error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
   }
-  const res = await fetch(`${BASE_URL}/banner/image`, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id }),
-  });
-  const data = await res.json();
-  return NextResponse.json(data, { status: res.status });
 }
