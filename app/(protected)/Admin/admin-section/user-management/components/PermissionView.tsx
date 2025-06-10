@@ -33,24 +33,26 @@ export default function PermissionPage({
   }, [pathname, role, permissions]);
 
   // Extract all submenu labels once
-  useEffect(() => {
-    const allSubmenus: string[] = [];
-    menuList.forEach((menuGroup) => {
-      menuGroup.menus.forEach((menu) => {
-        menu.submenus.forEach((submenu) => {
-          allSubmenus.push(submenu.label);
-        });
+useEffect(() => {
+  const allSubmenus: string[] = [];
+  menuList.forEach((menuGroup) => {
+    menuGroup.menus.forEach((menu) => {
+      menu.submenus.forEach((submenu) => {
+        allSubmenus.push(submenu.label);
       });
     });
-    setAllPermissions(allSubmenus);
-  }, [menuList]);
+  });
+  setAllPermissions(allSubmenus);
+}, [menuList]);
+
 
   // Initialize selected permissions from data if available
   useEffect(() => {
-    if (data && data.permissions && Array.isArray(data.permissions)) {
-      setSelectedPermissions(data.permissions);
-    }
-  });
+  if (data && data.permissions && Array.isArray(data.permissions)) {
+    setSelectedPermissions(data.permissions);
+  }
+}, []); 
+
 
   const handleCheckboxChange = (perm: string) => {
     setSelectedPermissions(

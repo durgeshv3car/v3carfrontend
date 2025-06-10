@@ -48,22 +48,6 @@ export const updateUser = async (
 };
 
 
-export const addApi = async (title: string) => {
-  try {
-    const response = await axios.post(
-      `${API_BASE_URL}/api-management`,
-      { title },
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-
-    return { success: true, data: response.data };
-  } catch (error) {
-    console.error("Error adding category:", error);
-    return { success: false };
-  }
-};
 
 
 export const fetchUsers = async () => {

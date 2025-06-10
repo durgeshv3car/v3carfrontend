@@ -20,7 +20,7 @@ import axios from "axios";
 
 
 type Inputs = {
-  username: string;
+  name: string;
   email: string;
   password: string;
   role: string;
@@ -78,22 +78,22 @@ const RegForm = ({ roleType }: { roleType: string }) => {
   return (
     <>
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      {/* Username */}
+      {/* name */}
       <div className="space-y-2">
-        <Label htmlFor="username">User Name</Label>
+        <Label htmlFor="name">Name</Label>
         <Input
-          id="username"
+          id="name"
           placeholder="John Doe"
-          {...register("username", {
-            required: "Username is required",
+          {...register("name", {
+            required: "name is required",
             minLength: {
               value: 4,
-              message: "Username must be at least 4 characters",
+              message: "name must be at least 4 characters",
             },
           })}
         />
-        {errors.username && (
-          <p className="text-sm text-red-500">{errors.username.message}</p>
+        {errors.name && (
+          <p className="text-sm text-red-500">{errors.name.message}</p>
         )}
       </div>
 
