@@ -1,69 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
-import { addCategory, fetchCategories, updateCategory, deleteCategory } from "@/app/(protected)/services/categorys/api";
 
-// GET /api/category
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ;
+
 export async function GET() {
-  try {
-    const categories = await fetchCategories();
-    return NextResponse.json(categories);
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch categories" }, { status: 500 });
-  }
+  const res = await fetch(`${BASE_URL}/category`);
+  const data = await res.json();
+  return NextResponse.json(data);
 }
 
-// POST /api/category
 export async function POST(req: NextRequest) {
-  try {
-    const { title } = await req.json();
-    if (!title) {
-      return NextResponse.json({ error: "Title is required" }, { status: 400 });
-    }
-    const result = await addCategory(title);
-    if (result.success) {
-      return NextResponse.json(result.data, { status: 201 });
-    } else {
-      return NextResponse.json({ error: "Failed to create category" }, { status: 500 });
-    }
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to create category" }, { status: 500 });
-  }
+  const body = await req.json();
+  const res = await fetch(`${BASE_URL}/category`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  return NextResponse.json(data, { status: res.status });
 }
 
-// PUT /api/category?id=...
 export async function PUT(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
-    const { title } = await req.json();
-    if (!id || !title) {
-      return NextResponse.json({ error: "ID and title are required" }, { status: 400 });
-    }
-    const result = await updateCategory(id, title);
-    if (result.success) {
-      return NextResponse.json({ success: true });
-    } else {
-      return NextResponse.json({ error: "Failed to update category" }, { status: 500 });
-    }
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to update category" }, { status: 500 });
+  const url = new URL(req.url);
+  const id = url.searchParams.get("id");
+  const body = await req.json();
+
+  if (!id) {
+    return NextResponse.json({ error: "ID required" }, { status: 400 });
   }
+
+  const res = await fetch(`${BASE_URL}/category/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  return NextResponse.json(data, { status: res.status });
 }
 
-// DELETE /api/category?id=...
 export async function DELETE(req: NextRequest) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const id = searchParams.get("id");
-    if (!id) {
-      return NextResponse.json({ error: "ID is required" }, { status: 400 });
-    }
-    const result = await deleteCategory(id);
-    if (result.success) {
-      return NextResponse.json({ success: true });
-    } else {
-      return NextResponse.json({ error: "Failed to delete category" }, { status: 500 });
-    }
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to delete category" }, { status: 500 });
+  const url = new URL(req.url);
+  const id = url.searchParams.get("id");
+
+  if (!id) {
+    return NextResponse.json({ error: "ID required" }, { status: 400 });
   }
+
+  const res = await fetch(`${BASE_URL}/category/${id}`, {
+    method: "DELETE",
+  });
+  const data = await res.json();
+  return NextResponse.json(data, { status: res.status });
 }

@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api";
+
 
 
 
@@ -29,11 +28,13 @@ const API_BASE_URL =
   
       formDataSend.append("companyUrl", formData.companyUrl);
   
-      const response = await axios.post(`${API_BASE_URL}/banner/upload`, formDataSend, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const response = await fetch("/api/sliders", {
+        method: "POST",
+        body: formDataSend,
       });
+      const data = await response.json();
   
-      return { success: true, data: response.data };
+      return { success: response.ok, data };
     } catch (error) {
       console.error("Error uploading image:", error);
       return { success: false };
@@ -42,33 +43,24 @@ const API_BASE_URL =
 
 export const fetchSliderImages = async (type: string) => {
   try {
-    if (!type) {
-      console.warn("Type is undefined, skipping fetch");
-      return [];
-    }
-
-    const response = await axios.get(`${API_BASE_URL}/banner/images/${type}`);
-
-    return response.data.images || [];
+    const response = await fetch(`/api/sliders?type=${type}`);
+    const data = await response.json();
+  
+    return data.images || data || [];
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error("Axios error:", error.response?.data || error.message);
-    } else {
-      console.error("Unexpected error:", error);
-    }
+    console.error("Error fetching slider images:", error);
     return [];
   }
 };
 
 export const deleteSliderImage = async (id: string) => {
   try {
-    await axios.delete(`${API_BASE_URL}/banner/image`, {
-      data: { id },
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const response = await fetch(`/api/sliders?id=${id}`, {
+      method: "DELETE",
     });
-    return { success: true };
+    const data = await response.json();
+  
+    return { success: response.ok, data };
   } catch (error) {
     console.error("Error deleting slider image:", error);
     return { success: false };
@@ -90,7 +82,7 @@ export const updateSliderImage = async (
       formDataSend.append("id", id);
       formDataSend.append("type", type);
       formDataSend.append("dimensions", JSON.stringify(dimensions));
-
+  
       if (!mobileUrl) formDataSend.append("mobileUrl", "empty");
       if (!webUrl) formDataSend.append("webUrl","empty");
   
@@ -100,18 +92,19 @@ export const updateSliderImage = async (
       if (editedData.companyUrl) formDataSend.append("companyUrl", editedData.companyUrl);
       if (editedData.active !== undefined) formDataSend.append("active", String(editedData.active));
   
-      await axios.put(`${API_BASE_URL}/banner/image`, formDataSend, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const response = await fetch("/api/sliders", {
+        method: "PUT",
+        body: formDataSend,
       });
+      const data = await response.json();
   
-      return { success: true };
+      return { success: response.ok, data };
     } catch (error) {
       console.error("Error updating slider image:", error);
       return { success: false };
     }
   };
 
-  
 export const scheduleDeleteSliderImage = async (id: string, type: string, deletionDate: Date) => {
     try {
       const formDataSend = new FormData();
@@ -119,14 +112,15 @@ export const scheduleDeleteSliderImage = async (id: string, type: string, deleti
       formDataSend.append("type", type);
       formDataSend.append("deletionDate", deletionDate.toISOString());
   
-      const response = await axios.put(`${API_BASE_URL}/banner/image`, formDataSend, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const response = await fetch("/api/sliders", {
+        method: "PUT",
+        body: formDataSend,
       });
+      const data = await response.json();
   
-      console.log("✅ Scheduled Delete Response:", response.data);
-      return { success: true };
+      return { success: response.ok, data };
     } catch (error) {
-      console.error("⚠️ Error scheduling delete:", error);
+      console.error("Error scheduling delete:", error);
       return { success: false };
     }
   };
@@ -138,14 +132,16 @@ export const scheduleDeleteSliderImage = async (id: string, type: string, deleti
       formDataSend.append("type", "slider");
       formDataSend.append("active", String(isActive));
   
-      await axios.put(`${API_BASE_URL}/banner/image`, formDataSend, {
-        headers: { "Content-Type": "multipart/form-data" },
+      const response = await fetch("/api/sliders", {
+        method: "PUT",
+        body: formDataSend,
       });
+      const data = await response.json();
   
-      return { success: true };
+      return { success: response.ok, data };
     } catch (error) {
       console.error("Error toggling slider status:", error);
       return { success: false };
     }
   };
-  
+
