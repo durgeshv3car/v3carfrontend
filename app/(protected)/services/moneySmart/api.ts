@@ -1,5 +1,4 @@
-import axios from "axios";
-
+import { redirect } from './../../../../i18n/routing';
 export const fetchMoney = async () => {
   try {
     const response = await fetch(`/api/moneySmart`);
@@ -37,7 +36,7 @@ export const updateMoney = async (
     if (editedData.detailDescription) formDataSend.append("detailDescription", editedData.detailDescription);
     if (mobileFile) formDataSend.append("mobile", mobileFile);
     if (webFile) formDataSend.append("web", webFile);
-    if (editedData.companyUrl) formDataSend.append("companyUrl", editedData.companyUrl);
+    if (editedData.redirectUrl) formDataSend.append("redirectUrl", editedData.redirectUrl);
     if (editedData.active !== undefined) formDataSend.append("isActive", String(editedData.active));
 
     const response = await fetch("/api/moneySmart", {
