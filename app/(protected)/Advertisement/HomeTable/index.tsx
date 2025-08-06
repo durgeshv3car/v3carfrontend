@@ -48,7 +48,7 @@ import TablePagination from "./table-pagination";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 
-type ModalType = 'slider' | 'logo' | 'offer' | 'category';
+type ModalType = 'slider' | 'logo' | 'offer' | 'category' | 'brands';
 
 // Define the props interface for the edit modal components
 interface EditModalProps<T> {
@@ -90,6 +90,10 @@ const modalMap: Record<ModalType, {
   category: {
     create: dynamic(() => import("../home-section/category/components/Create")) as CreateComponent,
     edit: dynamic(() => import("../home-section/category/components/EditModal")),
+  },
+  brands: {
+    create: dynamic(() => import("../home-section/brands/components/Create")) as CreateComponent,
+    edit: dynamic(() => import("../home-section/brands/components/EditModal")),
   },
 };
 
@@ -241,9 +245,9 @@ const ExampleTwo = <T,>({
           {/* Input for Filtering */}
           <Input
             placeholder="Filter Title..."
-            value={table.getColumn("title")?.getFilterValue() as string ?? ""}
+            value={table.getColumn("name")?.getFilterValue() as string ?? ""}
             onChange={(event) =>
-              table.getColumn("title")?.setFilterValue(event.target.value)
+              table.getColumn("name")?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
           />

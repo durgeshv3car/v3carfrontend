@@ -48,7 +48,7 @@ import TablePagination from "./table-pagination";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 
-type ModalType = 'newCar' | 'popularCar' | 'upcomingCar' ;
+type ModalType = 'newCar'  ;
 
 // Define the props interface for the edit modal components
 interface EditModalProps<T> {
@@ -79,14 +79,7 @@ const modalMap: Record<ModalType, {
     create: dynamic(() => import("../home-section/new-car/components/Create")) as CreateComponent,
     edit: dynamic(() => import("../home-section/new-car/components/EditModal")),
   },
-  popularCar: {
-    create: dynamic(() => import("../home-section/popular-car/components/Create")) as CreateComponent,
-    edit: dynamic(() => import("../home-section/popular-car/components/EditModal")),
-  },
-  upcomingCar: {
-    create: dynamic(() => import("../home-section/upcoming-car/components/Create")) as CreateComponent,
-    edit: dynamic(() => import("../home-section/upcoming-car/components/EditModal")),
-  },
+
  
 };
 

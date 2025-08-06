@@ -8,13 +8,13 @@ import ImageUpload from "../../../components/ImageUpload";
 import { toast } from "sonner";
 import axios from "axios";
 import { Switch } from "@/components/ui/switch";
-import { updateSliderImage } from "@/app/(protected)/services/sliders/api";
 import type { FileWithPreview } from "../../../components/ImageUpload";
+import { updateBrandsImage } from "@/app/(protected)/services/brands/api";
 
 interface TableRow {
   id: string;
-  title?: string;
-  imageUrl?: string;
+  name?: string;
+  description?: string;
   [key: string]: any;
 }
 
@@ -51,22 +51,20 @@ const EditModal: React.FC<EditModalProps> = ({
   // Find the row data based on the id
   useEffect(() => {
     if (id && tableData) {
-      const foundRow = tableData.find((row) => row.id === id) || null;
+      const foundRow = tableData.find((row) => row._id === id) || null;
       setSelectedRow(foundRow);
       setEditedData(foundRow || {});
          
-    if (foundRow?.mobileUrl) {
-      setMobileFile({ preview: foundRow.mobileUrl } as FileWithPreview);
+    if (foundRow?.image) {
+      setMobileFile({ preview: foundRow.image } as FileWithPreview);
     }
-    if (foundRow?.webUrl) {
-      setWebFile({ preview: foundRow.webUrl } as FileWithPreview);
-    }
+   
     }
   }, [id, tableData]);
 
   const handleClose = () => {
     onClose();
-    router.push("/Advertisement/home-section/slider", { scroll: false });
+    router.push("/Advertisement/home-section/brands", { scroll: false });
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,20 +72,17 @@ const EditModal: React.FC<EditModalProps> = ({
   };
 
   const refreshData = () => setRefresh((prev) => !prev);
-  const type = "slider";
+  const type = "brands";
 
   const handleUpdate = async () => {
     if (!id) return;
 
-    const result = await updateSliderImage(
+    const result = await updateBrandsImage(
       id,
-      type,
-      dimensions,
       editedData,
       mobileFile?.file,
-      webFile?.file,
       mobileFile?.preview,
-      webFile?.preview
+
     );
 
     if (result.success) {
@@ -124,13 +119,16 @@ const EditModal: React.FC<EditModalProps> = ({
         <div className="space-y-3">
           {Object.keys(selectedRow).map((key) =>
             ![
-              "id",
+              "_id",
               "action",
               "createdAt",
               "updatedAt",
               "type",
               "thumbnail",
-              "deletionDate"
+              "deletionDate",
+              "__v",
+              "slug",
+
             ].includes(key) ? (
               <div key={key}>
                 <div className="flex items-center">
@@ -152,17 +150,11 @@ const EditModal: React.FC<EditModalProps> = ({
                     </span>
                   )}
                 </div>
-                {key.toLowerCase() === "mobileurl" ? (
+                {key.toLowerCase() === "image" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
                     setFiles={(files: FileWithPreview[]) => setMobileFile(files[0] || null)}
                     label="Mobile"
-                  />
-                ) : key.toLowerCase() === "weburl" ? (
-                  <ImageUpload
-                    files={webFile ? [webFile] : []}
-                    setFiles={(files: FileWithPreview[]) => setWebFile(files[0] || null)}
-                    label="Web"
                   />
                 ) : key.toLowerCase() === "active" ? (
                   <Switch

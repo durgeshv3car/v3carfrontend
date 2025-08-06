@@ -5,7 +5,7 @@ import ExampleTwo from "../../../HomeTable";
 
 import { useRouter } from "next/navigation";
 import { columnsSlider } from "./columnsSlider";
-import { fetchSliderImages } from "@/app/(protected)/services/sliders/api";
+import { fetchBrandsImages } from "@/app/(protected)/services/brands/api";
 import { SliderData } from "./columnsSlider";
 
 function Users() {
@@ -18,11 +18,11 @@ function Users() {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [open, setOpen] = React.useState(false);
 
-  const type = "upcomingCar";
+  const type = "brands";
 
   const fetchData = async () => {
     try {
-      const result = await fetchSliderImages(type);
+      const result = await fetchBrandsImages();
 
       setData(result);
     } catch (error) {
@@ -41,7 +41,7 @@ function Users() {
     <>
       <div className="space-y-6">
         <ExampleTwo
-          tableHeading="Slider List"
+          tableHeading="Brands List"
           tableData={data}
           tableColumns={columnsSlider({
             fetchData,

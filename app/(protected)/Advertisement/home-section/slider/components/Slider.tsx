@@ -22,7 +22,7 @@ function Users() {
 
   const fetchData = async () => {
     try {
-      const result = await fetchSliderImages(type);
+      const result = await fetchSliderImages();
 
       setData(result);
     } catch (error) {

@@ -13,7 +13,7 @@ import type { FileWithPreview } from "../../../components/ImageUpload";
 
 interface TableRow {
   id: string;
-  title?: string;
+  name?: string;
   imageUrl?: string;
   [key: string]: any;
 }
@@ -35,7 +35,7 @@ const EditModal: React.FC<EditModalProps> = ({
   const [editedData, setEditedData] = useState<Partial<TableRow>>({});
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
-  const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
+
 
 
  const Web_DIMENSIONS = { width: 1920, height: 970 };
@@ -46,21 +46,19 @@ const EditModal: React.FC<EditModalProps> = ({
   }
 
 
-  
+
 
   // Find the row data based on the id
   useEffect(() => {
     if (id && tableData) {
-      const foundRow = tableData.find((row) => row.id === id) || null;
+      const foundRow = tableData.find((row) => row._id === id) || null;
       setSelectedRow(foundRow);
       setEditedData(foundRow || {});
          
-    if (foundRow?.mobileUrl) {
-      setMobileFile({ preview: foundRow.mobileUrl } as FileWithPreview);
+    if (foundRow?.image) {
+      setMobileFile({ preview: foundRow.image } as FileWithPreview);
     }
-    if (foundRow?.webUrl) {
-      setWebFile({ preview: foundRow.webUrl } as FileWithPreview);
-    }
+    
     }
   }, [id, tableData]);
 
@@ -81,13 +79,9 @@ const EditModal: React.FC<EditModalProps> = ({
 
     const result = await updateSliderImage(
       id,
-      type,
-      dimensions,
       editedData,
       mobileFile?.file,
-      webFile?.file,
       mobileFile?.preview,
-      webFile?.preview
     );
 
     if (result.success) {
@@ -124,45 +118,33 @@ const EditModal: React.FC<EditModalProps> = ({
         <div className="space-y-3">
           {Object.keys(selectedRow).map((key) =>
             ![
-              "id",
+              "_id",
               "action",
               "createdAt",
               "updatedAt",
               "type",
               "thumbnail",
-              "deletionDate"
+              "deletionDate",
+              "__v"
             ].includes(key) ? (
               <div key={key}>
                 <div className="flex items-center">
                   <label className="block text-sm font-medium">
-                    {key === "mobileUrl"
-                      ? "mobile"
-                      : key === "webUrl"
-                      ? "web"
-                      : key}
+                    {
+                      key}
                   </label>
-                  {key.toLowerCase() === "mobileurl" && (
+                  {key.toLowerCase() === "image" && (
                     <span className="text-xs text-gray-500 ml-2">
                       ( {Mobile_DIMENSIONS.width} x {Mobile_DIMENSIONS.height} )
                     </span>
                   )}
-                  {key.toLowerCase() === "weburl" && (
-                    <span className="text-xs text-gray-500 ml-2">
-                      ( {Web_DIMENSIONS.width} x {Web_DIMENSIONS.height} )
-                    </span>
-                  )}
+                 
                 </div>
-                {key.toLowerCase() === "mobileurl" ? (
+                {key.toLowerCase() === "image" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
                     setFiles={(files: FileWithPreview[]) => setMobileFile(files[0] || null)}
                     label="Mobile"
-                  />
-                ) : key.toLowerCase() === "weburl" ? (
-                  <ImageUpload
-                    files={webFile ? [webFile] : []}
-                    setFiles={(files: FileWithPreview[]) => setWebFile(files[0] || null)}
-                    label="Web"
                   />
                 ) : key.toLowerCase() === "active" ? (
                   <Switch

@@ -1,4 +1,12 @@
 import { useEffect, useState } from "react";
+import { Variant, VariantDetail } from './columnsLogo';
+
+
+interface VariantsModalProps {
+  variants: Variant[];
+  onClose: () => void;
+  refreshData: () => void;
+}
 import { PlusCircle, SquarePen, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,11 +17,21 @@ import {
 } from "@/app/(protected)/services/createCar/api";
 import TextEditor from "../../../components/SunEditor";
 import CreateModal from "./createModal";
+import { toast } from "sonner";
 
-function VariantsModal({ variants = [], onClose, refreshData }) {
-  const [variantList, setVariantList] = useState(variants);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [carId, setCarId] = useState("");
+
+
+interface VariantsModalProps {
+  variants: Variant[];
+  onClose: () => void;
+  refreshData: () => void;
+}
+
+const VariantsModal: React.FC<VariantsModalProps> = ({ variants = [], onClose, refreshData }) => {
+  const [variantList, setVariantList] = useState<Variant[]>(variants);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [carId, setCarId] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
   const handleAdd=()=>{
     setIsModalOpen(true)
   }
@@ -23,74 +41,138 @@ function VariantsModal({ variants = [], onClose, refreshData }) {
     if (storedId) setCarId(storedId);
   }, []);
 
-  const handleEdit = (variantIndex, detailIndex, field, value) => {
-    const updated = [...variantList];
-    updated[variantIndex].details[detailIndex][field] = value;
-    setVariantList(updated);
-
-    // ✅ Log change
-  };
-  const handleUpdateDetails = async (
-    variantIndex,
-    detailIndex,
-    variantId,
-    detailId
+  const handleEdit = (
+    variantIndex: number,
+    detailIndex: number,
+    field: keyof VariantDetail,
+    value: string | number
   ) => {
-    const updated = [...variantList];
+    try {
+      const updated = [...variantList];
+      if (updated[variantIndex]?.details[detailIndex]) {
+        updated[variantIndex].details[detailIndex] = {
+          ...updated[variantIndex].details[detailIndex],
+          [field]: value
+        };
+        setVariantList(updated);
+      }
+    } catch (error) {
+      console.error("Error updating field:", error);
+      toast.error("Failed to update field");
+    }
+  };
 
-    console.log("hsuc", updated[variantIndex]);
-    console.log("Updated Detail:", updated[variantIndex].details[detailIndex]);
-    const data = updated[variantIndex].details[detailIndex];
-    const res = await updateCarVariant(data, carId, variantId, detailId);
-    if (res.message) {
-      refreshData();
+  const handleUpdateDetails = async (
+    variantIndex: number,
+    detailIndex: number,
+    variantId: string,
+    detailId: string
+  ) => {
+    try {
+      const updated = [...variantList];
+      if (!updated[variantIndex]?.details[detailIndex]) {
+        throw new Error("Variant or detail not found");
+      }
+
+      const data = updated[variantIndex].details[detailIndex];
+      const res = await updateCarVariant(data, carId, variantId, detailId);
+      
+      if (res?.message) {
+        refreshData();
+        toast.success("Variant details updated successfully");
+      } else {
+        throw new Error("Failed to update variant details");
+      }
+    } catch (error) {
+      console.error("Error updating variant details:", error);
+      toast.error("Failed to update variant details");
     }
   };
 
   const handleEditNested = (
-    variantIndex,
-    detailIndex,
-    parentKey,
-    subKey,
-    value
+    variantIndex: number,
+    detailIndex: number,
+    parentKey: 'mileage',
+    subKey: 'city' | 'highway',
+    value: number
   ) => {
-    const updated = [...variantList];
-    updated[variantIndex].details[detailIndex][parentKey][subKey] = value;
-
-    // ✅ Log nested change
-    console.log(
-      "Updated Nested Detail:",
-      updated[variantIndex].details[detailIndex]
-    );
-  };
-
-  const handleDeleteVariant = async (variantId, detailId) => {
-    const res = await deleteVariantDetail(carId, variantId, detailId);
-    console.log(res);
-    if (res.data.message) {
-      refreshData();
+    try {
+      const updated = [...variantList];
+      if (updated[variantIndex]?.details[detailIndex]) {
+        updated[variantIndex].details[detailIndex] = {
+          ...updated[variantIndex].details[detailIndex],
+          [parentKey]: {
+            ...updated[variantIndex].details[detailIndex][parentKey],
+            [subKey]: value
+          }
+        };
+        setVariantList(updated);
+      }
+    } catch (error) {
+      console.error("Error updating nested field:", error);
+      toast.error("Failed to update field");
     }
   };
 
-  const handleDelete = async (variantId) => {
-    const res = await deleteVariant(carId, variantId);
-    if (res.data.message) {
-      refreshData();
+  const handleDeleteVariant = async (variantId: string, detailId: string) => {
+    try {
+      const res = await deleteVariantDetail(carId, variantId, detailId);
+      if (res?.data?.message) {
+        refreshData();
+        toast.success("Variant detail deleted successfully");
+      } else {
+        throw new Error("Failed to delete variant detail");
+      }
+    } catch (error) {
+      console.error("Error deleting variant detail:", error);
+      toast.error("Failed to delete variant detail");
     }
   };
 
-  const handleVariantNameChange = (index, newName) => {
-    const updated = [...variantList];
-    updated[index].name = newName;
-    console.log("hredfu", updated[index]);
-    setVariantList(updated);
-  };
-  const handleUpdateName = async (name, id) => {
-    const res = await updateCarVariantName(name, carId, id);
-    if (res.message) {
-      refreshData();
+  const handleDelete = async (variantId: string) => {
+    try {
+      const res = await deleteVariant(carId, variantId);
+      if (res?.data?.message) {
+        refreshData();
+        toast.success("Variant deleted successfully");
+      } else {
+        throw new Error("Failed to delete variant");
+      }
+    } catch (error) {
+      console.error("Error deleting variant:", error);
+      toast.error("Failed to delete variant");
     }
-    console.log(name, "ugsbych");
+  };
+
+  const handleVariantNameChange = (index: number, newName: string) => {
+    try {
+      const updated = [...variantList];
+      if (updated[index]) {
+        updated[index].name = newName;
+        setVariantList(updated);
+      }
+    } catch (error) {
+      console.error("Error updating variant name:", error);
+      toast.error("Failed to update variant name");
+    }
+  };
+
+  const handleUpdateName = async (name: string, id: string) => {
+    try {
+      if (!name.trim() || !id) {
+        throw new Error("Name and ID are required");
+      }
+      const res = await updateCarVariantName(name, carId, id);
+      if (res?.message) {
+        refreshData();
+        toast.success("Variant name updated successfully");
+      } else {
+        throw new Error("Failed to update variant name");
+      }
+    } catch (error) {
+      console.error("Error updating variant name:", error);
+      toast.error("Failed to update variant name");
+    }
   };
 
   return (
@@ -124,32 +206,32 @@ function VariantsModal({ variants = [], onClose, refreshData }) {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {Object.entries(detail).map(([key, value]) => {
                     if (key === "_id") return null;
-                    if (
-                      typeof value === "object" &&
-                      value !== null &&
-                      !Array.isArray(value)
-                    ) {
-                      return Object.entries(value).map(([subKey, subVal]) => (
-                        <div key={`${key}.${subKey}`}>
-                          <label className="block text-sm font-medium">
-                            {`${key}.${subKey}`}
-                          </label>
-                          <input
-                            type="text"
-                            value={subVal ?? ""}
-                            onChange={(e) =>
-                              handleEditNested(
-                                variantIndex,
-                                detailIndex,
-                                key,
-                                subKey,
-                                e.target.value
-                              )
-                            }
-                            className="w-full border px-2 py-1 rounded"
-                          />
+                    if (key === "mileage" && typeof value === "object" && value !== null) {
+                      return (
+                        <div key={key} className="space-y-2">
+                          {['city', 'highway'].map((subKey) => (
+                            <div key={`${key}.${subKey}`}>
+                              <label className="block text-sm font-medium">
+                                {`${key}.${subKey}`}
+                              </label>
+                              <input
+                                type="number"
+                                value={(value as any)[subKey] ?? ""}
+                                onChange={(e) =>
+                                  handleEditNested(
+                                    variantIndex,
+                                    detailIndex,
+                                    'mileage',
+                                    subKey as 'city' | 'highway',
+                                    Number(e.target.value)
+                                  )
+                                }
+                                className="w-full border px-2 py-1 rounded"
+                              />
+                            </div>
+                          ))}
                         </div>
-                      ));
+                      );
                     }
 
                     return (
@@ -160,20 +242,20 @@ function VariantsModal({ variants = [], onClose, refreshData }) {
 
                         {key === "description" ? (
                           <TextEditor
-                            value={value ?? ""}
+                            value={(value as string) ?? ""}
                             onChange={(val) =>
-                              handleEdit(variantIndex, detailIndex, key, val)
+                              handleEdit(variantIndex, detailIndex, key as keyof VariantDetail, val)
                             }
                           />
                         ) : (
                           <input
                             type={typeof value === "number" ? "number" : "text"}
-                            value={value ?? ""}
+                            value={value?.toString() ?? ""}
                             onChange={(e) =>
                               handleEdit(
                                 variantIndex,
                                 detailIndex,
-                                key,
+                                key as keyof VariantDetail,
                                 typeof value === "number"
                                   ? Number(e.target.value)
                                   : e.target.value

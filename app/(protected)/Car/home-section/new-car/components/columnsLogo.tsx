@@ -18,20 +18,42 @@ import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.share
 import VariantsModalTrigger from "./VarianstModalTrigger";
 import { deleteCar } from "@/app/(protected)/services/createCar/api";
 
-interface LogoData {
-  id: string;
-  title: string;
-  thumbnail: string | { web?: string; mobile?: string };
-  companyUrl: string;
+export interface Variant {
+  _id: string;
+  name: string;
+  details: VariantDetail[];
+}
+
+export interface VariantDetail {
+  _id: string;
+  fuel: string;
+  transmission: string;
+  mileage: {
+    city: number;
+    highway: number;
+  };
+  price: number;
+  description: string;
+  specifications: string;
+}
+
+export interface LogoData {
+  _id: string;
+  title?: string;
+  thumbnail?: string | { web?: string; mobile?: string };
+  image?: string;
+  companyUrl?: string;
   active: boolean;
-  brand: string;
+  brand: {
+    name:string
+  };
   model: string;
   pageType: string;
   bodyType: "Sedan" | "SUV" | "Hatchback" | "Coupe" | "Convertible";
   fuelType: ("Petrol" | "Diesel" | "CNG" | "EV")[];
+  transmissions: string[];
   mileage: number;
   engine: string;
-  transmission: "Manual" | "Automatic";
   seatCapacity: number;
   priceRange: string;
   description: string;
@@ -41,6 +63,7 @@ interface LogoData {
     height: number;
     wheelbase: number;
   };
+  variants?: Variant[]; 
 }
 
 interface ColumnsLogoProps {
@@ -97,7 +120,7 @@ export const columnsLogo = ({
   {
     accessorKey: "brand",
     header: "Brand",
-    cell: ({ row }) => <span>{row.original.brand}</span>,
+    cell: ({ row }) => <span>{row.original.brand.name}</span>,
   },
   {
     accessorKey: "model",
@@ -156,15 +179,15 @@ export const columnsLogo = ({
     },
   },
   {
-    accessorKey: "thumbnail.mobile",
+    accessorKey: "image",
     header: "Image",
     cell: ({ row }) => {
-      const thumbnailData = row.original.image;
+      const imageUrl = row.original.image;
       
       return (
         <Avatar className="w-8 h-8 rounded-none bg-transparent shadow-none border-none">
-          {thumbnailData? (
-            <AvatarImage src={thumbnailData} className="rounded-none" />
+          {imageUrl ? (
+            <AvatarImage src={imageUrl} alt={row.original.brand.name} className="rounded-none" />
           ) : (
             <AvatarFallback className="rounded-none">NA</AvatarFallback>
           )}
@@ -193,12 +216,17 @@ export const columnsLogo = ({
     enableHiding: false,
     cell: ({ row }) => {
       const handleDelete = async (id: string) => {
-        const result = await deleteCar(id);
-        if (result.data.message) {
-          fetchData();
-          toast.success("Logo data deleted");
-        } else {
-          toast.error("Logo data not deleted");
+        try {
+          const result = await deleteCar(id);
+          if (result?.data?.message) {
+            fetchData();
+            toast.success("Car data deleted successfully");
+          } else {
+            toast.error("Failed to delete car data");
+          }
+        } catch (error) {
+          console.error("Error deleting car:", error);
+          toast.error("Failed to delete car data");
         }
       };
 

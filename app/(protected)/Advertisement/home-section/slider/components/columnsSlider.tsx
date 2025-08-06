@@ -6,13 +6,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import ActiveToggleCell from "./ActiveToggleCell";
-import {
-  ColumnDef,
-  Row,
-  Table,
-} from '@tanstack/react-table';
-
+// import ActiveToggleCell from "./ActiveToggleCell";
+import { ColumnDef, Row, Table } from "@tanstack/react-table";
 
 import { SquarePen, Trash2, CalendarClock } from "lucide-react";
 
@@ -24,14 +19,16 @@ import axios from "axios";
 import { Switch } from "@/components/ui/switch";
 import { Calendar } from "@/components/ui/calendar";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { scheduleDeleteSliderImage,deleteSliderImage } from "@/app/(protected)/services/sliders/api";
+import {
+  deleteSliderImage,
+} from "@/app/(protected)/services/sliders/api";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 export interface SliderData {
-  id: string;
-  title: string;
-  thumbnail: string | { web?: string; mobile?: string };
-  companyUrl: string;
+  _id: string;
+  name: string;
+  image: string ;
+  carUrl: string;
   active: boolean;
 }
 
@@ -44,7 +41,14 @@ interface ColumnsSliderProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const columnsSlider = ({fetchData,router,setSelectedDate,selectedDate,open,setOpen}: ColumnsSliderProps): ColumnDef<SliderData>[] => [
+export const columnsSlider = ({
+  fetchData,
+  router,
+  setSelectedDate,
+  selectedDate,
+  open,
+  setOpen,
+}: ColumnsSliderProps): ColumnDef<SliderData>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -61,7 +65,6 @@ export const columnsSlider = ({fetchData,router,setSelectedDate,selectedDate,ope
     ),
     cell: ({ row }) => (
       <div className="flex items-center gap-2 xl:w-16">
-       
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -72,7 +75,7 @@ export const columnsSlider = ({fetchData,router,setSelectedDate,selectedDate,ope
     enableSorting: false,
     enableHiding: false,
   },
-  
+
   {
     id: "serialNumber",
     header: "ID",
@@ -80,93 +83,60 @@ export const columnsSlider = ({fetchData,router,setSelectedDate,selectedDate,ope
     enableSorting: false,
   },
   {
-    accessorKey: "title",
-    header: "Title",
+    accessorKey: "name",
+    header: "Name",
     cell: ({ row }) => (
       <div className="flex gap-3 items-center">
-        <span className="text-sm">{row.original.title}</span>
+        <span className="text-sm">{row.original.name}</span>
       </div>
     ),
   },
- 
-  
-  {
-    accessorKey: "thumbnail.web",
-    header: "Web",
-    cell: ({ row }) => {
-      const thumbnailData = row.original.thumbnail;
-  
-      // Ensure thumbnailData is an object
-      const imageUrls = thumbnailData && typeof thumbnailData === "string" ? JSON.parse(thumbnailData) : thumbnailData;
-  
-      return (
-        <div className="flex gap-3 items-center">
-          <Avatar className="w-8 h-8 rounded-none bg-transparent shadow-none border-none">
-            {imageUrls?.web ? ( // ✅ FIXED: Changed from webUrl to web
-              <AvatarImage src={imageUrls.web} className="rounded-none" />
-            ) : (
-              <AvatarFallback className="rounded-none">NA</AvatarFallback>
-            )}
-          </Avatar>
-        </div>
-      );
-    },
-  },
+
   {
     accessorKey: "thumbnail.mobile",
-    header: "Mobile",
+    header: "Image",
     cell: ({ row }) => {
-      const thumbnailData = row.original.thumbnail;
-  
-      // Ensure thumbnailData is an object
-      const imageUrls = thumbnailData && typeof thumbnailData === "string" ? JSON.parse(thumbnailData) : thumbnailData;
-  
+      const thumbnailData = row.original.image;
+
       return (
-        <div className="flex gap-3 items-center">
-          <Avatar className="w-8 h-8 rounded-none bg-transparent shadow-none border-none">
-            {imageUrls?.mobile ? (
-              <AvatarImage src={imageUrls.mobile} className="rounded-none" />
-            ) : (
-              <AvatarFallback className="rounded-none">NA</AvatarFallback>
-            )}
-          </Avatar>
-        </div>
+        <Avatar className="w-8 h-8 rounded-none bg-transparent shadow-none border-none">
+          {thumbnailData ? (
+            <AvatarImage src={thumbnailData} className="rounded-none" />
+          ) : (
+            <AvatarFallback className="rounded-none">NA</AvatarFallback>
+          )}
+        </Avatar>
       );
     },
   },
-  {
-    accessorKey: "companyUrl",
-    header: "Company URL",
+
+    {
+    accessorKey: "carUrl",
+    header: "Car Url",
     cell: ({ row }) => (
       <div className="flex gap-3 items-center">
-        <a
-          href={row.original.companyUrl} 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="text-sm text-blue-500 hover:underline cursor-pointer"
-        >
-          {row.original.companyUrl}
-        </a>
+        <span className="text-sm">{row.original.carUrl}</span>
       </div>
     ),
   },
-  {
-    accessorKey: "active",
-    header: "isActive",
-    cell: ({ row }) => <ActiveToggleCell row={row} refreshData={fetchData} />,
-  },
-  
+
+ 
+
+  // {
+  //   accessorKey: "active",
+  //   header: "isActive",
+  //   cell: ({ row }) => <ActiveToggleCell row={row} refreshData={fetchData} />,
+  // },
+
   {
     id: "actions",
     header: "Action",
     enableHiding: false,
     cell: ({ row }) => {
-     
-    
       const handleDelete = async (id: string) => {
         const result = await deleteSliderImage(id);
-      
-        if (result.success) {
+
+        if (result) {
           fetchData();
           toast.success("Slider data deleted");
         } else {
@@ -176,7 +146,6 @@ export const columnsSlider = ({fetchData,router,setSelectedDate,selectedDate,ope
 
       return (
         <div className="flex items-center gap-2">
- 
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -185,7 +154,9 @@ export const columnsSlider = ({fetchData,router,setSelectedDate,selectedDate,ope
                   size="icon"
                   className="w-7 h-7 border-default-200 dark:border-default-300 text-default-400"
                   onClick={() =>
-                    router.push(`/Advertisement/home-section/slider?id=${row.original.id}`)
+                    router.push(
+                      `/Advertisement/home-section/slider?id=${row.original._id}`
+                    )
                   }
                 >
                   <SquarePen className="w-3 h-3" />
@@ -203,7 +174,7 @@ export const columnsSlider = ({fetchData,router,setSelectedDate,selectedDate,ope
                   variant="outline"
                   size="icon"
                   className="w-7 h-7 border-default-200 dark:border-default-300 text-default-400"
-                  onClick={() => handleDelete(row.original.id)}
+                  onClick={() => handleDelete(row.original._id)}
                 >
                   <Trash2 className="w-4 h-4" />
                 </Button>
@@ -225,28 +196,27 @@ export const columnsSlider = ({fetchData,router,setSelectedDate,selectedDate,ope
   //   header: "schedulExpire",
   //   enableHiding: false,
   //   cell: ({ row }) => {
-    
-   
+
   //     const type = "slider";
-  
+
   //     const handleDateSelect = (date) => {
   //       setSelectedDate(date);
   //       console.log("Selected Deletion Date:", date);
   //     };
-  
+
   //     const handleScheduleDelete = async () => {
   //       if (!selectedDate) {
   //         console.log("❌ No date selected");
   //         return;
   //       }
-      
+
   //       const result = await scheduleDeleteSliderImage(row.original.id, type, selectedDate);
-      
+
   //       if (result.success) {
   //         setOpen(false);
   //       }
   //     };
-  
+
   //     return (
   //       <div className="flex items-center gap-2">
   //         <Dialog open={open} onOpenChange={setOpen}>
@@ -269,7 +239,7 @@ export const columnsSlider = ({fetchData,router,setSelectedDate,selectedDate,ope
   //               </TooltipContent>
   //             </Tooltip>
   //           </TooltipProvider>
-  
+
   //           {/* Calendar Dialog */}
   //           <DialogContent className="p-4">
   //             <h2 className="text-lg font-semibold">Select Deletion Date</h2>
@@ -288,6 +258,4 @@ export const columnsSlider = ({fetchData,router,setSelectedDate,selectedDate,ope
   //     );
   //   },
   // }
-  
-  
 ];

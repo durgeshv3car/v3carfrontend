@@ -4,33 +4,59 @@ import { addVariantDetails } from "@/app/(protected)/services/createCar/api";
 
 interface CreateModalProps {
   onClose: () => void;
+  carId: string;
+  name: string;
+  refreshData: () => void;
 }
 
-const CreateModal: React.FC<CreateModalProps> = ({ onClose ,carId,name,refreshData}) => {
-  const [price, setPrice] = useState("");
-  const [fuel, setFuel] = useState("");
-  const [mileageCity, setMileageCity] = useState("");
-  const [mileageHighway, setMileageHighway] = useState("");
-  const [description, setDescription] = useState("");
-  const [specifications, setSpecifications] = useState("");
+interface VariantFormData {
+  price: number;
+  fuel: string;
+  mileage: {
+    city: number;
+    highway: number;
+  };
+  description: string;
+  specifications: string;
+}
 
-  const handleSubmit = async() => {
-    const data = {
-      price,
-      fuel,
-      mileage: {
-        city: mileageCity,
-        highway: mileageHighway,
-      },
-      description,
-      specifications,
-    };
-    console.log(data,carId,name)
-    const res=await addVariantDetails(data, carId, name);
-    if (res.message){
-        refreshData()
+const CreateModal: React.FC<CreateModalProps> = ({ onClose, carId, name, refreshData }) => {
+  const [price, setPrice] = useState<string>("");
+  const [fuel, setFuel] = useState<string>("");
+  const [mileageCity, setMileageCity] = useState<string>("");
+  const [mileageHighway, setMileageHighway] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [specifications, setSpecifications] = useState<string>("");
+
+  const handleSubmit = async () => {
+    try {
+      if (!carId || !name) {
+        throw new Error("Car ID and name are required");
+      }
+
+      const data: VariantFormData = {
+        price: Number(price) || 0,
+        fuel: fuel.trim(),
+        mileage: {
+          city: Number(mileageCity) || 0,
+          highway: Number(mileageHighway) || 0,
+        },
+        description,
+        specifications,
+      };
+
+      const response = await addVariantDetails(data, carId, name);
+      
+      if (response.success) {
+        refreshData();
+        onClose();
+      } else {
+        throw new Error("Failed to add variant details");
+      }
+    } catch (error) {
+      console.error("Error adding variant details:", error);
+      // You might want to show a toast message here
     }
-    onClose();
   };
 
   return (
@@ -68,7 +94,12 @@ const CreateModal: React.FC<CreateModalProps> = ({ onClose ,carId,name,refreshDa
             <input
               type="number"
               value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (!value || /^\d*\.?\d*$/.test(value)) {
+                  setPrice(value);
+                }
+              }}
               className="w-full border px-3 py-2 rounded"
               placeholder="Enter price"
             />
@@ -81,7 +112,12 @@ const CreateModal: React.FC<CreateModalProps> = ({ onClose ,carId,name,refreshDa
             <input
               type="number"
               value={mileageCity}
-              onChange={(e) => setMileageCity(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (!value || /^\d*\.?\d*$/.test(value)) {
+                  setMileageCity(value);
+                }
+              }}
               className="w-full border px-3 py-2 rounded"
               placeholder="City mileage"
             />
@@ -94,7 +130,12 @@ const CreateModal: React.FC<CreateModalProps> = ({ onClose ,carId,name,refreshDa
             <input
               type="number"
               value={mileageHighway}
-              onChange={(e) => setMileageHighway(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (!value || /^\d*\.?\d*$/.test(value)) {
+                  setMileageHighway(value);
+                }
+              }}
               className="w-full border px-3 py-2 rounded"
               placeholder="Highway mileage"
             />
@@ -124,7 +165,12 @@ const CreateModal: React.FC<CreateModalProps> = ({ onClose ,carId,name,refreshDa
         <div className="mt-6 flex justify-end">
           <button
             onClick={handleSubmit}
-            className="bg-blue-600 text-white px-4 py-2 rounded"
+            disabled={!fuel.trim() || !price || !mileageCity || !mileageHighway}
+            className={`px-4 py-2 rounded ${
+              !fuel.trim() || !price || !mileageCity || !mileageHighway
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700'
+            } text-white`}
           >
             Submit
           </button>

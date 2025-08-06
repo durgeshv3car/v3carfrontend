@@ -1,21 +1,20 @@
 import axios from "axios";
-
-export const uploadSliderImage = async (formData: {
-  carUrl?:string
+export const uploadBrandsImage = async (formData: {
+  description: string;
   name?: string;
   mobileFile?: File | null;
 }) => {
   try {
     const formDataSend = new FormData();
+    formDataSend.append("description", formData.description);
     formDataSend.append("name", formData.name || "");
-    formDataSend.append("carUrl",formData.carUrl || "")
 
     if (formData.mobileFile) {
-      formDataSend.append("image", formData.mobileFile); // 'image' must match multer field name
+      formDataSend.append("image", formData.mobileFile); 
     }
 
     const response = await axios.post(
-      "http://localhost:5000/api/banners/create",
+      "http://localhost:5000/api/brands",
       formDataSend,
       {
         headers: {
@@ -31,20 +30,20 @@ export const uploadSliderImage = async (formData: {
   }
 };
 
-export const fetchSliderImages = async () => {
+export const fetchBrandsImages = async () => {
   try {
-    const response = await axios.get("http://localhost:5000/api/banners/all");
+    const response = await axios.get("http://localhost:5000/api/brands");
 
-    return response.data;
+    return response.data.brands;
   } catch (error) {
     console.error("Error fetching slider images:", error);
     return [];
   }
 };
 
-export const deleteSliderImage = async (id: string) => {
+export const deleteBrandsImage = async (id: string) => {
   try {
-    const response = await axios.delete(`http://localhost:5000/api/banners/${id}`, {
+    const response = await axios.delete(`http://localhost:5000/api/brands/${id}`, {
       method: "DELETE",
     });
     const data = await response.data;
@@ -55,9 +54,10 @@ export const deleteSliderImage = async (id: string) => {
     return { success: false };
   }
 };
-export const updateSliderImage = async (
+
+export const updateBrandsImage = async (
   id: string,
-  editedData: { name?: string; carUrl?: string; active?: boolean },
+  editedData: { name?: string; description?: string; active?: boolean },
   mobileFile?: File | null,
   mobileUrl?: string | null,
 ) => {
@@ -71,13 +71,13 @@ export const updateSliderImage = async (
     if (!mobileUrl) formDataSend.append("image", "empty");
     if (editedData.name) formDataSend.append("name", editedData.name);
     if (mobileFile) formDataSend.append("image", mobileFile);
-    if (editedData.carUrl)
-      formDataSend.append("carUrl", editedData.carUrl);
+    if (editedData.description)
+      formDataSend.append("description", editedData.description);
     if (editedData.active !== undefined)
       formDataSend.append("active", String(editedData.active));
 
     const response = await axios.put(
-      `http://localhost:5000/api/banners/${id}`,
+      `http://localhost:5000/api/brands/${id}`,
       formDataSend,
       {
         headers: {
@@ -92,6 +92,4 @@ export const updateSliderImage = async (
     return { success: false };
   }
 };
-
-
 

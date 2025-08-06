@@ -105,13 +105,18 @@ const EditModal: React.FC<EditModalProps> = ({
 
   const handleStep1 = async () => {
     if (!id) return;
-    
 
-    const result = await updateCar(id, editedData,mobileFile);
+    try {
+      const fileData = mobileFile?.file ? { file: mobileFile.file } : undefined;
+      const result = await updateCar(id, editedData, fileData);
 
-    if (result.message) {
-      toast.success("Basic data updated");
-    } else {
+      if (result.message) {
+        toast.success("Basic data updated");
+      } else {
+        toast.error("Failed to update basic data");
+      }
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to update basic data");
     }
   };
@@ -192,13 +197,19 @@ const EditModal: React.FC<EditModalProps> = ({
     if (!id) return;
     console.log(editedData);
 
-    const result = await updateCar(id, editedData,mobileFile);
+    try {
+      const fileData = mobileFile?.file ? { file: mobileFile.file } : undefined;
+      const result = await updateCar(id, editedData, fileData);
 
-    if (result.message) {
-      refreshData();
-      handleClose();
-      toast.success("Data updated successfully");
-    } else {
+      if (result.message) {
+        refreshData();
+        handleClose();
+        toast.success("Data updated successfully");
+      } else {
+        toast.error("Failed to update data");
+      }
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to update data");
     }
   };

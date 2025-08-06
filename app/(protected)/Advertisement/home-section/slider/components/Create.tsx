@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ImageUpload from "../../../components/ImageUpload";
 import { toast } from "sonner";
-import { uploadSliderImage } from "@/app/(protected)/services/sliders/api";
+
 
 import type { FileWithPreview } from "../../../components/ImageUpload";
+import { uploadSliderImage } from "@/app/(protected)/services/sliders/api";
 interface CreateModalProps {
   onClose: () => void;
   columnsField: string[];
@@ -23,7 +24,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
-  const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
+ 
 
   const Web_DIMENSIONS = { width: 1920, height: 970 };
   const Mobile_DIMENSIONS = { width: 365*2, height: 140*2 };
@@ -54,24 +55,21 @@ const CreateModal: React.FC<CreateModalProps> = ({
   };
 
   const refreshData = () => setRefresh((prev) => !prev);
-  console.log(mobileFile, webFile);
+
 
   const handleSubmit = async () => {
     try {
       const result = await uploadSliderImage({
-        type,
-        dimensions,
-        title: formData.Title,
+        carUrl:formData["Car Url"],
+        name: formData.Name,
         mobileFile: mobileFile?.file || null,
-        webFile: webFile?.file || null,
-        companyUrl: formData["Company URL"],
       });
+     
 
-      if (result.success) {
+      if (result.data) {
         toast.success("Slider image added");
         console.log("Upload success:", result.data);
         setMobileFile(null);
-        setWebFile(null);
         refreshData();
         handleClose();
       } else {
@@ -107,26 +105,15 @@ const CreateModal: React.FC<CreateModalProps> = ({
                   <label className="block text-sm font-medium">
                     {key === "mobile" ? "Mobile" : key === "web" ? "Web" : key}
                   </label>
-                  {key.toLowerCase() === "web" && (
-                    <span className="text-xs text-gray-500 ml-2">
-                      ( {Web_DIMENSIONS.width} x {Web_DIMENSIONS.height} )
-                    </span>
-                  )}
-                  {key.toLowerCase() === "mobile" && (
+                 
+                  {key.toLowerCase() === "image" && (
                     <span className="text-xs text-gray-500 ml-2">
                       ( {Mobile_DIMENSIONS.width} x {Mobile_DIMENSIONS.height} )
                     </span>
                   )}
                 </div>
-                {key.toLowerCase() === "web" ? (
-                  <ImageUpload
-                    files={webFile ? [webFile] : []}
-                    setFiles={(files: FileWithPreview[]) =>
-                      setWebFile(files[0] || null)
-                    }
-                    label="Web"
-                  />
-                ) : key.toLowerCase() === "mobile" ? (
+                {
+                 key.toLowerCase() === "image" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
                     setFiles={(files: FileWithPreview[]) =>

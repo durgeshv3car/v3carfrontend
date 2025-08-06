@@ -12,10 +12,40 @@ import {
   addVariant,
   addVariantDetails,
 } from "@/app/(protected)/services/createCar/api";
+import { fetchBrandsImages } from "@/app/(protected)/services/brands/api";
 
 interface FileWithPreview {
   preview: string;
   file: File;
+}
+
+interface CarFormData extends Record<string, string | string[] | undefined> {
+  Brand: string;
+  Model: string;
+  "Body Type": string;
+  "Fuel Type": string[];
+  Transmission: string[];
+  Mileage: string;
+  Engine: string;
+  "Seat Capacity": string;
+  "Price Range": string;
+  Description: string;
+  Dimensions: string;
+  Image?: string;
+}
+
+type FormValue = string | string[] | undefined;
+
+interface VariantDetail {
+  fuel: string;
+  transmission: string;
+  mileage: {
+    city: number;
+    highway: number;
+  };
+  price: number;
+  description: string;
+  specifications: string;
 }
 
 interface CreateModalProps {
@@ -33,16 +63,29 @@ const CreateModal: React.FC<CreateModalProps> = ({
 }) => {
   const [carId, setCarId] = useState("");
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState<Record<string, string | string[]>>(
-    {}
-  );
+  const [formData, setFormData] = useState<Partial<CarFormData>>({});
 
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
-  const [webFile, setWebFile] = useState<FileWithPreview | null>(null);
+
   const [variants, setVariants] = useState<string[]>([]);
   const [variantInput, setVariantInput] = useState("");
-  const [variantDetails, setVariantDetails] = useState<Record<string, any>>({});
-  const testcarId = "68677ae247d4ed6202e4978d";
+  const [variantDetails, setVariantDetails] = useState<
+    Record<string, VariantDetail>
+  >({});
+  const [brands, setBrands] = useState<{ _id: string; name: string }[]>([]);
+
+  const fetchData = async () => {
+    try {
+      const result = await fetchBrandsImages();
+      setBrands(result);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const Logo_DIMENSIONS = { width: 150 * 2, height: 150 * 2 };
   const WEB_DIMENSIONS = { width: 1920, height: 970 };
@@ -75,51 +118,77 @@ const CreateModal: React.FC<CreateModalProps> = ({
     setVariants([]);
     setVariantDetails({});
     setMobileFile(null);
-    setWebFile(null);
   };
 
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const value = e.target.value;
+    setFormData((prev) => ({ ...prev, [e.target.name]: value }));
+  };
+
+  const getInputValue = (key: string): string => {
+    const value = formData[key];
+    return typeof value === "string" ? value : "";
+  };
+
+  const getMultiSelectValue = (key: string): string[] => {
+    const value = formData[key];
+    return Array.isArray(value) ? value : [];
   };
 
   const handleStep1 = async () => {
     try {
       console.log(formData);
-      const response = await addCar(formData, mobileFile, type);
-      setCarId(response?.response?.data._id);
-      refreshData();
+      const fileData = mobileFile ? { file: mobileFile.file } : undefined;
+      const response = await addCar(formData as CarFormData, type, fileData);
+      if (response?.response?.data?._id) {
+        setCarId(response.response.data._id);
+        refreshData();
+      } else {
+        throw new Error("Failed to create car");
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error creating car:", error);
+      // You might want to show a toast message here
     }
   };
 
-  const handleStep2 = async (key) => {
+  const handleStep2 = async (key: string) => {
     try {
+      if (!carId) throw new Error("Car ID not found");
       const response = await addVariant(carId, key);
-      console.log(response);
-      refreshData();
+      if (response?.success) {
+        refreshData();
+      } else {
+        throw new Error("Failed to add variant");
+      }
     } catch (error) {
-      console.log(error);
+      console.error("Error adding variant:", error);
+      // You might want to show a toast message here
     }
   };
 
   const handleNext = async () => {
-    if (step === 1) {
-      await handleStep1();
-      setStep(2);
-    } else if (step === 2) {
-      const keyValue = Object.keys(variantDetails);
-      for (const key of keyValue) {
-        await handleStep2(key);
+    try {
+      if (step === 1) {
+        await handleStep1();
+        setStep(2);
+      } else if (step === 2) {
+        const keyValue = Object.keys(variantDetails);
+        for (const key of keyValue) {
+          await handleStep2(key);
+        }
+        setStep(3);
+      } else {
+        const keyValue = Object.keys(variantDetails);
+        for (const key of keyValue) {
+          await handleStep3(key);
+        }
+        handleClose();
+        refreshData();
       }
-      setStep(3);
-    } else {
-      const keyValue = Object.keys(variantDetails);
-      for (const key of keyValue) {
-        await handleStep3(key);
-      }
-      handleClose();
-      refreshData();
+    } catch (error) {
+      console.error("Error in handleNext:", error);
+      // You might want to show a toast message here
     }
   };
 
@@ -157,11 +226,23 @@ const CreateModal: React.FC<CreateModalProps> = ({
   };
 
   const refreshData = () => setRefresh((prev) => !prev);
-  const handleStep3 = async (key) => {
-    await addVariantDetails(variantDetails[key], carId, key);
+  const handleStep3 = async (key: string) => {
+    try {
+      if (!carId) throw new Error("Car ID not found");
+      const detail = variantDetails[key];
+      if (!detail) throw new Error("Variant details not found");
 
-    handleClose();
-    refreshData();
+      const response = await addVariantDetails(detail, carId, key);
+      if (response?.success) {
+        handleClose();
+        refreshData();
+      } else {
+        throw new Error("Failed to add variant details");
+      }
+    } catch (error) {
+      console.error("Error adding variant details:", error);
+      // You might want to show a toast message here
+    }
   };
 
   return (
@@ -204,7 +285,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
                   {["fuel type", "transmission"].includes(lowerKey) ? (
                     <MultiSelect
                       name={key}
-                      value={formData[key] || []}
+                      value={getMultiSelectValue(key)}
                       options={
                         lowerKey === "fuel type"
                           ? [
@@ -230,6 +311,24 @@ const CreateModal: React.FC<CreateModalProps> = ({
                       className="w-full"
                       placeholder="Select Options"
                     />
+                  ) : lowerKey === "brand" ? (
+                    <select
+                      value={formData[key] || ""}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          [key]: e.target.value,
+                        }))
+                      }
+                      className="w-full border px-2 py-2 rounded"
+                    >
+                      <option value="">Select Brand</option>
+                      {brands.map((brand) => (
+                        <option key={brand._id} value={brand._id}>
+                          {brand.name}
+                        </option>
+                      ))}
+                    </select>
                   ) : lowerKey === "image" ? (
                     <ImageUpload
                       files={mobileFile ? [mobileFile] : []}
@@ -240,7 +339,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
                     />
                   ) : lowerKey === "description" ? (
                     <TextEditor
-                      value={formData[key] || ""}
+                      value={getInputValue(key)}
                       onChange={(val) =>
                         setFormData((prev) => ({
                           ...prev,
@@ -251,13 +350,8 @@ const CreateModal: React.FC<CreateModalProps> = ({
                   ) : (
                     <Input
                       name={key}
-                      value={formData[key] || ""}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          [key]: e.target.value,
-                        }))
-                      }
+                      value={getInputValue(key)}
+                      onChange={onInputChange}
                       className="w-full"
                     />
                   )}
