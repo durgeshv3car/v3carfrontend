@@ -1,26 +1,26 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
-import React from 'react';
+'use client';
 
-export const metadata: Metadata = {
-    title: 'Error 404',
-};
+import { Link } from '@/i18n/routing';
+import Image from "next/image";
 
-const NotFound = () => {
+export default function NotFound() {
     return (
-        <div className="relative flex min-h-screen items-center justify-center overflow-hidden">
-            <div className="px-6 py-16 text-center font-semibold before:container before:absolute before:left-1/2 before:aspect-square before:-translate-x-1/2 before:rounded-full before:bg-[linear-gradient(180deg,#4361EE_0%,rgba(67,97,238,0)_50.73%)] before:opacity-10 md:py-20">
-                <div className="relative">
-                    <img src="/assets/images/error/404-dark.svg" alt="404" className="dark-img mx-auto -mt-10 w-full max-w-xs object-cover md:-mt-14 md:max-w-xl" />
-                    <img src="/assets/images/error/404-light.svg" alt="404" className="light-img mx-auto -mt-10 w-full max-w-xs object-cover md:-mt-14 md:max-w-xl" />
-                    <p className="mt-5 text-base dark:text-white">The page you requested was not found!</p>
-                    <Link href="/" className="btn btn-gradient mx-auto !mt-7 w-max border-0 uppercase shadow-none">
-                        Home
-                    </Link>
-                </div>
-            </div>
-        </div>
-    );
-};
+      <div className="min-h-screen flex flex-col justify-center items-center bg-background px-6 py-20 text-center">
+  <div className="max-w-md w-full">
+    <h1 className="text-8xl font-semibold text-default-900 dark:text-white mb-4">
+      404
+    </h1>
+    <p className="text-base text-default-700 dark:text-gray-300 mb-8">
+      The page you are looking for doesn’t exist, may have been moved, or is temporarily unavailable.
+    </p>
+    <Link
+      href="/auth/login"
+      className="inline-block w-full bg-white dark:bg-gray-900 text-default-900 dark:text-white border border-default-200 dark:border-gray-700 rounded-lg px-6 py-3 text-base font-medium shadow-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200"
+    >
+      Go to Homepage
+    </Link>
+  </div>
+</div>
 
-export default NotFound;
+    );
+}

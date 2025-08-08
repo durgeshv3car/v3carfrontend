@@ -1,28 +1,25 @@
-import ProviderComponent from '@/components/layouts/provider-component';
-import 'react-perfect-scrollbar/dist/css/styles.css';
-import '../styles/tailwind.css';
-import { Metadata } from 'next';
-import { Nunito } from 'next/font/google';
+import type { Metadata } from "next";
 
+import "./globals.css";
+import "./theme.css";
+
+import { RootClientWrapper } from "./ClientTheme";
 export const metadata: Metadata = {
-    title: {
-        template: '%s | VRISTO - Multipurpose Tailwind Dashboard Template',
-        default: 'VRISTO - Multipurpose Tailwind Dashboard Template',
-    },
+  title: "Dashcode admin Template",
+  description: "created by codeshaper",
+ 
 };
-const nunito = Nunito({
-    weight: ['400', '500', '600', '700', '800'],
-    subsets: ['latin'],
-    display: 'swap',
-    variable: '--font-nunito',
-});
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-    return (
-        <html lang="en">
-            <body className={nunito.variable}>
-                <ProviderComponent>{children}</ProviderComponent>
-            </body>
-        </html>
-    );
+export default async function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body className="">
+        <RootClientWrapper>{children}</RootClientWrapper>
+      </body>
+    </html>
+  );
 }

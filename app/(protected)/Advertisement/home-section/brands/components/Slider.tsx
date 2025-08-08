@@ -1,0 +1,63 @@
+"use client";
+import React, { useState, useEffect } from "react";
+import ExampleTwo from "../../../HomeTable";
+
+
+import { useRouter } from "next/navigation";
+import { columnsSlider } from "./columnsSlider";
+import { fetchBrandsImages } from "@/app/(protected)/services/brands/api";
+import { SliderData } from "./columnsSlider";
+
+function Users({token}:{token:any}) {
+  
+  const router = useRouter();
+
+  const [data, setData] = useState<SliderData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [refresh, setRefresh] = useState<boolean>(false);
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [open, setOpen] = React.useState(false);
+
+  const type = "brands";
+
+  const fetchData = async () => {
+    try {
+      const result = await fetchBrandsImages();
+
+      setData(result);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [refresh]);
+
+  if (loading) return <p>Loading...</p>;
+  return (
+    <>
+      <div className="space-y-6">
+        <ExampleTwo
+          tableHeading="Brands List"
+          tableData={data}
+          tableColumns={columnsSlider({
+            fetchData,
+            router,
+            setSelectedDate,
+            selectedDate,
+            open,
+            setOpen,
+          })}
+          setRefresh={setRefresh}
+          type={type}
+          token={token}
+        />
+      </div>
+    </>
+  );
+}
+
+export default Users;

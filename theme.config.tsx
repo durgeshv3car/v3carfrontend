@@ -1,12 +1,50 @@
-const themeConfig = {
-    locale: 'en', // en, da, de, el, es, fr, hu, it, ja, pl, pt, ru, sv, tr, zh
-    theme: 'light', // light, dark, system
-    menu: 'vertical', // vertical, collapsible-vertical, horizontal
-    layout: 'full', // full, boxed-layout
-    rtlClass: 'ltr', // rtl, ltr
-    animation: '', // animate__fadeIn, animate__fadeInDown, animate__fadeInUp, animate__fadeInLeft, animate__fadeInRight, animate__slideInDown, animate__slideInLeft, animate__slideInRight, animate__zoomIn
-    navbar: 'navbar-sticky', // navbar-sticky, navbar-floating, navbar-static
-    semidark: false,
+
+import React from 'react'
+import { DocsThemeConfig } from 'nextra-theme-docs'
+import DashCodeLogo from '@/components/dascode-logo';
+const config: DocsThemeConfig = {
+  logo: (
+    <span className=" inline-flex gap-2.5 items-center">
+      <DashCodeLogo className="  text-default-900 h-8 w-8 [&>path:nth-child(3)]:text-background [&>path:nth-child(2)]:text-background" />
+      <span className="  text-lg font-bold text-default ">CreditCircle</span>
+    </span>
+  ),
+  project: {
+    link: "https://github.com/shuding/nextra",
+  },
+  banner: {
+    key: "1.0-release",
+    text: (
+      <a href="/dashboard" target="_blank">
+        🎉 Dashcode
+      </a>
+    ),
+  },
+  // footer: {
+  //   text: (
+  //     <span>
+  //       {new Date().getFullYear()} ©{" "}
+  //       <a href="https://codeshaper.net/" target="_blank">
+  //         CodeShaper
+  //       </a>
+  //       .
+  //     </span>
+  //   ),
+  // },
+  themeSwitch: {
+    useOptions() {
+      return {
+        light: 'Light',
+        dark: 'Dark',
+        system: 'System',
+      };
+    },
+  },
+  useNextSeoProps() {
+    return {
+      titleTemplate: "%s – CreditCircle",
+    };
+  },
 };
 
-export default themeConfig;
+export default config
