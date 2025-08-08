@@ -8,7 +8,7 @@ import { columnsSlider } from "./columnsSlider";
 import { fetchSliderImages } from "@/app/(protected)/services/sliders/api";
 import { SliderData } from "./columnsSlider";
 
-function Users() {
+function Users({token}:{token:any}) {
   
   const router = useRouter();
 
@@ -40,7 +40,7 @@ function Users() {
   return (
     <>
       <div className="space-y-6">
-        <ExampleTwo
+        <ExampleTwo<SliderData>
           tableHeading="Slider List"
           tableData={data}
           tableColumns={columnsSlider({
@@ -53,6 +53,7 @@ function Users() {
           })}
           setRefresh={setRefresh}
           type={type}
+          token={token}
         />
       </div>
     </>

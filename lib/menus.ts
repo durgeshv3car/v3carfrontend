@@ -178,76 +178,21 @@ export function getMenuList(
           children: [],
         },
         {
-          href: "/Advertisement/home-section/logo",
-          label: "Landing Partner Logo",
-          active: pathname === "/Advertisement/home-section/logo",
+          href: "/Advertisement/home-section/car-review",
+          label: "Car Review",
+          active: pathname === "/Advertisement/home-section/car-review",
           icon: "heroicons-outline:bookmark",
           children: [],
         },
         {
-          href: "/Advertisement/home-section/offer",
-          label: "Offers",
-          active: pathname === "/Advertisement/home-section/offer",
+          href: "/Advertisement/home-section/brands",
+          label: "Brands",
+          active: pathname === "/Advertisement/home-section/brands",
           icon: "heroicons-outline:tag",
           children: [],
         },
 
-        {
-          href: "/Advertisement/home-section/category",
-          label: "Category",
-          active: pathname === "/Advertisement/home-section/category",
-          icon: "heroicons-outline:folder",
-          children: [],
-        },
-        {
-          href: "/Advertisement/loan-section/creditCard",
-          label: "Credit Card Offers",
-          active: pathname === "/Advertisement/loan-section/creditCard",
-          icon: "heroicons-outline:question-mark-circle",
-          children: [],
-        },
-        {
-          href: "/Advertisement/loan-section/carInsurance",
-          label: "Car Insurance",
-          active: pathname === "/Advertisement/loan-section/carInsurance",
-          icon: "heroicons-outline:question-mark-circle",
-          children: [],
-        },
-        {
-          href: "/Advertisement/loan-section/healthInsurance",
-          label: "Health Insurance",
-          active: pathname === "/Advertisement/loan-section/healthInsurance",
-          icon: "heroicons-outline:question-mark-circle",
-          children: [],
-        },
-        {
-          href: "/Advertisement/loan-section/lifeInsurance",
-          label: "Life Insurance",
-          active: pathname === "/Advertisement/loan-section/lifeInsurance",
-          icon: "heroicons-outline:question-mark-circle",
-          children: [],
-        },
-        {
-          href: "/Advertisement/loan-section/mutualFunds",
-          label: "Mutual Funds",
-          active: pathname === "/Advertisement/loan-section/mutualFunds",
-          icon: "heroicons-outline:question-mark-circle",
-          children: [],
-        },
-        {
-          href: "/Advertisement/loan-section/stockMarket",
-          label: "Stock Market",
-          active: pathname === "/Advertisement/loan-section/stockMarket",
-          icon: "heroicons-outline:question-mark-circle",
-          children: [],
-        },
-        {
-          href: "/Advertisement/loan-section/incomePlan",
-          label: "Income Plans",
-          active: pathname === "/Advertisement/loan-section/incomePlan",
-          icon: "heroicons-outline:question-mark-circle",
-          children: [],
-        },
+       
       ],
     },
   ];
@@ -327,74 +272,6 @@ export function getMenuList(
       groupLabel: "",
       id: "tools",
       menus: filteredToolsMenus,
-    });
-  }
-  const othersMenus: Menu[] = [
-    {
-      id: "others",
-      href: "",
-      label: "others",
-      active: pathname.includes("/others"),
-      icon: "heroicons-outline:exclamation-circle",
-      submenus: [
-        {
-          href: "/Others/home-section/refer-earn",
-          label: "Refer&Earns",
-          active: pathname === "/Others/home-section/refer-earn",
-          icon: "heroicons-outline:hand-raised",
-          children: [],
-        },
-        {
-          href: "/Others/home-section/money-smart",
-          label: "MoneySmarts",
-          active: pathname === "/Others/home-section/money-smart",
-          icon: "heroicons-outline:banknotes",
-          children: [],
-        },
-        {
-          href: "/Others/page-section/faq",
-          label: "Faq",
-          active: pathname === "/Others/page-section/faq",
-          icon: "heroicons-outline:question-mark-circle",
-          children: [],
-        },
-        {
-          href: "/Others/page-section/policy",
-          label: "Policy",
-          active: pathname === "/Others/page-section/policy",
-          icon: "heroicons-outline:shield-check",
-          children: [],
-        },
-         {
-          href: "/Others/page-section/credit-score",
-          label: "CreditScoreUrl",
-          active: pathname === "/Others/page-section/credit-score",
-          icon: "heroicons-outline:shield-check",
-          children: [],
-        },
-          {
-          href: "/Others/page-section/wallet-points",
-          label: "WalletPoints",
-          active: pathname === "/Others/page-section/wallet-points",
-          icon: "heroicons-outline:shield-check",
-          children: [],
-        },
-          {
-          href: "/Others/home-section/redeem-list",
-          label: "RedeemList",
-          active: pathname === "/Others/home-section/redeem-list",
-          icon: "heroicons-outline:shield-check",
-          children: [],
-        },
-      ],
-    },
-  ];
-  const filteredOthersMenus = filterMenus(othersMenus);
-  if (filteredOthersMenus.length > 0) {
-    groups.push({
-      groupLabel: "",
-      id: "others",
-      menus: filteredOthersMenus,
     });
   }
 

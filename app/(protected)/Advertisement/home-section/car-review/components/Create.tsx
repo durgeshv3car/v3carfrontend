@@ -5,16 +5,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ImageUpload from "../../../components/ImageUpload";
 import { toast } from "sonner";
-
+import TextEditor from "@/app/(protected)/Car/components/SunEditor";
 
 import type { FileWithPreview } from "../../../components/ImageUpload";
-import { uploadSliderImage } from "@/app/(protected)/services/sliders/api";
+import { uploadReviewImage } from "@/app/(protected)/services/carReviews/api";
 interface CreateModalProps {
   onClose: () => void;
   columnsField: string[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   type: string;
-  token:any;
+  token:any
 }
 
 const CreateModal: React.FC<CreateModalProps> = ({
@@ -26,10 +26,9 @@ const CreateModal: React.FC<CreateModalProps> = ({
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
- 
 
   const Web_DIMENSIONS = { width: 1920, height: 970 };
-  const Mobile_DIMENSIONS = { width: 365*2, height: 140*2 };
+  const Mobile_DIMENSIONS = { width: 365 * 2, height: 140 * 2 };
   const dimensions = {
     web: Web_DIMENSIONS,
     mobile: Mobile_DIMENSIONS,
@@ -58,15 +57,16 @@ const CreateModal: React.FC<CreateModalProps> = ({
 
   const refreshData = () => setRefresh((prev) => !prev);
 
-
   const handleSubmit = async () => {
+    console.log("click")
     try {
-      const result = await uploadSliderImage({
-        carUrl:formData["Car Url"],
-        name: formData.Name,
+      const result = await uploadReviewImage({
+        token:token,
+        type:type,
+        title: formData.Title,
+        description:formData.Description,
         mobileFile: mobileFile?.file || null,
       });
-     
 
       if (result.data) {
         toast.success("Slider image added");
@@ -81,7 +81,12 @@ const CreateModal: React.FC<CreateModalProps> = ({
       console.error("Error submitting:", error);
     }
   };
-  const excludedFields = ["schedulexpire", "isactive"];
+  const excludedFields = ["schedulexpire", "isactive", "user"];
+  // Helper function to get input value for a key
+  const getInputValue = (key: string) => {
+    return formData[key] || "";
+  };
+
   return (
     <>
       <div
@@ -107,21 +112,30 @@ const CreateModal: React.FC<CreateModalProps> = ({
                   <label className="block text-sm font-medium">
                     {key === "mobile" ? "Mobile" : key === "web" ? "Web" : key}
                   </label>
-                 
+
                   {key.toLowerCase() === "image" && (
                     <span className="text-xs text-gray-500 ml-2">
                       ( {Mobile_DIMENSIONS.width} x {Mobile_DIMENSIONS.height} )
                     </span>
                   )}
                 </div>
-                {
-                 key.toLowerCase() === "image" ? (
+                {key.toLowerCase() === "image" ? (
                   <ImageUpload
                     files={mobileFile ? [mobileFile] : []}
                     setFiles={(files: FileWithPreview[]) =>
                       setMobileFile(files[0] || null)
                     }
                     label="Mobile"
+                  />
+                ) : key.toLowerCase() === "description" ? (
+                  <TextEditor
+                    value={getInputValue(key)}
+                    onChange={(val) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        [key]: val,
+                      }))
+                    }
                   />
                 ) : (
                   <Input

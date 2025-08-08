@@ -13,6 +13,7 @@ interface CreateModalProps {
   columnsField: string[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   type: string;
+  token:any;
 }
 
 const CreateModal: React.FC<CreateModalProps> = ({
@@ -20,6 +21,7 @@ const CreateModal: React.FC<CreateModalProps> = ({
   columnsField,
   setRefresh,
   type,
+  token
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);

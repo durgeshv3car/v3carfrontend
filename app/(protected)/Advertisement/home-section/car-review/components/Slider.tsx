@@ -5,8 +5,9 @@ import ExampleTwo from "../../../HomeTable";
 
 import { useRouter } from "next/navigation";
 import { columnsSlider } from "./columnsSlider";
-import { fetchBrandsImages } from "@/app/(protected)/services/brands/api";
 import { SliderData } from "./columnsSlider";
+import { fetchReferImages } from "@/app/(protected)/services/refer-earns/api";
+import { fetchReviewImages } from "@/app/(protected)/services/carReviews/api";
 
 function Users({token}:{token:any}) {
   
@@ -18,11 +19,11 @@ function Users({token}:{token:any}) {
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [open, setOpen] = React.useState(false);
 
-  const type = "brands";
+  const type = "reviews";
 
   const fetchData = async () => {
     try {
-      const result = await fetchBrandsImages();
+      const result = await fetchReviewImages(token);
 
       setData(result);
     } catch (error) {
@@ -41,7 +42,7 @@ function Users({token}:{token:any}) {
     <>
       <div className="space-y-6">
         <ExampleTwo
-          tableHeading="Brands List"
+          tableHeading="Review List"
           tableData={data}
           tableColumns={columnsSlider({
             fetchData,

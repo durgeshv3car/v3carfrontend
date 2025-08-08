@@ -15,6 +15,7 @@ import {
 } from "@/app/(protected)/services/createCar/api";
 import type { FileWithPreview } from "../../../components/ImageUpload";
 import { MultiSelect } from "primereact/multiselect";
+import { fetchBrandsImages } from "@/app/(protected)/services/brands/api";
 
 interface TableRow {
   id: string;
@@ -58,7 +59,6 @@ const EditModal: React.FC<EditModalProps> = ({
   const [selectedRow, setSelectedRow] = useState<TableRow | null>(null);
   const [mobileFile, setMobileFile] = useState<FileWithPreview | null>(null);
 
-
   // New state for variant management
   const [variants, setVariants] = useState<string[]>([]);
   const [variantInput, setVariantInput] = useState("");
@@ -66,6 +66,20 @@ const EditModal: React.FC<EditModalProps> = ({
     Record<string, VariantDetails>
   >({});
   const [carId, setCarId] = useState<string>("");
+    const [brands, setBrands] = useState<{ _id: string; name: string }[]>([]);
+  
+    const fetchData = async () => {
+      try {
+        const result = await fetchBrandsImages();
+        setBrands(result);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+  
+    useEffect(() => {
+      fetchData();
+    }, []);
 
   const LOGO_DIMENSIONS = { width: 150 * 2, height: 150 * 2 };
   const WEB_DIMENSIONS = { width: 1920, height: 970 };
@@ -82,14 +96,13 @@ const EditModal: React.FC<EditModalProps> = ({
       setSelectedRow(foundRow);
       setEditedData(foundRow || {});
       setCarId(foundRow?._id || "");
-      
 
       if (foundRow?.image) {
         setMobileFile({ preview: foundRow.image } as FileWithPreview);
       }
-      
     }
   }, [id, tableData]);
+
 
   const handleClose = () => {
     onClose();
@@ -332,6 +345,7 @@ const EditModal: React.FC<EditModalProps> = ({
                   </div>
                 );
               }
+             
 
               if (lowerKey === "image") {
                 return (
@@ -348,16 +362,26 @@ const EditModal: React.FC<EditModalProps> = ({
                 );
               }
 
-              if (lowerKey === "active") {
+              if (lowerKey === "brand") {
                 return (
                   <div key={key}>
-                    <label className="block text-sm font-medium">Active</label>
-                    <Switch
-                      checked={Boolean(editedData[key])}
-                      onCheckedChange={(value) =>
-                        setEditedData((prev) => ({ ...prev, [key]: value }))
+                    <label className="block text-sm font-medium">Brand</label>
+                    <select
+                      value={editedData[key] || ""}
+                      onChange={(e) =>
+                        setEditedData((prev) => ({
+                          ...prev,
+                          [key]: e.target.value,
+                        }))
                       }
-                    />
+                      className="w-full border px-2 py-2 rounded"
+                    >
+                      {brands.map((brand) => (
+                        <option key={brand._id} value={brand._id}>
+                          {editedData.brand.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 );
               }
@@ -511,7 +535,6 @@ const EditModal: React.FC<EditModalProps> = ({
                     onChange={(value) =>
                       handleDetailChange(variant, "description", value)
                     }
-                  
                   />
                 </div>
 

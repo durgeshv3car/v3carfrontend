@@ -48,7 +48,7 @@ import TablePagination from "./table-pagination";
 import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 
-type ModalType = 'slider' | 'logo' | 'offer' | 'category' | 'brands';
+type ModalType = 'slider'  | 'brands' | 'reviews';
 
 // Define the props interface for the edit modal components
 interface EditModalProps<T> {
@@ -64,6 +64,7 @@ interface CreateModalProps {
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   columnsField: string[];
   type: ModalType;
+  token:any
 }
 
 // Type for modal components
@@ -79,21 +80,13 @@ const modalMap: Record<ModalType, {
     create: dynamic(() => import("../home-section/slider/components/Create")) as CreateComponent,
     edit: dynamic(() => import("../home-section/slider/components/EditModal")),
   },
-  logo: {
-    create: dynamic(() => import("../home-section/logo/components/Create")) as CreateComponent,
-    edit: dynamic(() => import("../home-section/logo/components/EditModal")),
-  },
-  offer: {
-    create: dynamic(() => import("../home-section/offer/components/Create")) as CreateComponent,
-    edit: dynamic(() => import("../home-section/offer/components/EditModal")),
-  },
-  category: {
-    create: dynamic(() => import("../home-section/category/components/Create")) as CreateComponent,
-    edit: dynamic(() => import("../home-section/category/components/EditModal")),
-  },
   brands: {
     create: dynamic(() => import("../home-section/brands/components/Create")) as CreateComponent,
     edit: dynamic(() => import("../home-section/brands/components/EditModal")),
+  },
+   reviews: {
+    create: dynamic(() => import("../home-section/car-review/components/Create")) as CreateComponent,
+    edit: dynamic(() => import("../home-section/car-review/components/EditModal")),
   },
 };
 
@@ -103,6 +96,7 @@ interface TableProps<T> {
   tableData: T[];
   setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   type: ModalType;
+  token:any
 }
 
 const ExampleTwo = <T,>({
@@ -111,6 +105,7 @@ const ExampleTwo = <T,>({
   tableColumns,
   setRefresh,
   type,
+  token
 }: TableProps<T>) => {
   const searchParams = useSearchParams();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -341,6 +336,7 @@ const ExampleTwo = <T,>({
           setRefresh={setRefresh}
           columnsField={columnsField}
           type={type}
+          token={token}
         />
       )}
       
@@ -351,6 +347,7 @@ const ExampleTwo = <T,>({
           onClose={closeModal}
           tableData={tableData}
           setRefresh={setRefresh}
+          token={token}
         />
       )}
     </div>
