@@ -275,6 +275,34 @@ export function getMenuList(
     });
   }
 
+    const carMenus: Menu[] = [
+    {
+      id: "car",
+      href: "",
+      label: "Car",
+      active: pathname.includes("/Car"),
+      icon: "heroicons-outline:user",
+      submenus: [
+        {
+          href: "/Car/home-section/new-car",
+          label: "new-car",
+          active: pathname === "/auth/register",
+          icon: "heroicons-outline:user-plus",
+          children: [],
+        },
+      ],
+    },
+  ];
+
+  const filteredCarMenus = filterMenus(carMenus);
+  if (filteredCarMenus.length > 0) {
+    groups.push({
+      groupLabel: "",
+      id: "account",
+      menus: filteredCarMenus,
+    });
+  }
+
   // Account group
   const accountMenus: Menu[] = [
     {

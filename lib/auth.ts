@@ -57,8 +57,6 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     },
     async session({ session, token }: { session: any; token: any }) {
       const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-      
-
       try {
        const res =await axios.get(`${API_BASE_URL}/auth/user/${token.id}`, {
           headers: {

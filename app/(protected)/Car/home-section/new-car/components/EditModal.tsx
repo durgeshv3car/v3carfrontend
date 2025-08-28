@@ -8,6 +8,7 @@ import ImageUpload from "../../../components/ImageUpload";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 import TextEditor from "../../../components/SunEditor";
+import { MultiSelectShadcn } from "./MultiSelectShadcn";
 import {
   addVariant,
   addVariantDetails,
@@ -308,43 +309,26 @@ const EditModal: React.FC<EditModalProps> = ({
                 );
               }
 
-              if (["fueltype", "transmissions"].includes(lowerKey)) {
-                return (
-                  <div key={key}>
-                    <label className="block text-sm font-medium mb-1">
-                      {key}
-                    </label>
-                    <MultiSelect
-                      name={key}
-                      value={editedData[key] || []}
-                      options={
-                        lowerKey === "fueltype"
-                          ? [
-                              { label: "Petrol", value: "Petrol" },
-                              { label: "Diesel", value: "Diesel" },
-                              { label: "Electric", value: "Electric" },
-                              { label: "Hybrid", value: "Hybrid" },
-                              { label: "CNG", value: "CNG" },
-                              { label: "LPG", value: "LPG" },
-                            ]
-                          : [
-                              { label: "Manual", value: "Manual" },
-                              { label: "Automatic", value: "Automatic" },
-                            ]
-                      }
-                      onChange={(e) =>
-                        setEditedData((prev) => ({
-                          ...prev,
-                          [key]: e.value,
-                        }))
-                      }
-                      display="chip"
-                      className="w-full"
-                      placeholder="Select Options"
-                    />
-                  </div>
-                );
-              }
+          
+
+      if (["fueltype", "transmissions"].includes(lowerKey)) {
+        return (
+          <MultiSelectShadcn
+            key={key}
+            label={key}
+            name={key}
+            type={lowerKey}
+            value={editedData[key] || []}
+            onChange={(val) =>
+              setEditedData((prev) => ({
+                ...prev,
+                [key]: val,
+              }))
+            }
+          />
+        )
+      }
+    
              
 
               if (lowerKey === "image") {
@@ -378,7 +362,7 @@ const EditModal: React.FC<EditModalProps> = ({
                     >
                       {brands.map((brand) => (
                         <option key={brand._id} value={brand._id}>
-                          {editedData.brand.name}
+                          {brand.name}
                         </option>
                       ))}
                     </select>

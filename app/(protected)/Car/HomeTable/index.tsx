@@ -230,10 +230,10 @@ const ExampleTwo = <T,>({
 
           {/* Input for Filtering */}
           <Input
-            placeholder="Filter Title..."
-            value={table.getColumn("title")?.getFilterValue() as string ?? ""}
+            placeholder="Filter Brand..."
+            value={table.getColumn("brand")?.getFilterValue() as string ?? ""}
             onChange={(event) =>
-              table.getColumn("title")?.setFilterValue(event.target.value)
+              table.getColumn("brand")?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
           />
